@@ -36,7 +36,7 @@ in the SDK repository, where the types are.
 ## How the site is published
 
 GitHub Pages serves `build/` exactly as it is committed: every push to
-`master` publishes it (`.github/workflows/pages.yml`). Nothing is built on
+`main` publishes it (`.github/workflows/pages.yml`). Nothing is built on
 GitHub, so what was checked here is what goes out.
 
 ## License
