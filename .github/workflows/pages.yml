@@ -1,0 +1,33 @@
+# Publishes build/ as committed. Nothing is built here: the site is built
+# and checked on a maintainer's machine, and this only serves the result.
+name: Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    # GitHub Pages serves this repository only once it is public.
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build
+      - id: deployment
+        uses: actions/deploy-pages@v5

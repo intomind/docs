@@ -32,3 +32,16 @@ so they are kept on the maintainers' machines, in the file
 `INTOMIND_PRIVATE_WORDS` names or `~/.config/intomind/private-words.tsv`,
 and the check fails without them. The JavaScript and Rust examples are compiled
 in the SDK repository, where the types are.
+
+## How the site is published
+
+GitHub Pages serves `build/` exactly as it is committed: every push to
+`master` publishes it (`.github/workflows/pages.yml`). Nothing is built on
+GitHub, so what was checked here is what goes out.
+
+## License
+
+Free under the GNU Affero General Public License, version 3. We also
+license it commercially, on fair terms shaped by your use case: write to
+contact@intomind.com. See `LICENSING.md`, and `CONTRIBUTING.md` before a
+first pull request.
