@@ -212,6 +212,9 @@ offset type    field
 - A notification carries as many values as fit the negotiated MTU after
   the 28-byte header. With the smallest MTU this contract allows, 96
   values fit in one notification; a vector of up to 128 values takes two.
+  Corrected by section 27 of 1.4: 64 values fit at that MTU, and
+  from 1.4 a notification carries at most 64 values, 156 bytes, on every
+  link.
   Parts of one vector share `sample_index`, `device_time` and `token`; a
   host reassembles by `first` and knows the vector is complete when a part
   arrives without `more_parts`. A window's tokens all carry the window's

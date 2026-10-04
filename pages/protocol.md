@@ -1,7 +1,8 @@
 # IntoMind BLE Protocol v1.4
 
-Status: as built in firmware 1.4.1, 2026-10-05. Firmware 1.4.0,
-2026-10-02, built all of it but section 26. It supersedes 1.3 under the
+Status: as built in firmware 1.4.2, 2026-10-05. Firmware 1.4.1 built all
+of it but section 27, and firmware 1.4.0, 2026-10-02, all but sections 26
+and 27. It supersedes 1.3 under the
 rules of section 0 of 1.1: a 1.3 host works against a 1.4 device, and a
 1.4 host reads a 1.3 device's version and asks it nothing new.
 
@@ -13,11 +14,17 @@ What 1.4 adds:
   signal of section 22 still streams. One control status.
 - **The heads' encoder ids in a request of their own** (section 26), so
   that every answer fits. One control opcode.
+- **Every embedding notification within 156 bytes** (section 27), so that
+  every notification but EEG Data fits the smallest MTU the contract
+  allows, as section 3 of 1.0 has always said. No new number.
 
-One thing defined earlier changes: the LIST_HEADS trailer of 1.3 is
+Two things defined earlier change. The LIST_HEADS trailer of 1.3 is
 withdrawn, because with it the answer is longer than any answer may be,
-and no device ever sent it (section 26.1). Nothing else already defined in
-1.0, 1.1, 1.2, or 1.3 changes meaning, size, or number.
+and no device ever sent it (section 26.1). And the size of an embedding
+notification, which section 19.2 of 1.2 tied to the negotiated MTU with a
+wrong count, is now at most 156 bytes on every link (section 27). Nothing
+else already defined in 1.0, 1.1, 1.2, or 1.3 changes meaning, size, or
+number.
 
 Device Info's `app_slot_bytes` and `weights_image_bytes` keep their
 meaning. Firmware 1.4.0 divides its flash anew and reports 290816 and
@@ -130,3 +137,25 @@ this contract never does, answers status 5. It never answers status 2,
 which says the device does not do what was asked, and never answers
 status 0 with less than the whole answer. The same holds on Update
 Control, where the status is 5 as well.
+
+## 27. Embedding notifications fit 156 bytes
+
+Section 3 of 1.0 holds every notification and indication but EEG Data to
+156 bytes, so that an MTU of 159, the smallest the contract allows for
+them, carries each one whole. Section 19.2 of 1.2 said instead that an
+embedding notification carries as many values as fit the negotiated MTU,
+and that 96 values fit at that smallest MTU. The count is wrong: after the
+28 byte header, 64 values fit. And firmware 1.2 to 1.4.1 kept neither
+rule. It filled a part with up to 108 values, 244 bytes, whatever the MTU,
+so the launch model's 76 value vectors each went as one notification of
+180 bytes, which a host below an MTU of 183 received cut short.
+
+From 1.4, as built in firmware 1.4.2, an embedding notification carries at
+most 64 values, 156 bytes, on every link. A vector wider than that goes in
+parts exactly as section 19.2 of 1.2 defines: each part names its `first`
+value, and every part but the last sets `more_parts`. The launch model's
+vectors go in two parts, 64 values and 12. A host puts parts back together
+as it always has, so a 1.2 or 1.3 host reads them unchanged, and a
+notification from an earlier firmware reads as it did.
+
+No number is assigned, and nothing else changes.

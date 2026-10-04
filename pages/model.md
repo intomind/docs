@@ -23,18 +23,22 @@ A head is weights and never code. A device will not run code you send it.
 
 ## What ships
 
-The device ships with the encoder and no head. The encoder is the product.
-A head is what you make with it, and a head that somebody else trained on
-their own labels would be a head trained on their question, not yours.
+The device ships with three open heads on board. Age is built into the
+weights: it is slot 0, selected whenever the device powers on, and it
+changes only with a weights update. Sex is in slot 1, one of the four slots
+that are yours to fill, replace, or empty. The reconstruction head is in
+the weights too, where the device uses it to make its generated signal.
+
+Age and sex show what the embedding carries. They are not useful
+predictors of either. The heads that matter are the ones you train on your
+own recordings, for your own question.
 
 ## Open heads
 
-We publish heads for the encoder the IntoMind One ships, each with what it
-was measured to do, at
-[github.com/intomind/eeg-foundation-model-heads](https://github.com/intomind/eeg-foundation-model-heads):
-age and sex, which show what the embedding carries and are not useful
-predictors of either, and the reconstruction head. A head names the encoder
-it was trained for, and a device reports the encoder it runs.
+We publish these heads, each with what it was measured to do, at
+[github.com/intomind/eeg-foundation-model-heads](https://github.com/intomind/eeg-foundation-model-heads).
+A head names the encoder it was trained for, and a device reports the
+encoder it runs.
 
 ## Embeddings from the device
 
@@ -87,13 +91,15 @@ above passes that along.
 ## Uploading it
 
 ```python
-head_id = await device.upload_head(blob, slot=1, select=True)
+head_id = await device.upload_head(blob, slot=2, select=True)
 await device.set_predictions(True)
 
 device.on_prediction = lambda dev, p: print(p.outputs, p.head_id)
 ```
 
-There are four slots. A head carries its own hash, the device checks it
+There are four slots for your heads, 1 to 4. A unit ships with the open
+sex head in slot 1, so this example uses slot 2. A head carries its own
+hash, the device checks it
 before storing it, and every prediction the device sends carries the hash
 of the head that produced it. A recording of predictions therefore always
 says which head made them, which matters the first time you have two.

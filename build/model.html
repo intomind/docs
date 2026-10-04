@@ -51,9 +51,10 @@ footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
 <p>A head is a small set of weights that reads the embedding and produces up to thirty two numbers. You train it on your own recordings, on a laptop, in seconds. Then you upload it to the device, and the device produces those numbers by itself, four seconds at a time, without a computer attached.</p>
 <p>A head is weights and never code. A device will not run code you send it.</p>
 <h2>What ships</h2>
-<p>The device ships with the encoder and no head. The encoder is the product. A head is what you make with it, and a head that somebody else trained on their own labels would be a head trained on their question, not yours.</p>
+<p>The device ships with three open heads on board. Age is built into the weights: it is slot 0, selected whenever the device powers on, and it changes only with a weights update. Sex is in slot 1, one of the four slots that are yours to fill, replace, or empty. The reconstruction head is in the weights too, where the device uses it to make its generated signal.</p>
+<p>Age and sex show what the embedding carries. They are not useful predictors of either. The heads that matter are the ones you train on your own recordings, for your own question.</p>
 <h2>Open heads</h2>
-<p>We publish heads for the encoder the IntoMind One ships, each with what it was measured to do, at <a href="https://github.com/intomind/eeg-foundation-model-heads">github.com/intomind/eeg-foundation-model-heads</a>: age and sex, which show what the embedding carries and are not useful predictors of either, and the reconstruction head. A head names the encoder it was trained for, and a device reports the encoder it runs.</p>
+<p>We publish these heads, each with what it was measured to do, at <a href="https://github.com/intomind/eeg-foundation-model-heads">github.com/intomind/eeg-foundation-model-heads</a>. A head names the encoder it was trained for, and a device reports the encoder it runs.</p>
 <h2>Embeddings from the device</h2>
 <p>The encoder runs on the device. Ask, and the device sends its output for each window while it streams, in two forms:</p>
 <ul><li><strong>the window embedding</strong>, the seventy six numbers a head consumes, one</li></ul>
@@ -73,11 +74,11 @@ blob = train_head([w.embedding for w in windows], targets, name=&quot;focus&quot
 <p>The fit is least squares with a ridge term, and the ridge is chosen from your embeddings unless you pass one. The encoder&#x27;s last normalization leaves one direction of the embedding with almost no variance, and a fixed small ridge lets the fit spend most of a row&#x27;s integer range on that direction. The chosen ridge removes it and leaves the rest of the fit essentially untouched, so the head the device runs scores what the float fit scored.</p>
 <p>A head records the encoder whose embeddings it was trained on, when you say which. Every window from the device names its encoder, so the example above passes that along.</p>
 <h2>Uploading it</h2>
-<pre><code>head_id = await device.upload_head(blob, slot=1, select=True)
+<pre><code>head_id = await device.upload_head(blob, slot=2, select=True)
 await device.set_predictions(True)
 
 device.on_prediction = lambda dev, p: print(p.outputs, p.head_id)</code></pre>
-<p>There are four slots. A head carries its own hash, the device checks it before storing it, and every prediction the device sends carries the hash of the head that produced it. A recording of predictions therefore always says which head made them, which matters the first time you have two.</p>
+<p>There are four slots for your heads, 1 to 4. A unit ships with the open sex head in slot 1, so this example uses slot 2. A head carries its own hash, the device checks it before storing it, and every prediction the device sends carries the hash of the head that produced it. A recording of predictions therefore always says which head made them, which matters the first time you have two.</p>
 <p>A head is yours. It is checked for its own hash and for its shape, never for a signature of ours, so nothing stops you putting your own model on your own device. Our firmware is signed and the device refuses anything else in its place. Your head is not, and the device runs it.</p>
 <p>A head trained beside a different encoder than the one on the device is stored and runs like any other. The library warns you when you upload one, and the Command Center marks it, because its outputs were learned from another encoder&#x27;s view of the signal and may not mean what its name says. Whether it still means something is yours to judge.</p>
 <p>The Rust and JavaScript packages do the same thing without a Python runtime. Both hand back a state machine rather than doing the input and output themselves, so it works over whatever Bluetooth stack you have.</p>
