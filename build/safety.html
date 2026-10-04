@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safety and care — docs.intomind.com</title>
+<style>
+:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
+        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
+          --rule: #2d3138; --link: #8fb4f0; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+header { border-bottom: 1px solid var(--rule); }
+nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
+nav a:hover, nav a.here { color: var(--ink); }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+p, li { max-width: 40rem; }
+a { color: var(--link); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.86em; }
+code { background: color-mix(in srgb, var(--rule) 45%, transparent);
+       padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
+      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
+         border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+blockquote { margin: 1.25rem 0; padding-left: 1rem;
+             border-left: 3px solid var(--rule); color: var(--quiet); }
+footer { border-top: 1px solid var(--rule); color: var(--quiet);
+         font-size: 0.85rem; }
+footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
+</style>
+<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="here">Safety and care</a></nav></header>
+<main><h1>Safety and care</h1>
+<h2>This is not a medical device</h2>
+<p>It is not intended to diagnose, treat, cure, or prevent any disease or condition. It is a research and development instrument. Nothing it records or reports is a clinical measurement, and nothing on this site is medical advice.</p>
+<p>If you have a medical question, ask a doctor. If you are looking for a medical EEG, this is not one.</p>
+<h2>Who should not use it</h2>
+<ul><li>Anyone with an implanted electrical device, including a pacemaker, a</li></ul>
+<p>  neurostimulator, or a cochlear implant, without asking the doctor who   manages it first.</p>
+<ul><li>Anyone with broken or irritated skin where the electrodes would sit.</li><li>Children, unsupervised.</li></ul>
+<h2>While you are wearing it</h2>
+<p>The device is powered by a small battery and the electrodes are passive: they listen. Lead-off detection, which you turn on deliberately, passes a current far below anything you can feel.</p>
+<p>Take it off if the skin under an electrode becomes sore or red. Some people react to prolonged pressure rather than to the metal.</p>
+<p>Do not use it while driving, operating machinery, or doing anything where a distraction matters.</p>
+<h2>The battery</h2>
+<p>It is a lithium polymer cell. Treat it the way you would treat the one in a phone.</p>
+<ul><li>Charge it with the cable provided, from an ordinary USB source.</li><li>Do not charge it unattended on a soft surface.</li><li>Do not puncture, crush, or take the device apart.</li><li>If the device becomes hot, swells, or smells, stop using it, put it</li></ul>
+<p>  somewhere with nothing flammable nearby, and do not charge it again.</p>
+<ul><li>Do not put it in household waste. Take it to a battery recycling point.</li></ul>
+<h2>Cleaning</h2>
+<p>A damp cloth on the electrodes, then let them dry. No solvents, no alcohol, no abrasives: the electrodes are gold plated and the plating is what keeps them quiet.</p>
+<p>Do not submerge the device and do not run it under a tap. It is not sealed.</p>
+<h2>Your recordings</h2>
+<p>Everything the device records goes to your computer and stays there. No account is needed, nothing is uploaded, and the software works with no network at all.</p>
+<p>A recording of your brain is about as personal as data gets. If you share one, share it deliberately.</p>
+<h2>Regulatory</h2>
+<p>The device is currently sold as a development kit. Emissions testing under the relevant rules for unintentional radiators is in progress, and this page will state the result when there is one to state.</p>
+<p>The radio module inside the device carries its own certification.</p>
+<h2>Repair and end of life</h2>
+<p>There is nothing inside you can service. The case is not meant to be opened and opening it will not be covered.</p>
+<p>At end of life, the battery goes to a battery recycling point and the rest goes to electronics recycling.</p></main>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
+software under the GNU Affero General Public License, version 3, with a
+commercial license available at contact@intomind.com. The device is not a
+medical device.</div></footer>
+</html>

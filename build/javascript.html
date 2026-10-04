@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript — docs.intomind.com</title>
+<style>
+:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
+        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
+          --rule: #2d3138; --link: #8fb4f0; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+header { border-bottom: 1px solid var(--rule); }
+nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
+nav a:hover, nav a.here { color: var(--ink); }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+p, li { max-width: 40rem; }
+a { color: var(--link); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.86em; }
+code { background: color-mix(in srgb, var(--rule) 45%, transparent);
+       padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
+      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
+         border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+blockquote { margin: 1.25rem 0; padding-left: 1rem;
+             border-left: 3px solid var(--rule); color: var(--quiet); }
+footer { border-top: 1px solid var(--rule); color: var(--quiet);
+         font-size: 0.85rem; }
+footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
+</style>
+<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="here">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
+<main><h1>JavaScript</h1>
+<pre><code>npm install @intomind/sdk</code></pre>
+<p>The same protocol, in TypeScript, for browsers and Node. In a browser it uses Web Bluetooth, so a page can talk to a device with nothing installed.</p>
+<pre><code>import { requestAndConnect } from &quot;@intomind/sdk&quot;;
+
+// The browser asks the user to pick a device. It must start from a click.
+const link = await requestAndConnect();
+
+link.on((event) =&gt; {
+  if (event.type === &quot;samples&quot;) {
+    const uv = event.batch.microvolts(0, 0, link.info);
+  }
+  if (event.type === &quot;gap&quot;) {
+    // written down, never smoothed over
+  }
+});
+
+await link.send(link.session.startStream());</code></pre>
+<p>A device that claims the processing chain preprocesses its own signal, and the chain is checked here with the device&#x27;s own rules before it is sent:</p>
+<pre><code>import { protocol as P } from &quot;intomind&quot;;
+
+await link.send(link.session.setPipeline([P.highpass(0.5), ...P.mainsBands(60, 500), P.lowpass()], 500));
+const state = P.decodePipelineState((await link.request(link.session.pipeline())).payload);</code></pre>
+<p><code>link.info</code> is what the device said it is, read before anything was asked of it. Scaling a count needs it, because the reference voltage and the converter width are the device&#x27;s to state and not this library&#x27;s to assume.</p>
+<p>Pass <code>onEvent</code> to <code>requestAndConnect</code> instead if you need the events that arrive while the link is still being set up. That callback cannot refer to the link, because the link does not exist yet.</p>
+<h2>The same rules as everywhere else</h2>
+<ul><li>What a device can do is the bits it reports, not a version number.</li><li>A gap is announced before the samples that follow it, so anything</li></ul>
+<p>  writing samples down writes the break down first and can never splice.</p>
+<ul><li>A loss carries an exact count. A break carries none, because zero</li></ul>
+<p>  missing samples is a different statement from an unknown extent.</p>
+<ul><li>A packet that arrives twice is dropped and counted, and a <code>duplicate</code></li></ul>
+<p>  event says so. It means another program on the same computer is   listening to the device.</p>
+<ul><li>Nothing assumes a channel count, a converter width, or a reference</li></ul>
+<p>  voltage. They come from the device.</p>
+<h2>Held to the same vectors</h2>
+<p>The package is tested against <code>contract/conformance.json</code>, which the device firmware emits from the codec it runs: 66 messages to decode and 56 to refuse. So is the Rust crate, and so is the Python library. An implementation that drifts fails a test rather than a session.</p>
+<p>One warning if you read that file yourself. It writes every 64-bit field as a decimal string, because a device time runs past what a JSON number holds exactly. Parse it with <code>BigInt</code>, not <code>Number</code>.</p>
+<h2>The light, the registers, and embeddings</h2>
+<pre><code>session.setIndicator(&quot;verbose&quot;);           // silent, reserved, verbose
+session.identify(5);                       // the light winks for five seconds
+session.converterRegisters();              // answer decodes with decodeConverterRegisters, describeAds1299Registers
+session.setEmbeddings(&quot;both&quot;);             // the window embedding and the tokens
+const windows = new EmbeddingAssembler(4, 20, &quot;both&quot;);   // channels, tokens per channel
+// for each event of type &quot;embedding&quot;: const w = windows.feed(event.embedding); if (w) { ... one whole window ... }</code></pre>
+<h2>Its name, the model&#x27;s cadence, and a synthetic signal</h2>
+<pre><code>P.composeName(&quot;Ada&quot;, &quot;Blue&quot;);              // &quot;Ada&#x27;s Blue IntoMind One&quot;
+P.nameFits(&quot;Beatrice&quot;, &quot;Purple&quot;);          // false: 30 bytes, over the 29 a scan list shows
+session.setName(&quot;Ada&quot;, &quot;Blue&quot;);            // refused before sending if it would not fit
+session.getName();                         // answer decodes with decodeNameParts
+P.displayNames([&quot;Ada&#x27;s IntoMind One&quot;, &quot;Ada&#x27;s IntoMind One&quot;]);   // the second becomes &quot;Ada&#x27;s IntoMind One 2&quot;
+session.setModelInterval(60);              // one window a minute; 0 is every window it can
+session.modelInterval();                   // answer decodes with decodeModelInterval
+session.setMode(&quot;synthetic&quot;);              // the device generates the signal, at 500 per second
+// every batch it sends says so: event.batch.synthetic</code></pre>
+<p>The number <code>displayNames</code> adds to a shared name is the host&#x27;s. The device never holds it.</p>
+<h2>Web Bluetooth</h2>
+<p>Works in Chrome and Edge on desktop and Android. Safari and Firefox do not implement Web Bluetooth. The page must be served over HTTPS, or from localhost, and the connection has to start from something the user clicked.</p></main>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
+software under the GNU Affero General Public License, version 3, with a
+commercial license available at contact@intomind.com. The device is not a
+medical device.</div></footer>
+</html>

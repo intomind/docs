@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rust — docs.intomind.com</title>
+<style>
+:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
+        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
+          --rule: #2d3138; --link: #8fb4f0; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+header { border-bottom: 1px solid var(--rule); }
+nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
+nav a:hover, nav a.here { color: var(--ink); }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+p, li { max-width: 40rem; }
+a { color: var(--link); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.86em; }
+code { background: color-mix(in srgb, var(--rule) 45%, transparent);
+       padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
+      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
+         border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+blockquote { margin: 1.25rem 0; padding-left: 1rem;
+             border-left: 3px solid var(--rule); color: var(--quiet); }
+footer { border-top: 1px solid var(--rule); color: var(--quiet);
+         font-size: 0.85rem; }
+footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
+</style>
+<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="here">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
+<main><h1>Rust</h1>
+<pre><code>cargo add intomind</code></pre>
+<p>The client does no input and no output. It is handed bytes that arrived and it hands back bytes to send, which means it works over whatever Bluetooth stack you already have, on whatever runtime you already use, and it can be tested without either.</p>
+<pre><code>use intomind::{protocol::uuid_fill, Event, Session};
+
+let mut session = Session::new();
+session.on_device_info(&amp;read(uuid_fill::DEVICE_INFO)?)?;
+
+let command = session.start_stream();
+write(command.characteristic, &amp;command.bytes, command.with_response)?;
+
+for event in session.on_notification(uuid_fill::EEG_DATA, &amp;notification) {
+    match event {
+        Event::Samples(batch) =&gt; {
+            let info = *session.info()?;
+            for row in 0..batch.rows() {
+                let uv = batch.microvolts(row, 0, &amp;info);
+            }
+        }
+        Event::Gap(gap) =&gt; {
+            // Written down, never smoothed over. `samples_lost` is None
+            // for a re-base, whose extent is not a number.
+        }
+        Event::Duplicate { .. } =&gt; {
+            // A packet that arrived twice, dropped: another program on
+            // this computer is listening to the device.
+        }
+        _ =&gt; {}
+    }
+}</code></pre>
+<h2>The crates</h2>
+<table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td><code>intomind</code></td><td>a device as a state machine, over any transport</td></tr>
+<tr><td><code>intomind-protocol</code></td><td>the wire, and nothing else. <code>no_std</code>, no dependencies</td></tr>
+<tr><td><code>intomind-capture</code></td><td>what a recording is on disk</td></tr>
+<tr><td><code>intomind-model</code></td><td>the encoder, <code>no_std</code>, allocating nothing</td></tr>
+</tbody></table>
+<p><code>intomind-protocol</code> and <code>intomind-model</code> are the crates the device firmware itself builds. The wire and the arithmetic are the same by construction rather than by agreement.</p>
+<h2>Capabilities</h2>
+<pre><code>use intomind::protocol::device_info::capability;
+
+if session.can(capability::MODEL) { /* ... */ }
+session.set_leadoff(true)?;   // refused unless the device claims it</code></pre>
+<h2>Processing on the device</h2>
+<p>A device that claims the processing chain preprocesses its own signal, and the chain in force is readable at any time. A chain is checked here, with the device&#x27;s own rules from <code>intomind-pipeline</code>, before anything is sent.</p>
+<pre><code>use intomind::protocol::pipeline::{kind, Chain, Stage};
+
+let mut chain = Chain::NATURAL;
+chain.push(Stage::one(kind::HIGH_PASS, 5))?;       // 0.5 Hz, in tenths
+chain.push(Stage::two(kind::NOTCH, 580, 620))?;    // 58 to 62 Hz
+chain.push(Stage::one(kind::LOW_PASS, 0))?;        // automatic corner
+let command = session.set_pipeline(&amp;chain, 500)?;  // refused with its reason if it cannot run at 500
+let read = session.pipeline()?;                    // the answer decodes with pipeline::PipelineState</code></pre>
+<h2>The light, the registers, and embeddings</h2>
+<pre><code>use intomind::embeddings::{Assembler, Form};
+use intomind::protocol::control::indicator;
+
+session.set_indicator(indicator::VERBOSE)?;             // silent, reserved, verbose
+session.identify(5)?;                                   // the light winks for five seconds
+let regs = session.converter_registers()?;              // answer decodes with control::ConverterRegisters
+let ask = session.set_embeddings(Some(Form::Both))?;    // the window embedding and the tokens
+let mut windows = Assembler::new(4, 20, Form::Both);    // channels, tokens per channel
+// for each Event::Embedding(e): if let Some(w) = windows.feed(e) { ... one whole window ... }</code></pre>
+<p><code>Assembler</code> returns a window when its last piece arrives: the embedding a head consumes, the tokens generation starts from, both quantized exactly as the device&#x27;s heads receive them.</p>
+<h2>Its name, the model&#x27;s cadence, and a synthetic signal</h2>
+<pre><code>use intomind::protocol::control::mode;
+
+let ask = session.set_name(&quot;Ada&quot;, &quot;Blue&quot;, &quot;IntoMind One&quot;)?;   // refused unless the whole fits 29 bytes
+let labels = intomind::display_names(&amp;[&quot;Ada&#x27;s IntoMind One&quot;, &quot;Ada&#x27;s IntoMind One&quot;]);
+// [&quot;Ada&#x27;s IntoMind One&quot;, &quot;Ada&#x27;s IntoMind One 2&quot;]: the number is the host&#x27;s
+let every_minute = session.set_model_interval(60)?;         // 0 is every window it can
+let synthetic = session.set_mode(mode::SYNTHETIC)?;         // the device generates the signal
+// every Event::Samples(batch) it sends has batch.synthetic set</code></pre>
+<h2>The timebase</h2>
+<p>Device time onto host time is a line through several exchanges, and the fit refuses what it cannot measure. One exchange fixes an offset and claims no rate. A skew beyond a thousand parts per million is not two crystals disagreeing, and a slope drawn through a stalled exchange is not a measurement, so both are dropped and the offset is kept.</p>
+<pre><code>let mut tb = Timebase::new(info.time_tick_hz);
+tb.observe(Exchange { before, after, device_ticks });
+tb.host_time(sample_device_time);</code></pre></main>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
+software under the GNU Affero General Public License, version 3, with a
+commercial license available at contact@intomind.com. The device is not a
+medical device.</div></footer>
+</html>

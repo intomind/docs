@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command Center — docs.intomind.com</title>
+<style>
+:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
+        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
+          --rule: #2d3138; --link: #8fb4f0; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+header { border-bottom: 1px solid var(--rule); }
+nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
+nav a:hover, nav a.here { color: var(--ink); }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+p, li { max-width: 40rem; }
+a { color: var(--link); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.86em; }
+code { background: color-mix(in srgb, var(--rule) 45%, transparent);
+       padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
+      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
+         border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+blockquote { margin: 1.25rem 0; padding-left: 1rem;
+             border-left: 3px solid var(--rule); color: var(--quiet); }
+footer { border-top: 1px solid var(--rule); color: var(--quiet);
+         font-size: 0.85rem; }
+footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
+</style>
+<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="here">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
+<main><h1>Command Center</h1>
+<p>The program that runs the device. A local server and a page in your own browser. Nothing is sent anywhere.</p>
+<pre><code>git clone https://github.com/intomind/commandcenter
+cd commandcenter
+pip install &#x27;intomind[analysis]&#x27; aiohttp
+python3 hub.py</code></pre>
+<p>Then open <code>http://localhost:8080</code>.</p>
+<p>The page serves whether or not a device is connected, so you can go back through recordings with no hardware present.</p>
+<h2>What it does</h2>
+<ul><li>Connects to a device and shows what it is: its firmware, its channels,</li></ul>
+<p>  its rates, and what it says it can do.</p>
+<ul><li>Shows the live signal, and contact quality when lead-off detection is on.</li><li>Runs the cued protocols the instrument library provides, and records</li></ul>
+<p>  them with everything about how they were produced.</p>
+<ul><li>Reads recordings back, runs the analyses on them, and exports them.</li><li>Where a device carries a model, selects a head and shows what it</li></ul>
+<p>  predicts, and collects the model&#x27;s embeddings from the live stream into   a file for training heads or generating signal.</p>
+<ul><li>Sets the device&#x27;s light: silent, reserved, or verbose, and makes it</li></ul>
+<p>  identify itself with a blink.</p>
+<ul><li>Names the device: your name and an adjective, shown composed as you type</li></ul>
+<p>  and counted against the 29 bytes a scan list can show.</p>
+<ul><li>Sets how often the model describes a window, and shows how long one</li></ul>
+<p>  pass takes on the device.</p>
+<ul><li>Says above the trace whenever the signal is not your electrodes: the</li></ul>
+<p>  converter&#x27;s test signal, shorted inputs, or the device&#x27;s synthetic   signal.</p>
+<ul><li>Lists the devices it hears and connects only the one you pick. Nothing</li></ul>
+<p>  connects by itself.</p>
+<ul><li>Says when another program on this computer is also listening to the</li></ul>
+<p>  device. Each packet then arrives twice, and the copy is dropped.</p>
+<ul><li>In Intermediate, reads the converter&#x27;s registers in words, for debugging.</li></ul>
+<h2>It only listens to your own machine</h2>
+<p>The server refuses any request whose Host header is not localhost, and any request or websocket whose Origin is a page somewhere else. That is not paranoia: a page on the internet can otherwise reach a server running on your machine, and read what it says, including over a websocket, which ordinary cross origin rules do not cover.</p>
+<h2>Exports</h2>
+<p>Six formats, and the Command Center calls the instrument library&#x27;s exporter rather than writing its own, so a file exported here is the same file exported from a script.</p>
+<table><thead><tr><th>Format</th><th>What it is for</th></tr></thead><tbody>
+<tr><td>npz</td><td>numpy, lossless</td></tr>
+<tr><td>BDF</td><td>twenty four bit biosignal format, lossless for this device</td></tr>
+<tr><td>EDF</td><td>the older sixteen bit format, widely read, and lossy. It says so, with the error measured</td></tr>
+<tr><td>csv and tsv</td><td>text, for anything that reads a table</td></tr>
+<tr><td>MATLAB v7.3</td><td>for MATLAB</td></tr>
+</tbody></table>
+<p>Whether a format was lossless for a given recording is measured rather than claimed: the exporter reads what it wrote and compares.</p>
+<h2>Recordings</h2>
+<p>They go to <code>~/.local/share/intomind/captures</code>, or wherever <code>$INTOMIND_CAPTURES</code> points.</p>
+<p>Each one is its samples, its events, and a manifest that says how it was produced: the device, its firmware, its configuration, whether the signal was measured or generated, where the gaps were, how the clocks were fitted, and what software recorded it. Checksums are written last, so a run that dies half way leaves something that is visibly incomplete rather than something that looks finished and is short.</p>
+<h2>License</h2>
+<p>Free software under the GNU Affero General Public License, version 3. If you run a modified copy as a service for other people, they can ask you for your changes. A commercial license is available at contact@intomind.com.</p></main>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
+software under the GNU Affero General Public License, version 3, with a
+commercial license available at contact@intomind.com. The device is not a
+medical device.</div></footer>
+</html>

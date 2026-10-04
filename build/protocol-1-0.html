@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IntoMind BLE Protocol v1.0 — docs.intomind.com</title>
+<style>
+:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
+        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
+          --rule: #2d3138; --link: #8fb4f0; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+header { border-bottom: 1px solid var(--rule); }
+nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
+nav a:hover, nav a.here { color: var(--ink); }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+p, li { max-width: 40rem; }
+a { color: var(--link); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.86em; }
+code { background: color-mix(in srgb, var(--rule) 45%, transparent);
+       padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
+      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
+         border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+blockquote { margin: 1.25rem 0; padding-left: 1rem;
+             border-left: 3px solid var(--rule); color: var(--quiet); }
+footer { border-top: 1px solid var(--rule); color: var(--quiet);
+         font-size: 0.85rem; }
+footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
+</style>
+<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
+<main><p class="source">This page is version 1.0 of the protocol contract, so it cannot disagree with the software it describes.</p><p class="source">Each version adds to the one before it: <a href="protocol.html">1.4</a>, <a href="protocol-1-3.html">1.3</a>, <a href="protocol-1-2.html">1.2</a>, <a href="protocol-1-1.html">1.1</a>, 1.0. Version 1.1 restates the whole contract as it stood then.</p><h1>IntoMind BLE Protocol v1.0</h1>
+<p>Status: frozen 2026-09-19. This document is the contract between an IntoMind device and any host. Firmware, the api, the sdk, and the Command Center all implement it. Its canonical home moves to the api repository at publication.</p>
+<h2>0. Versioning and compatibility</h2>
+<ul><li>The device reports <code>proto_major.proto_minor</code> in Device Info. This document</li></ul>
+<p>  is 1.0.</p>
+<ul><li>Within major version 1, a minor version only adds: new opcodes, new</li></ul>
+<p>  characteristics, new capability bits, new fields appended to Device Info.   Nothing already defined changes meaning, size, or number. A 1.0 host works   against every 1.x device by ignoring what it does not know.</p>
+<ul><li>A major version change is allowed to break the wire format. The device</li></ul>
+<p>  advertises the major version so a host can refuse or adapt.</p>
+<ul><li>Numbers that were used by any earlier firmware are never reused for a</li></ul>
+<p>  different meaning. Section 14 lists them.</p>
+<ul><li>The wire formats of Device Info (first 27 bytes), EEG Data, the Control</li></ul>
+<p>  Point, and Status are byte for byte the v0.1 formats.</p>
+<h2>1. Design invariants</h2>
+<ol><li><strong>On-device time is authoritative.</strong> Every sample carries a device time</li></ol>
+<p>   captured on the device, in hardware, at the converter&#x27;s data-ready edge.    The host maps device time onto its own clock. It never derives sample    times from packet arrival. 2. <strong>The timeline is never silently corrupted.</strong> A monotonic <code>sample_index</code>    is the source of truth for continuity. Any loss is announced with an    explicit discontinuity flag and count. The host reconstructs a timeline    with marked holes, never a silent splice. 3. <strong>The raw stream is never altered.</strong> The device acquires, timestamps,    buffers, and streams the converter&#x27;s samples unchanged. No filtering,    scaling, or resampling happens on the raw stream. The on-device model of    section 10 consumes a private copy of the stream and is additive:    turning it on or off changes nothing about the raw data. 4. <strong>The link is private.</strong> Data, control, status, and updates require an    encrypted, bonded connection. Neural data belongs to its owner. 5. <strong>The contract adapts to hardware.</strong> Capabilities and capacities are    read from the device, so one contract serves devices with different    channel counts, battery sensing, model presence, or slot sizes. 6. <strong>The model can never hurt the instrument.</strong> Every model surface is    optional. A device with no valid model behaves exactly like a device with    no model at all, and acquisition never waits on inference.</p>
+<h2>2. GATT structure</h2>
+<p>One primary service. 128-bit UUIDs from the base <code>f3a1xxxx-2c4b-4d1e-9a6f-1b2c3d4e5f60</code>, where <code>xxxx</code> is the fill below.</p>
+<table><thead><tr><th>Fill</th><th>Characteristic</th><th>Properties</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>0001</code></td><td>Service</td><td></td><td>IntoMind Neural Stream</td></tr>
+<tr><td><code>0002</code></td><td>Device Info</td><td>Read</td><td>identity, capabilities, capacities (section 4)</td></tr>
+<tr><td><code>0003</code></td><td>Control Point</td><td>Write, Write Without Response</td><td>commands (section 6)</td></tr>
+<tr><td><code>0004</code></td><td>Control Response</td><td>Indicate</td><td>command results</td></tr>
+<tr><td><code>0005</code></td><td>EEG Data</td><td>Notify</td><td>sample packets (section 5)</td></tr>
+<tr><td><code>0006</code></td><td>Status</td><td>Read, Notify</td><td>live device status (section 7)</td></tr>
+<tr><td><code>0007</code></td><td>reserved</td><td></td><td>held by an earlier development firmware, never reused</td></tr>
+<tr><td><code>0008</code></td><td>Update Control</td><td>Write, Indicate</td><td>update and head transfer commands (section 9)</td></tr>
+<tr><td><code>0009</code></td><td>Update Data</td><td>Write Without Response</td><td>transfer payload bytes (section 9)</td></tr>
+<tr><td><code>000A</code></td><td>Predictions</td><td>Notify</td><td>model outputs (section 10)</td></tr>
+</tbody></table>
+<p>All characteristics except Device Info require an encrypted, bonded link (section 12). Every characteristic value is at most 244 bytes, so nothing requires ATT fragmentation at an ATT MTU of 247. Notifications and indications are sized to the negotiated MTU, see section 3.</p>
+<h2>3. Advertising and connection</h2>
+<ul><li>Advertising data: flags, complete list of 128-bit service UUIDs holding</li></ul>
+<p>  the service UUID.</p>
+<ul><li>Scan response: complete local name <code>IntoMind-1-XXXX</code>, where <code>XXXX</code> is the</li></ul>
+<p>  last two bytes of <code>device_id</code> in uppercase hex. Multiple units are   distinguishable before connecting.</p>
+<ul><li>Hosts filter on the service UUID or on the name prefix <code>IntoMind-</code>.</li><li>The device requests an ATT MTU of 247 and a connection interval that</li></ul>
+<p>  sustains the stream (7.5 to 15 ms while streaming). Hosts should accept   the largest MTU they can. The device sizes EEG Data packets to the   negotiated MTU, so streaming works at any MTU of 44 or more (one sample   per packet at four channels). Other notifications and indications are at   most 156 bytes and require an MTU of at least 159. Every current phone,   desktop, and browser stack negotiates more than this.</p>
+<ul><li>Bonding uses LE Secure Connections with Just Works (the device has no</li></ul>
+<p>  display or keypad). The device stores up to four bonds and evicts the   least recently used when a fifth host pairs.</p>
+<h2>4. Device Info (read)</h2>
+<p>Little-endian. Read once per connection. Re-read after a weights update activates (section 9), since model fields can change then.</p>
+<pre><code>offset type    field
+0      u8      proto_major            1
+1      u8      proto_minor            0
+2      u8      fw_major
+3      u8      fw_minor
+4      u8      fw_patch
+5      u8      channel_count          4 on the IntoMind One
+6      u8      adc_bits               24
+7      u32     time_tick_hz           device time ticks per second, 1000000
+11     u32     vref_uv                converter reference in microvolts, 4500000
+15     u16     capabilities           bitmask, table below
+17     u8      supported_rates        bit0 250, bit1 500, bit2 1000 SPS
+18     u8      reserved
+19     u8[8]   device_id              stable per-unit id from the SoC factory id
+--- end of the v0.1 layout, 27 bytes ---
+27     u8      info_len               total length of Device Info in bytes, 76 in 1.0
+28     u8      hw_major               hardware revision, 1
+29     u8      hw_minor               1
+30     u8      hw_patch               5
+31     u8      reserved
+32     u8[8]   fw_build_id            identifies the exact firmware image
+40     u16     model_embed_dim        embedding width, 96 on the IntoMind One, 0 = no model runtime
+42     u16     model_native_sps       the model&#x27;s native rate, 500
+44     u16     model_window_samples   samples per prediction window at the native rate, 2000
+46     u8      head_slots             user head slots, 4
+47     u8      head_max_outputs       largest out_dim a head may have, 32
+48     u16     head_slot_bytes        capacity of one head slot, 4096
+50     u16     update_chunk_max       largest Update Data write accepted, 244
+52     u32     app_slot_bytes         application image capacity including its header, 237568
+56     u32     weights_image_bytes    weights image capacity including its header, 507904
+60     u8[16]  reserved               zero
+76     end</code></pre>
+<p>A host reads <code>info_len</code> and never reads past it. A later 1.x device may report a larger <code>info_len</code> with fields appended after offset 76.</p>
+<p>Read Device Info again after any update activates, since the firmware version, the build id, and every model field can change across one.</p>
+<p>Capabilities:</p>
+<table><thead><tr><th>Bit</th><th>Name</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>0</td><td>battery_voltage</td><td><code>Status.battery_percent</code> and GET_BATTERY carry measured values</td></tr>
+<tr><td>1</td><td>battery_low_flag</td><td>the hardware has a low battery indicator</td></tr>
+<tr><td>2</td><td>leadoff</td><td>lead-off detection available</td></tr>
+<tr><td>3</td><td>test_signal</td><td>internal test signal mode available</td></tr>
+<tr><td>4</td><td>dcdc_mode</td><td>reserved for converter power mode selection</td></tr>
+<tr><td>5</td><td>input_short</td><td>input short mode available</td></tr>
+<tr><td>6</td><td>update</td><td>the Update service is present and accepts application and weights images</td></tr>
+<tr><td>7</td><td>model</td><td>a model runtime is present in this firmware</td></tr>
+<tr><td>8</td><td>model_ready</td><td>valid weights were loaded at the time of this read, predictions can be enabled</td></tr>
+<tr><td>9</td><td>heads</td><td>user head slots are present, head operations are accepted</td></tr>
+<tr><td>10 to 15</td><td>reserved</td><td>zero</td></tr>
+</tbody></table>
+<p>A device without a battery sense circuit reports bit 0 clear and <code>battery_percent</code> = 0xFF. The IntoMind One reports bit 0 set.</p>
+<h2>5. EEG Data (notify)</h2>
+<p>Header little-endian. The sample payload is the converter&#x27;s own byte order: big-endian two&#x27;s complement 24-bit integers, most significant byte first. The device copies converter bytes without per-sample swapping. The host sign-extends and scales.</p>
+<pre><code>offset type   field
+0      u8     packet_type            0x01 = EEG data
+1      u8     flags                  bit0 discontinuity_before_this_packet
+                                     bit1 leadoff_active
+                                     bits2-3 mode (0 normal, 1 test, 2 short)
+                                     bit4 usb_present
+2      u16    samples_lost_before    convenience count, saturates at 0xFFFF
+4      u32    sample_index           index of the first sample, monotonic, wraps at 2^32
+8      u64    device_time            device time of the first sample&#x27;s data-ready edge, in time_tick_hz ticks
+16     u8     n_samples
+17     u8     loff_statp             lead-off status latched with the last sample in this packet, bit n = channel n+1
+18     u8     gain_code              0..6 = gain 1, 2, 4, 6, 8, 12, 24
+19     u8     rate_code              4 = 1000, 5 = 500, 6 = 250 SPS
+20     ...    payload                n_samples x channel_count x 3 bytes</code></pre>
+<ul><li><code>n_samples</code> is at most the value set by SET_SAMPLES_PER_PACKET and never</li></ul>
+<p>  more than fits the negotiated MTU. One notification is one packet.</p>
+<ul><li>Scaling on the host: <code>microvolts = raw × (2 × vref_uv) / (gain × 2^24)</code>.</li></ul>
+<p>  At gain 24 and a 4.5 V reference one count is about 0.02235 µV.</p>
+<ul><li>Continuity on the host: the expected next <code>sample_index</code> is the previous</li></ul>
+<p>  packet&#x27;s <code>sample_index</code> plus its <code>n_samples</code>. Compute   <code>step = new_index − expected</code> as a signed 32-bit difference so the   index&#x27;s own wrap is exact.   - <code>step == 0</code> and bit0 clear: continuous.   - <code>step &gt; 0</code>: <code>step</code> samples were lost. They span the corresponding     device time range. <code>samples_lost_before</code> carries the same number when     it fits in 16 bits.   - <code>step &lt;= 0</code>, or bit0 set with <code>step == 0</code>: the timeline re-based     (RESET_EPOCH or a stream start). This is a break, not a loss. The     device sets bit0 and <code>samples_lost_before</code> = 0. A host must never turn     a non-positive step into a loss count. Taking the unsigned difference     here reports a loss that never happened.</p>
+<ul><li>Every sample in an epoch is acquired under one configuration, because</li></ul>
+<p>  configuration changes are refused while streaming.</p>
+<h2>6. Control Point (write) and Control Response (indicate)</h2>
+<p>A request is <code>[opcode, arg?]</code>, one or two bytes. Exactly the opcodes marked with an argument take one, and they require it. Any other length is invalid. The device answers on Control Response with <code>[opcode, status, payload?]</code>.</p>
+<p>Status codes:</p>
+<table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>0</td><td>OK</td></tr>
+<tr><td>1</td><td>invalid argument, or malformed request</td></tr>
+<tr><td>2</td><td>unsupported by this device or build</td></tr>
+<tr><td>3</td><td>busy: refused while streaming or while a transfer is active</td></tr>
+<tr><td>4</td><td>not streaming</td></tr>
+<tr><td>5</td><td>hardware error</td></tr>
+</tbody></table>
+<p>Precedence when several apply: invalid argument, then unsupported, then busy, then hardware. A request is validated before device state is consulted.</p>
+<p>Opcodes carried over from v0.1, unchanged:</p>
+<table><thead><tr><th>Opcode</th><th>Command</th><th>Arg</th><th>Notes</th></tr></thead><tbody>
+<tr><td>0x01</td><td>START_STREAM</td><td></td><td>begins continuous conversion and streaming</td></tr>
+<tr><td>0x02</td><td>STOP_STREAM</td><td></td><td></td></tr>
+<tr><td>0x10</td><td>SET_RATE</td><td>rate_code</td><td>refused with 3 while streaming</td></tr>
+<tr><td>0x11</td><td>SET_GAIN</td><td>gain_code</td><td>refused with 3 while streaming</td></tr>
+<tr><td>0x20</td><td>SET_MODE</td><td>0, 1, 2</td><td>normal, test signal, input short. Refused with 3 while streaming</td></tr>
+<tr><td>0x30</td><td>SET_LEADOFF</td><td>0, 1</td><td>refused with 3 while streaming</td></tr>
+<tr><td>0x40</td><td>TIME_SYNC</td><td></td><td>payload <code>u64 device_time</code> captured at request receipt</td></tr>
+<tr><td>0x41</td><td>SET_SAMPLES_PER_PACKET</td><td>1..N</td><td>N is the largest count that fits the MTU. Larger values are clamped to N and reported in the payload as <code>u8 applied</code></td></tr>
+<tr><td>0x50</td><td>RESET_EPOCH</td><td></td><td>zero <code>sample_index</code>, start a fresh epoch. The next packet carries the discontinuity flag with a zero loss count</td></tr>
+<tr><td>0xF0</td><td>SOFT_RESET</td><td></td><td>re-initialize the device. The link drops</td></tr>
+</tbody></table>
+<p>Opcodes new in 1.0:</p>
+<table><thead><tr><th>Opcode</th><th>Command</th><th>Arg</th><th>Payload</th><th>Notes</th></tr></thead><tbody>
+<tr><td>0x42</td><td>GET_BATTERY</td><td></td><td><code>u16 battery_mv, u8 battery_percent, u8 charger_state</code></td><td>requires capability bit 0, else status 2. <code>battery_percent</code> follows Status</td></tr>
+<tr><td>0x43</td><td>GET_BOOT_INFO</td><td></td><td><code>u8 active_slot, u8 boot_reason, u8 slot_state, u8 reserved, u32 boot_count</code></td><td>table below</td></tr>
+<tr><td>0x53</td><td>CLEAR_BONDS</td><td></td><td></td><td>forget every bond except the requesting host&#x27;s. Takes effect at the next disconnect</td></tr>
+<tr><td>0x80</td><td>SET_PREDICTIONS</td><td>0, 1</td><td></td><td>status 2 without a ready model or a selected head. Predictions flow only while streaming</td></tr>
+<tr><td>0x81</td><td>SELECT_HEAD</td><td>slot</td><td></td><td>0 = the built-in head, 1..head_slots = user slots. Status 1 for an empty or unknown slot</td></tr>
+<tr><td>0x82</td><td>LIST_HEADS</td><td></td><td>see below</td><td></td></tr>
+<tr><td>0x83</td><td>REMOVE_HEAD</td><td>slot</td><td></td><td>1..head_slots only. Refused with 3 while streaming</td></tr>
+<tr><td>0x84</td><td>GET_MODEL_INFO</td><td></td><td>see below</td><td></td></tr>
+</tbody></table>
+<p>GET_BOOT_INFO fields: <code>active_slot</code> 0 = A, 1 = B. <code>slot_state</code> 0 = trial (the running image has not yet confirmed itself), 1 = confirmed. <code>boot_count</code> counts boots of this unit since manufacture. <code>boot_reason</code>:</p>
+<table><thead><tr><th>Value</th><th>Reason</th></tr></thead><tbody>
+<tr><td>0</td><td>power on</td></tr>
+<tr><td>1</td><td>reset pin</td></tr>
+<tr><td>2</td><td>software reset</td></tr>
+<tr><td>3</td><td>watchdog</td></tr>
+<tr><td>4</td><td>CPU lockup or system fault</td></tr>
+<tr><td>5</td><td>update activation</td></tr>
+<tr><td>6</td><td>rollback, the bootloader reverted to the previous image</td></tr>
+<tr><td>0xFF</td><td>unknown</td></tr>
+</tbody></table>
+<p>A watchdog or fault reset is also visible in the stream as a discontinuity.</p>
+<p>LIST_HEADS payload: <code>u8 active_slot, u8 n_entries</code>, then <code>n_entries</code> records of 30 bytes:</p>
+<pre><code>u8     slot        0 = built-in
+u8     state       0 empty, 1 valid, 2 invalid (failed its hash at load)
+u16    out_dim
+u8[8]  head_id     first 8 bytes of the head&#x27;s SHA-256, zero when empty
+u8[16] name        UTF-8, zero padded
+u8[2]  reserved</code></pre>
+<p><code>n_entries</code> is <code>1 + head_slots</code> when a model runtime is present. Without one the request answers status 2.</p>
+<p>GET_MODEL_INFO payload:</p>
+<pre><code>u8     model_state      0 no runtime, 1 runtime present but no valid weights, 2 ready
+u8     active_head      slot, or 0xFF when none
+u8     predictions_on   0, 1
+u8     reserved
+u8[8]  encoder_id       identity of the loaded weights, zero unless ready
+u8     weights_major
+u8     weights_minor
+u8     weights_patch
+u8     reserved</code></pre>
+<p>Opcodes 0x60 to 0x6F are reserved for factory and bench builds. Production firmware answers status 2 to them.</p>
+<h2>7. Status (read and notify)</h2>
+<pre><code>u8   state                 0 idle, 1 streaming
+u8   mode
+u8   gain_code
+u8   rate_code
+u8   charger_state         0 no input, 1 charging, 2 complete, 3 fault, 4 standby
+u8   battery_percent       0..100, or 0xFF unknown
+u8   loff_statp            as latched with the most recent sample acquired
+u8   flags                 bit0 usb_present, bit1 buffer_high_watermark
+u16  dropped_total         samples acquired but never delivered this power-on, saturates
+u16  buffer_fill           samples currently buffered on the device</code></pre>
+<p>Notified on any state change and at about 1 Hz while connected.</p>
+<ul><li><code>battery_percent</code> is a state of charge estimate from the measured pack</li></ul>
+<p>  voltage on the IntoMind One. GET_BATTERY carries the voltage itself.</p>
+<ul><li><code>loff_statp</code> mirrors the per-packet value. Before the first sample of a</li></ul>
+<p>  session it reads 0. Use the per-packet copy for contact tracking.</p>
+<ul><li><code>buffer_high_watermark</code> is set while <code>buffer_fill</code> is at or above three</li></ul>
+<p>  quarters of the device&#x27;s buffer. Read it as backpressure.</p>
+<ul><li><code>dropped_total</code> counts every sample acquired but never delivered: buffer</li></ul>
+<p>  overflow, conversions the acquisition path could not read in time, and   anything discarded at an epoch boundary. Only a reboot clears it. It is   telemetry. The authoritative account of what a host missed is   <code>sample_index</code> continuity.</p>
+<h2>8. Time sync (informative)</h2>
+<p>Device time is monotonic and free running. The converter&#x27;s clock and the host&#x27;s clock drift relative to each other by tens of parts per million, so a host that needs alignment better than about 10 ms re-syncs every few minutes:</p>
+<ol><li>Note host time <code>T1</code>, write TIME_SYNC.</li><li>The device captures <code>Td</code> at receipt and returns it.</li><li>Note host time <code>T2</code> at the response. Estimate <code>offset ≈ (T1+T2)/2 − Td</code></li></ol>
+<p>   with uncertainty <code>±(T2−T1)/2</code>. Regress <code>offset</code> over several syncs to    estimate skew. 4. Map any sample: <code>host_time ≈ device_time × (1 + skew) + offset</code>.</p>
+<p>Multiple devices each sync independently to the same host clock, which puts them on one timebase at millisecond alignment without wires.</p>
+<h2>9. Update service</h2>
+<p>The Update service carries three kinds of transfer: an application image, a weights image, and a user head. Application and weights images are produced by IntoMind, signed, and encrypted. A host carries them as opaque bytes and needs no key. Heads are plain blobs in the format of section 11, made by anyone.</p>
+<h3>9.1 Rules</h3>
+<ul><li>A transfer is refused with status 3 while streaming. Stop the stream</li></ul>
+<p>  first.</p>
+<ul><li>One transfer at a time. START while one is in progress is refused with</li></ul>
+<p>  status 3. ABORT ends it.</p>
+<ul><li>The running application is never written. An application image goes to</li></ul>
+<p>  the idle slot. The device tells the host which slot that is, and the   host sends the image variant built for that slot.</p>
+<ul><li>A weights image is written in place. If power fails during the write the</li></ul>
+<p>  partition fails verification at the next boot, predictions are   unavailable, and everything else works. A new weights transfer repairs   it.</p>
+<ul><li>A head is written to the slot named in START. Slot 0, the built-in head,</li></ul>
+<p>  cannot be written or removed.</p>
+<ul><li>The device keeps a transfer&#x27;s progress in memory across a disconnect.</li></ul>
+<p>  START with identical parameters resumes at the reported offset. A reboot   starts over.</p>
+<h3>9.2 Update Control (write, indicate)</h3>
+<p>Request <code>[op, ...]</code>, response <code>[op, status, payload?]</code>.</p>
+<p>Status codes:</p>
+<table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>0</td><td>OK</td></tr>
+<tr><td>1</td><td>invalid argument or malformed request</td></tr>
+<tr><td>2</td><td>unsupported (no such target on this device)</td></tr>
+<tr><td>3</td><td>busy: streaming, or a transfer is already active</td></tr>
+<tr><td>4</td><td>no transfer in progress</td></tr>
+<tr><td>5</td><td>flash error</td></tr>
+<tr><td>6</td><td>verification failed, see <code>verify_result</code></td></tr>
+</tbody></table>
+<p>Operations:</p>
+<table><thead><tr><th>Op</th><th>Command</th><th>Request</th><th>Response payload</th></tr></thead><tbody>
+<tr><td>0x01</td><td>START</td><td><code>u8 target, u8 slot, u32 total_len, u8[8] transfer_id</code></td><td><code>u8 target_slot, u16 chunk_max, u32 resume_offset</code></td></tr>
+<tr><td>0x02</td><td>QUERY</td><td></td><td><code>u8 state, u32 offset, u32 crc32</code></td></tr>
+<tr><td>0x03</td><td>FINISH</td><td></td><td><code>u8 verify_result</code></td></tr>
+<tr><td>0x04</td><td>ACTIVATE</td><td></td><td></td></tr>
+<tr><td>0x05</td><td>ABORT</td><td></td><td></td></tr>
+</tbody></table>
+<ul><li><code>target</code>: 1 application, 2 weights, 3 head.</li><li><code>slot</code>: for a head, 1..head_slots. Zero otherwise.</li><li><code>total_len</code>: the exact number of bytes the host will send. For images</li></ul>
+<p>  this is the envelope length (section 9.4). For a head it is the blob   length.</p>
+<ul><li><code>transfer_id</code>: the first 8 bytes of the SHA-256 of the full transfer.</li></ul>
+<p>  The device uses it only to recognize a resume.</p>
+<ul><li><code>target_slot</code>: for an application, the slot that will receive the image,</li></ul>
+<p>  0 = A or 1 = B. The host must send the variant linked for that slot.   Zero for other targets.</p>
+<ul><li><code>chunk_max</code>: the largest Update Data write the device accepts. Equal to</li></ul>
+<p>  <code>update_chunk_max</code> in Device Info unless the MTU is smaller.</p>
+<ul><li><code>resume_offset</code>: bytes already accepted from an identical earlier START.</li></ul>
+<p>  The host continues from this offset.</p>
+<ul><li>QUERY <code>state</code>: 0 idle, 1 receiving, 2 complete (FINISH verified), 3</li></ul>
+<p>  failed. <code>offset</code> is the number of bytes accepted so far. <code>crc32</code> is the   IEEE 802.3 CRC-32 (the zlib CRC) over those bytes as sent, so a host   can check it against its own copy without any key.</p>
+<ul><li>FINISH verifies the whole transfer and answers status 0 with</li></ul>
+<p>  <code>verify_result</code> 0, or status 6 with the reason. After status 0 the   transfer state is complete and ACTIVATE is allowed.</p>
+<ul><li>ACTIVATE for an application: the device marks the new image for a trial</li></ul>
+<p>  boot, confirms the indication, then resets within one second. The link   drops. If the new image fails to confirm itself, the bootloader returns   to the previous image and GET_BOOT_INFO reports reason 6.</p>
+<ul><li>ACTIVATE for weights: the device confirms the indication and then</li></ul>
+<p>  resets, the same way. Weights are verified at every boot, so restarting   is what puts the new ones in force and what proves they are sound   before anything runs on them. If they are not, the device comes back   with predictions unavailable and everything else working.</p>
+<ul><li>ACTIVATE for a head: status 2. A head is written and verified by FINISH</li></ul>
+<p>  and selected with SELECT_HEAD.</p>
+<p><code>verify_result</code>:</p>
+<table><thead><tr><th>Value</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>0</td><td>verified</td></tr>
+<tr><td>1</td><td>length differs from <code>total_len</code></td></tr>
+<tr><td>2</td><td>malformed envelope or image header</td></tr>
+<tr><td>3</td><td>target mismatch between START and the image</td></tr>
+<tr><td>4</td><td>slot mismatch: the image is linked for the other slot</td></tr>
+<tr><td>5</td><td>content hash mismatch</td></tr>
+<tr><td>6</td><td>signature invalid</td></tr>
+<tr><td>7</td><td>image security counter is lower than the installed image&#x27;s</td></tr>
+<tr><td>8</td><td>head dimensions do not match this device</td></tr>
+<tr><td>9</td><td>flash write failure</td></tr>
+<tr><td>10</td><td>unknown key id</td></tr>
+</tbody></table>
+<h3>9.3 Update Data (write without response)</h3>
+<p>Each write appends its bytes to the transfer. No framing, at most <code>chunk_max</code> bytes per write. The link layer delivers writes in order and without loss. A host paces itself with QUERY, for example every 32 writes, and compares <code>offset</code> and <code>crc32</code> with its own count.</p>
+<h3>9.4 Image envelope</h3>
+<p>An application or weights image travels inside an envelope whose first 32 bytes are plain and describe the payload. The remainder is encrypted and opaque to the host.</p>
+<pre><code>offset type    field
+0      u8[4]   magic            &quot;IMUP&quot;
+4      u8      envelope_version 1
+5      u8      target           1 application, 2 weights
+6      u8      slot_link        application: 0 = built for slot A, 1 = built for slot B. 0xFF for weights
+7      u8      key_id
+8      u8[16]  nonce
+24     u32     plain_len        length of the encrypted payload in bytes
+28     u8[4]   reserved
+32     ...     payload          plain_len bytes</code></pre>
+<p>A release of the application ships as two envelopes, one per <code>slot_link</code>. The host reads <code>target_slot</code> from START and sends the matching one. The device rejects a mismatch with <code>verify_result</code> 4 before any flash is written.</p>
+<h2>10. Predictions (notify)</h2>
+<p>Model outputs, one notification per window. Present in the GATT table on every device with a model runtime. Notifications flow only while streaming, with predictions enabled, a ready model, and a selected head.</p>
+<pre><code>offset type    field
+0      u8      packet_type        0x02 = prediction
+1      u8      flags              bit0 gap_in_window
+                                  bit1 duty_reduced (the device skipped windows to stay within its compute budget)
+                                  bit2 leadoff_in_window
+2      u8      head_slot
+3      u8      n_outputs
+4      u32     sample_index       raw stream index of the window&#x27;s first sample
+8      u64     device_time        device time of that sample
+16     u16     window_samples     window length in raw samples at the current rate
+18     u8[8]   head_id
+26     u8[2]   reserved
+28     f32[n]  outputs            n_outputs little-endian IEEE 754 values</code></pre>
+<ul><li>The window is the <code>window_samples</code> raw samples starting at <code>sample_index</code>.</li></ul>
+<p>  A host aligns predictions to its recording through the same index it   uses for the raw stream.</p>
+<ul><li>The model consumes its own copy of the stream resampled to</li></ul>
+<p>  <code>model_native_sps</code>. At the native rate a window is <code>model_window_samples</code>   raw samples. At 250 SPS it is half that.</p>
+<ul><li>Each output is <code>scale[o] × (bias[o] + Σ W[o][i] × e[i])</code> for the selected</li></ul>
+<p>  head (section 11). The host applies any activation it wants.</p>
+<ul><li>Cadence is the device&#x27;s choice within its compute budget. Windows are</li></ul>
+<p>  self describing, so a host never assumes a fixed hop.</p>
+<ul><li><code>head_id</code> names the head that produced the outputs. Recordings should</li></ul>
+<p>  store it with the predictions.</p>
+<h2>11. Heads</h2>
+<p>A head is weights, never code. It maps the model&#x27;s embedding to a small number of outputs.</p>
+<p>The embedding <code>e</code> is a vector of <code>model_embed_dim</code> signed 16-bit integers in units of 1/4096. The runtime computes the embedding in floating point and quantizes it at that fixed scale before running a head. The scale is part of this contract: changing it would change every head ever trained. The sdk runs the same runtime on the host and produces the same integers, which is what lets a head trained on a host behave identically on the device.</p>
+<p>Head blob, little-endian:</p>
+<pre><code>offset type            field
+0      u8[4]           magic            &quot;IMHD&quot;
+4      u8              format_version   1
+5      u8              kind             1 = linear
+6      u16             in_dim           must equal model_embed_dim
+8      u16             out_dim          1..head_max_outputs
+10     u8[16]          name             UTF-8, zero padded
+26     u8[6]           reserved         zero
+32     i8[out_dim×in_dim] weights       row major, one row per output
+       i32[out_dim]    bias
+       f32[out_dim]    scale
+       u8[32]          sha256           over every preceding byte</code></pre>
+<ul><li><code>head_id</code> is the first 8 bytes of <code>sha256</code>.</li><li>On FINISH the device checks magic, version, kind, <code>in_dim</code> against its</li></ul>
+<p>  embedding width, <code>out_dim</code> against <code>head_max_outputs</code>, total length   against the field sizes, and the hash. Any failure is <code>verify_result</code> 8   (dimensions) or 5 (hash) and nothing is stored.</p>
+<ul><li>Slot 0 holds the built-in head that ships with the weights image. User</li></ul>
+<p>  slots are 1..head_slots. A head blob for the IntoMind One is at most   <code>head_slot_bytes</code>, which the format satisfies at every allowed size.</p>
+<ul><li>Removing or overwriting the active head deselects it. Predictions stop</li></ul>
+<p>  until SELECT_HEAD names another.</p>
+<h2>12. Security</h2>
+<ul><li>LE Secure Connections with bonding are required for every characteristic</li></ul>
+<p>  except Device Info. Pairing is Just Works. This defeats passive   eavesdropping, which is the primary threat to neural data. It does not   defend against an active attacker present during the initial pairing,   which is the accepted limit of a device with no display or button.</p>
+<ul><li>Update images are signed. The device installs nothing whose signature it</li></ul>
+<p>  cannot verify, and a running image never writes over itself. A failed   new image rolls back automatically.</p>
+<ul><li>Local first. No cloud dependency. Any network feature of a host</li></ul>
+<p>  application is opt in and never a precondition for using the device.</p>
+<h2>13. Power-on defaults</h2>
+<table><thead><tr><th>Setting</th><th>Default</th></tr></thead><tbody>
+<tr><td>rate</td><td>500 SPS (<code>rate_code</code> 5)</td></tr>
+<tr><td>gain</td><td>24 (<code>gain_code</code> 6)</td></tr>
+<tr><td>mode</td><td>normal</td></tr>
+<tr><td>lead-off</td><td>off</td></tr>
+<tr><td>samples per packet</td><td>the largest count that fits the negotiated MTU</td></tr>
+<tr><td>streaming</td><td>off</td></tr>
+<tr><td>predictions</td><td>off</td></tr>
+<tr><td>active head</td><td>slot 0 when a ready model has a built-in head, else none</td></tr>
+</tbody></table>
+<h2>14. Reserved numbers</h2>
+<p>Never reused for another meaning. Production firmware answers status 2 to the opcodes.</p>
+<table><thead><tr><th>Kind</th><th>Numbers</th><th>Note</th></tr></thead><tbody>
+<tr><td>Control opcodes</td><td>0x12, 0x13, 0x31, 0x70, 0x71</td><td>earlier development firmware</td></tr>
+<tr><td>Control opcodes</td><td>0x60 to 0x6F</td><td>factory and bench builds</td></tr>
+<tr><td>Characteristic fill</td><td>0x0007</td><td>earlier development firmware</td></tr>
+<tr><td>Packet types</td><td>0x01 EEG data, 0x02 prediction</td><td>assigned</td></tr>
+</tbody></table>
+<h2>15. Conformance</h2>
+<p>The reference codec for every message in this document is a small library that both the firmware and the host tooling build unchanged, so an encoder on one side and a decoder on the other are the same code. Its test vectors are the conformance suite for any independent implementation. A host implementation is conformant when it decodes every vector to the documented fields and refuses every malformed vector.</p>
+<p>The vectors are published as one JSON file, emitted by the firmware from the codec it runs. Every message kind in this document appears there, and so does a set of malformed messages for each kind, each with the reason it is refused: truncated, invalid, or reserved.</p>
+<p>Two rules govern the file itself, so that a reader in any language gets the same answer from it.</p>
+<ul><li><strong>A 64-bit field is written as a decimal string.</strong> A device time runs past</li></ul>
+<p>  what a JSON number holds exactly. A reader that parses one as a   floating-point number lands a few ticks away, and it then agrees with an   expectation that was rounded the same way, so the mistake passes unseen.   Parse these as integers.</p>
+<ul><li><strong>A count that does not exist is written as null, never as zero.</strong> A break</li></ul>
+<p>  in the timeline has no extent, and zero there would claim that nothing was   lost.</p></main>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
+software under the GNU Affero General Public License, version 3, with a
+commercial license available at contact@intomind.com. The device is not a
+medical device.</div></footer>
+</html>

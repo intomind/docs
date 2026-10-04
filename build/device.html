@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The device — docs.intomind.com</title>
+<style>
+:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
+        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
+          --rule: #2d3138; --link: #8fb4f0; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+header { border-bottom: 1px solid var(--rule); }
+nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
+      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
+nav a:hover, nav a.here { color: var(--ink); }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+p, li { max-width: 40rem; }
+a { color: var(--link); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.86em; }
+code { background: color-mix(in srgb, var(--rule) 45%, transparent);
+       padding: 0.1em 0.3em; border-radius: 3px; }
+pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
+      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
+th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
+         border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+blockquote { margin: 1.25rem 0; padding-left: 1rem;
+             border-left: 3px solid var(--rule); color: var(--quiet); }
+footer { border-top: 1px solid var(--rule); color: var(--quiet);
+         font-size: 0.85rem; }
+footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
+</style>
+<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="here">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
+<main><h1>The device</h1>
+<h2>What is in the box</h2>
+<ul><li>The headset, with four electrodes and a reference.</li><li>A strap.</li><li>A USB-C cable for charging.</li></ul>
+<h2>Charging</h2>
+<p>Plug the USB-C cable into any ordinary charger or a computer. The charge indicator shows what the charger is doing. Charging from empty takes about an hour and three quarters.</p>
+<p>The device records on its battery only. While it is plugged in it charges and stays connected, but it does not record from the electrodes: a recording started on the cable is refused, and one that is running stops the moment the cable goes in, keeping everything recorded until then. Unplug it to record. The generated signal, which needs no one wearing the device, still runs while it charges.</p>
+<p>A full charge lasts about a day of streaming, roughly 25 hours, at 250 or 500 samples per second. That is an estimate from the battery&#x27;s voltage over two hours of streaming on one pre-production unit, not a run from full to empty. The charging time comes from the same unit. A number measured before production says so until it has been measured on a shipping unit.</p>
+<h2>Turning it on</h2>
+<p>The switch on the edge. Off is off: the device draws nothing and does not advertise.</p>
+<h2>Wearing it</h2>
+<p>The electrodes have to touch skin, not hair. Part the hair where each one sits and press the device down until the electrodes are against the scalp. The strap holds it there. It should feel firm and not tight.</p>
+<p>Contact is most of the quality of a recording. If a channel is noisy, it is almost always contact and almost never the device. Lift it, part the hair again, and press it back down.</p>
+<p>The Command Center can turn on lead-off detection, which tells you which electrodes the device believes are attached. It passes a very small current to do that, so it is off unless you ask for it.</p>
+<h2>What the light means</h2>
+<p>One light, one language, and you choose how much of it you want to see. By default the light is dark, and it says only the two things that matter when no screen is near: the battery is low, or the device failed its start-up check. A blink means the same thing whichever setting you choose.</p>
+<table><thead><tr><th>Light</th><th>What it means</th><th>Shown when</th></tr></thead><tbody>
+<tr><td>Two blinks, then a pause</td><td>the battery is below twenty percent; it stops above twenty five, or on the charger</td><td>always, unless you chose silent</td></tr>
+<tr><td>Three blinks, then a pause</td><td>the device failed its start-up check</td><td>always, unless you chose silent</td></tr>
+<tr><td>Lit, with a short dark wink once a second</td><td>this is the device your software just asked to identify itself</td><td>always, for as long as you asked</td></tr>
+<tr><td>A slow blink, once a second</td><td>on, waiting to be connected</td><td>verbose only</td></tr>
+<tr><td>Steady</td><td>connected</td><td>verbose only</td></tr>
+<tr><td>A brief pulse every two seconds</td><td>streaming</td><td>verbose only</td></tr>
+<tr><td>Blinking quickly</td><td>an update is being written</td><td>verbose only</td></tr>
+</tbody></table>
+<p>The three settings are silent, reserved, and verbose. Reserved is the default and shows the first two rows. Verbose shows everything, which is useful while you learn the device or debug a connection. Silent shows nothing at all, not even low battery, for someone who wants a dark device on a sleeping head. Your software sets it, and the device remembers it across power cycles; the Command Center has it under the device&#x27;s settings.</p>
+<p>When several things are true the light shows the most important: a failed check, then low battery, then an update, then streaming, connected, and waiting. Three blinks means the device could not bring up its own front end. It still connects, so the Command Center can tell you what it found.</p>
+<h2>Connecting</h2>
+<p>Turn it on, open the Command Center, and connect. The first time, your computer will pair with it. After that it connects without pairing again, whenever you choose it.</p>
+<p>The link is encrypted, and everything except the device&#x27;s own identity requires that encryption. Pairing is the kind with no code to type, because the device has no display and no buttons to type one on. That stops anybody listening from reading your recording. It does not stop somebody who is physically present at the moment you first pair, which is the honest limit of a device with no screen.</p>
+<p>The device remembers four computers. A fifth replaces the one you have not used for longest.</p>
+<h2>Several devices at once</h2>
+<p>One computer can stream from two devices at once at 250 samples per second each. That was verified for an hour on one laptop, with no sample lost from either device.</p>
+<p>At 500 or 1000 samples per second, stream from one device per computer. In a test with two devices at 500, one of them could not get all of its samples through. It marked the ones it could not send as gaps, so the recording showed exactly where they were missing.</p>
+<h2>Its name</h2>
+<p>The device can carry your name and an adjective, and it shows them to every computer and phone that scans for it: Ada&#x27;s Blue IntoMind One. With only a name it is Ada&#x27;s IntoMind One, with only an adjective Blue IntoMind One, and with neither it is IntoMind One. The Command Center sets both under the device&#x27;s settings, and the device keeps them across power cycles. A new name shows in scans once the computer that set it lets go of the device.</p>
+<p>The whole name is at most 29 bytes, which is what a scan list can show, so it is never cut short. Plain English letters, digits and spaces are one byte each. Accented letters and other scripts take two to four, and the Command Center counts them as you type.</p>
+<p>When two devices near your computer share a name, your computer numbers the later ones: Ada&#x27;s IntoMind One 2. The number is your computer&#x27;s, it lasts as long as the list, and the device never holds it.</p>
+<h2>A synthetic signal</h2>
+<p>The device can stream a signal it generates itself, in place of its electrodes. It is for building and testing software against the device&#x27;s real timing without anyone wearing it, for demonstrations, and for sharing a session that holds no one&#x27;s brain data. The converter is off while it runs, and it runs at 500 samples per second.</p>
+<p>Everything made from it is marked. Every packet says it was generated, and so does a recording made from it. The Command Center says so above the trace for as long as it lasts.</p>
+<p>The device runs one AI model at a time: the generator behind this signal, or the foundation model that describes your own signal. While it generates, there are no embeddings and no predictions, and it will not start generating while either is on. Only the generator needs the converter off. Turning your own recording&#x27;s tokens back into signal needs the converter and the foundation model, and works as it always does.</p>
+<p>A small model on the device draws the encoder&#x27;s description of the next fifth of a second, channel by channel, and the reconstruction head turns it back into signal. How close that comes to real EEG was measured on 19,459 windows from 37 recording studies the generator was not trained on:</p>
+<table><thead><tr><th>Measure</th><th>Synthetic</th><th>Real EEG</th></tr></thead><tbody>
+<tr><td>a linear classifier reading the encoder&#x27;s embeddings, telling generated windows from real ones (area under the curve, 0.5 is chance)</td><td>0.56, with a 95 percent interval of 0.51 to 0.63</td><td>0.38 to 0.58, one set of real studies against another</td></tr>
+<tr><td>the same classifier over ten minutes without a reset</td><td>0.53 to 0.55 in every minute</td><td></td></tr>
+<tr><td>power spectrum, 1 to 45 Hz</td><td>within 1.5 dB of real EEG</td><td></td></tr>
+<tr><td>coherence between channels, 8 to 13 Hz</td><td>0.18</td><td>0.28</td></tr>
+</tbody></table>
+<p>A score between 0.38 and 0.58 is what real EEG from a study the classifier never saw gets, so on that classifier the synthetic signal passes for real EEG. The generator was trained with the encoder in the loop, so that result is partly by construction. The spectrum and the coherence are the independent checks, and they are close but not equal.</p>
+<p>It is not a recording of anyone and cannot stand in for one:</p>
+<ul><li>It contains no events: no blinks, no muscle bursts, no spindles.</li><li>A nonlinear classifier tells it from real EEG every time. It is close in</li></ul>
+<p>  the way the encoder&#x27;s linear view sees it, and not beyond that.</p>
+<ul><li>It varies less over time than one real person does, and above 45 Hz it</li></ul>
+<p>  is 3 dB from real EEG.</p>
+<p>It is a demonstration signal, not data. Nothing should be trained or validated on it.</p>
+<h2>Updating it</h2>
+<p>Updates arrive through the Command Center and are written to the spare half of the device&#x27;s memory, so the copy you are running is never touched. The device checks the signature before it will run anything, and if a new version cannot start, the device goes back to the old one by itself. There is no state in which an update leaves you with a device that does not work.</p>
+<h2>Care</h2>
+<p>Wipe the electrodes with a damp cloth after use and let them dry. They are gold plated: no solvents, no abrasives, nothing that would take the plating off.</p>
+<p>Do not submerge the device. It is not sealed.</p>
+<p>Store it somewhere dry. If you are not going to use it for months, charge it first: a lithium cell left flat for a long time does not recover.</p>
+<h2>If something is wrong</h2>
+<table><thead><tr><th>What you see</th><th>What to try</th></tr></thead><tbody>
+<tr><td>It does not appear</td><td>check the switch, then charge it for an hour</td></tr>
+<tr><td>One channel is noisy</td><td>contact. Lift, part the hair, press down</td></tr>
+<tr><td>Every channel is noisy</td><td>you are probably on a charger. Unplug and record on the battery</td></tr>
+<tr><td>It disconnects</td><td>distance, or something else on the same radio. Move closer</td></tr>
+<tr><td>It connects but never answers, or a new feature is missing after an update</td><td>your computer is holding an older description of the device. Remove the device from your system&#x27;s Bluetooth settings (on Linux, <code>bluetoothctl remove</code> with its address) and connect again</td></tr>
+<tr><td>Three blinks</td><td>it failed its start-up check. Connect and read what the Command Center says</td></tr>
+<tr><td>The Command Center says another program is listening</td><td>a second program on this computer subscribed to the device, so every packet arrives twice. The copies are dropped and your recording is intact. Close the other program if it should not be listening</td></tr>
+</tbody></table>
+<h2>What it is</h2>
+<table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>Channels</td><td>four, and a shared reference</td></tr>
+<tr><td>Converter</td><td>Texas Instruments ADS1299-4, a twenty four bit biopotential front end; its registers can be read over the link for debugging</td></tr>
+<tr><td>Radio</td><td>Raytac MDBT50Q-1MV2 module, a Nordic nRF52840</td></tr>
+<tr><td>Resolution</td><td>twenty four bits</td></tr>
+<tr><td>Sample rates</td><td>250, 500, or 1000 per second</td></tr>
+<tr><td>Gain</td><td>up to twenty four</td></tr>
+<tr><td>Noise floor</td><td>0.14 microvolts root mean square with the inputs shorted at 250 samples per second, measured on a prototype of this design</td></tr>
+<tr><td>Link</td><td>Bluetooth Low Energy, encrypted and bonded</td></tr>
+<tr><td>Battery</td><td>a single rechargeable lithium polymer cell, charged over USB-C</td></tr>
+<tr><td>Processing</td><td>on the device: a high-pass, a low-pass, and notch bands, on from the first use with a sensible default; the stream always says what produced it</td></tr>
+<tr><td>Embeddings</td><td>the model&#x27;s description of each four second window, sent to your computer on request in two forms: one vector for training heads, and the per-slice vectors that turn back into signal for generating it</td></tr>
+<tr><td>The light</td><td>one status light with three settings: silent, reserved (the default), verbose; an identify blink on request</td></tr>
+<tr><td>Name</td><td>yours to set: a name and an adjective, composed with the product&#x27;s name, at most 29 bytes in all</td></tr>
+<tr><td>Synthetic signal</td><td>a generated stream in place of the electrodes, at 500 samples per second, marked as generated wherever it goes</td></tr>
+</tbody></table>
+<h2>What the IntoMind One supports</h2>
+<p>The protocol is one contract for every IntoMind device, and no device does all of it. This is what the IntoMind One answers to.</p>
+<table><thead><tr><th>Operation</th><th>IntoMind One</th></tr></thead><tbody>
+<tr><td>stream, rate, gain, input mode, contact detection, time sync, epoch reset</td><td>yes</td></tr>
+<tr><td>battery and charger state</td><td>yes</td></tr>
+<tr><td>boot record and self-confirmation</td><td>yes</td></tr>
+<tr><td>updates over the air, signed</td><td>yes</td></tr>
+<tr><td>the model, heads, predictions</td><td>yes</td></tr>
+<tr><td>the processing chain: catalog, read, set, clear, restore</td><td>yes</td></tr>
+<tr><td>where the model&#x27;s input comes from</td><td>yes</td></tr>
+<tr><td>the bias drive, set and read</td><td>no: its bias output reaches a pad and no further</td></tr>
+<tr><td>the light: its setting read and set, and identify</td><td>yes</td></tr>
+<tr><td>the converter&#x27;s registers, read for debugging</td><td>yes, while not streaming</td></tr>
+<tr><td>embeddings: the window embedding and the tokens, on request</td><td>yes</td></tr>
+<tr><td>how often the model describes a window, read and set</td><td>yes</td></tr>
+<tr><td>its name, read and set</td><td>yes</td></tr>
+<tr><td>a synthetic signal</td><td>yes, at 500 samples per second</td></tr>
+</tbody></table>
+<p>The device carries a small neural network that turns four seconds of signal into a compact description of it. See <a href="model.html">the model</a>.</p></main>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
+software under the GNU Affero General Public License, version 3, with a
+commercial license available at contact@intomind.com. The device is not a
+medical device.</div></footer>
+</html>
