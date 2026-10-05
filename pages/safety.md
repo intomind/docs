@@ -7,9 +7,6 @@ condition. It is a research and development instrument. Nothing it
 records or reports is a clinical measurement, and nothing on this site is
 medical advice.
 
-If you have a medical question, ask a doctor. If you are looking for a
-medical EEG, this is not one.
-
 ## Who should not use it
 
 - Anyone with an implanted electrical device, including a pacemaker, a
