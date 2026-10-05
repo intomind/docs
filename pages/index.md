@@ -1,6 +1,6 @@
 # IntoMind One
 
-A four channel EEG headset that streams your brain's own electrical
+A four channel wearable EEG device that streams your brain's own electrical
 activity to a computer you own, over Bluetooth, and software you can read.
 
 Everything on this site is about two things: the device, and the code that

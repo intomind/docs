@@ -4,7 +4,7 @@
 
 ## What is in the box
 
-- The headset, with four electrodes and a reference.
+- The IntoMind One, with four electrodes and a reference.
 - A strap.
 - A USB-C cable for charging.
 
