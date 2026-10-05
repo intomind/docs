@@ -86,7 +86,7 @@ u8[8]  encoder_id   the id the head names, all zero for an empty slot or a head 
 <p>Section 3 of 1.0 holds every notification and indication but EEG Data to 156 bytes, so that an MTU of 159, the smallest the contract allows for them, carries each one whole. Section 19.2 of 1.2 said instead that an embedding notification carries as many values as fit the negotiated MTU, and that 96 values fit at that smallest MTU. The count is wrong: after the 28 byte header, 64 values fit. And firmware 1.2 to 1.4.1 kept neither rule. It filled a part with up to 108 values, 244 bytes, whatever the MTU, so the launch model&#x27;s 76 value vectors each went as one notification of 180 bytes, which a host below an MTU of 183 received cut short.</p>
 <p>From 1.4, as built in firmware 1.4.2, an embedding notification carries at most 64 values, 156 bytes, on every link. A vector wider than that goes in parts exactly as section 19.2 of 1.2 defines: each part names its <code>first</code> value, and every part but the last sets <code>more_parts</code>. The launch model&#x27;s vectors go in two parts, 64 values and 12. A host puts parts back together as it always has, so a 1.2 or 1.3 host reads them unchanged, and a notification from an earlier firmware reads as it did.</p>
 <p>No number is assigned, and nothing else changes.</p></main>
-<footer><div>IntoMind is a trademark of IntoMind, Inc. The source code is at
+<footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
 <a href="https://github.com/intomind">github.com/intomind</a>. The IntoMind One
 device is not a medical device.</div></footer>
 </html>
