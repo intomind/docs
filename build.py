@@ -194,7 +194,7 @@ def page(name: str, title: str, body: str, source: str | None = None) -> str:
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(title)} — {SITE}</title>
+<title>{html.escape(title)} | {SITE}</title>
 <style>{STYLE}</style>
 <header><nav><span class="mark">IntoMind</span>{nav}</nav></header>
 <main>{note}{body}</main>

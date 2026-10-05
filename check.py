@@ -53,6 +53,8 @@ def main() -> int:
                 problems.append(f"{f.name}: links to {href}, which is not there")
         if "<title>" not in text:
             problems.append(f"{f.name}: no title")
+        if "\u2014" in text:
+            problems.append(f"{f.name}: an em dash, which the public pages do not use")
 
     problems += names_that_do_not_exist()
 
