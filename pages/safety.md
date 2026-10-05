@@ -41,6 +41,9 @@ a phone.
 
 ## Cleaning
 
+Make sure the device is completely powered off and the charging cable and
+battery are unplugged.
+
 A damp cloth on the electrodes, then let them dry. No solvents, no
 alcohol, no abrasives: the electrodes are gold plated and the plating is
 what keeps them quiet.
