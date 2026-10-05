@@ -218,9 +218,9 @@ def page(name: str, title: str, body: str, source: str | None = None) -> str:
 <style>{STYLE}</style>
 <header><nav><a class="mark" href="https://intomind.com">IntoMind</a>{nav}</nav></header>
 <main>{note}{body}</main>
-<footer><div>IntoMind is a trademark of IntoMind, Inc. The source is at
-<a href="https://github.com/intomind">github.com/intomind</a>. The device is
-not a medical device.</div></footer>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The source code is at
+<a href="https://github.com/intomind">github.com/intomind</a>. The IntoMind One
+device is not a medical device.</div></footer>
 </html>
 """
 
