@@ -75,7 +75,7 @@ body { margin: 0; background: var(--paper); color: var(--ink);
 header { border-bottom: 1px solid var(--rule); }
 nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
       display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
 nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
 nav a:hover, nav a.here { color: var(--ink); }
 main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
@@ -216,7 +216,7 @@ def page(name: str, title: str, body: str, source: str | None = None) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)} | {SITE}</title>
 <style>{STYLE}</style>
-<header><nav><span class="mark">IntoMind</span>{nav}</nav></header>
+<header><nav><a class="mark" href="https://intomind.com">IntoMind</a>{nav}</nav></header>
 <main>{note}{body}</main>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. The source is at
 <a href="https://github.com/intomind">github.com/intomind</a>. The device is

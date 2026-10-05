@@ -16,7 +16,7 @@ body { margin: 0; background: var(--paper); color: var(--ink);
 header { border-bottom: 1px solid var(--rule); }
 nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
       display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; }
+nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
 nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
 nav a:hover, nav a.here { color: var(--ink); }
 main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
@@ -43,7 +43,7 @@ footer { border-top: 1px solid var(--rule); color: var(--quiet);
 footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
 .source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
 </style>
-<header><nav><span class="mark">IntoMind</span><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
+<header><nav><a class="mark" href="https://intomind.com">IntoMind</a><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
 <main><p class="source">This page is version 1.1 of the protocol contract, so it cannot disagree with the software it describes.</p><p class="source">Each version adds to the one before it: <a href="protocol.html">1.4</a>, <a href="protocol-1-3.html">1.3</a>, <a href="protocol-1-2.html">1.2</a>, 1.1, <a href="protocol-1-0.html">1.0</a>. Version 1.1 restates the whole contract as it stood then.</p><h1>IntoMind BLE Protocol v1.1</h1>
 <p>Status: in force from firmware 1.1.0, written 2026-09-25. This document is the contract between an IntoMind device and any host. Firmware, the api, the sdk, and the Command Center all implement it. Its canonical home moves to the api repository at publication. It supersedes 1.0 by addition only: a 1.0 host works against a 1.1 device, and a 1.1 host reads a 1.0 device&#x27;s version and asks it nothing new.</p>
 <p>What 1.1 adds: the processing chain the device runs on its signal and the operations to read and set it (section 16); where the model&#x27;s input comes from; the bias drive, on devices that claim one; two capability bits; and two bytes that were reserved, in GET_MODEL_INFO and in the prediction header.</p>
