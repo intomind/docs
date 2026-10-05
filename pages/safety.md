@@ -56,19 +56,3 @@ network at all.
 
 A recording of your brain is about as personal as data gets. If you share
 one, share it deliberately.
-
-## Regulatory
-
-The device is currently sold as a development kit. Emissions testing
-under the relevant rules for unintentional radiators is in progress, and
-this page will state the result when there is one to state.
-
-The radio module inside the device carries its own certification.
-
-## Repair and end of life
-
-There is nothing inside you can service. The case is not meant to be
-opened and opening it will not be covered.
-
-At end of life, the battery goes to a battery recycling point and the rest
-goes to electronics recycling.
