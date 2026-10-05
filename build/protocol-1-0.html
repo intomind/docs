@@ -333,6 +333,6 @@ u16  buffer_fill           samples currently buffered on the device</code></pre>
 <p>Two rules govern the file itself, so that a reader in any language gets the same answer from it.</p>
 <ul><li><strong>A 64-bit field is written as a decimal string.</strong> A device time runs past what a JSON number holds exactly. A reader that parses one as a floating-point number lands a few ticks away, and it then agrees with an expectation that was rounded the same way, so the mistake passes unseen. Parse these as integers.</li><li><strong>A count that does not exist is written as null, never as zero.</strong> A break in the timeline has no extent, and zero there would claim that nothing was lost.</li></ul></main>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. The IntoMind One
+<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
 device is not a medical device.</div></footer>
 </html>
