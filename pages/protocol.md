@@ -1,8 +1,9 @@
 # IntoMind BLE Protocol v1.4
 
-Status: as built in firmware 1.4.2, 2026-10-05. Firmware 1.4.1 built all
-of it but section 27, and firmware 1.4.0, 2026-10-02, all but sections 26
-and 27. It supersedes 1.3 under the
+Status: as built in firmware 1.4.2 and later. Units ship firmware 1.4.5,
+2026-10-05, which also keeps every queued sample at a numbering restart.
+Firmware 1.4.1 built all of it but section 27, and firmware 1.4.0,
+2026-10-02, all but sections 26 and 27. It supersedes 1.3 under the
 rules of section 0 of 1.1: a 1.3 host works against a 1.4 device, and a
 1.4 host reads a 1.3 device's version and asks it nothing new.
 
