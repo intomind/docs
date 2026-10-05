@@ -1,6 +1,6 @@
 # The device
 
-**IntoMind 1 (IM-1)**
+**IntoMind One (IM-1)**
 
 ## What is in the box
 

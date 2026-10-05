@@ -1,4 +1,4 @@
-# IntoMind
+# IntoMind One
 
 A four channel EEG headset that streams your brain's own electrical
 activity to a computer you own, over Bluetooth, and software you can read.
