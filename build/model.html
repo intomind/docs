@@ -114,8 +114,7 @@ signal = back.from_tokens(w.tokens, channels=4, tokens_per_channel=20)   # (chan
 <h2>Weights</h2>
 <p>The encoder&#x27;s weights stay on the device. They reach it only as signed updates from IntoMind, they cannot be read back over the link, and they are not published. Everything you work with is the model&#x27;s output: the embeddings the device sends, the heads you train on them, and the reconstruction head, all of them open. How the weights were made and what they were measured to do is in our paper, linked here once it is posted.</p>
 <p>Your device runs the model, and your computer trains heads and generates signal, without the weights ever leaving it.</p></main>
-<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
-software under the GNU Affero General Public License, version 3, with a
-commercial license available at contact@intomind.com. The device is not a
-medical device.</div></footer>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The source is at
+<a href="https://github.com/intomind">github.com/intomind</a>. The device is
+not a medical device.</div></footer>
 </html>

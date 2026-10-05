@@ -218,10 +218,9 @@ def page(name: str, title: str, body: str, source: str | None = None) -> str:
 <style>{STYLE}</style>
 <header><nav><span class="mark">IntoMind</span>{nav}</nav></header>
 <main>{note}{body}</main>
-<footer><div>IntoMind is a trademark of IntoMind, Inc. The software is free
-software under the GNU Affero General Public License, version 3, with a
-commercial license available at contact@intomind.com. The device is not a
-medical device.</div></footer>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. The source is at
+<a href="https://github.com/intomind">github.com/intomind</a>. The device is
+not a medical device.</div></footer>
 </html>
 """
 
