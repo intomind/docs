@@ -220,7 +220,7 @@ def page(name: str, title: str, body: str, source: str | None = None) -> str:
 <main>{note}{body}</main>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
 <a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-device is not a medical device.</div></footer>
+is not a medical device.</div></footer>
 </html>
 """
 
