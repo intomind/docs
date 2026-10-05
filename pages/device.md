@@ -1,5 +1,7 @@
 # The device
 
+**IntoMind 1 (IM-1)**
+
 ## What is in the box
 
 - The headset, with four electrodes and a reference.
