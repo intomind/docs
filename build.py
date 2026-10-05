@@ -71,7 +71,7 @@ STYLE = """
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 17px/1.65 ui-serif, Georgia, "Times New Roman", serif; }
+       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
 header { border-bottom: 1px solid var(--rule); }
 nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
       display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
