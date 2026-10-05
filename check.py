@@ -45,6 +45,7 @@ def main() -> int:
             (r"&lt;(p|h1|h2|table|code)&gt;", "a tag that was escaped instead of rendered"),
             (r"\*\*", "emphasis that was not rendered"),
             (r"`[^`]+`", "a code span that was not rendered"),
+            (r"<p>\s", "a wrapped bullet rendered as a paragraph"),
         ]:
             if re.search(pattern, prose, re.M):
                 problems.append(f"{f.name}: {why}")

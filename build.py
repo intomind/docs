@@ -164,11 +164,31 @@ def render(md: str) -> str:
         if re.match(r"[-*] +", line) or re.match(r"\d+\. +", line):
             ordered = bool(re.match(r"\d+\. ", line))
             tag = "ol" if ordered else "ul"
-            items = []
+            items = []  # [text, nested list html]
             while i < len(lines) and (re.match(r"[-*] +", lines[i]) or re.match(r"\d+\. +", lines[i])):
-                items.append(re.sub(r"^(?:[-*]|\d+\.) +", "", lines[i]))
+                items.append([re.sub(r"^(?:[-*]|\d+\.) +", "", lines[i]), ""])
                 i += 1
-            out.append(f"<{tag}>" + "".join(f"<li>{inline(t)}</li>" for t in items) + f"</{tag}>")
+                # An item wrapped in the source continues on indented lines
+                # until the next item or a blank line. An indented bullet
+                # starts a list nested one level in, whose own items may
+                # wrap onto lines indented further still.
+                while i < len(lines) and lines[i].strip() and lines[i][0] in " \t":
+                    if re.match(r"\s+(?:[-*]|\d+\.) +", lines[i]):
+                        sub_tag = "ol" if re.match(r"\s+\d+\. ", lines[i]) else "ul"
+                        indent = len(lines[i]) - len(lines[i].lstrip())
+                        sub = []
+                        while (i < len(lines) and re.match(r"\s+(?:[-*]|\d+\.) +", lines[i])
+                               and len(lines[i]) - len(lines[i].lstrip()) == indent):
+                            sub.append(re.sub(r"^\s+(?:[-*]|\d+\.) +", "", lines[i]))
+                            i += 1
+                            while i < len(lines) and lines[i].strip() and len(lines[i]) - len(lines[i].lstrip()) > indent:
+                                sub[-1] += " " + lines[i].strip()
+                                i += 1
+                        items[-1][1] += f"<{sub_tag}>" + "".join(f"<li>{inline(t)}</li>" for t in sub) + f"</{sub_tag}>"
+                    else:
+                        items[-1][0] += " " + lines[i].strip()
+                        i += 1
+            out.append(f"<{tag}>" + "".join(f"<li>{inline(t)}{n}</li>" for t, n in items) + f"</{tag}>")
             continue
         if not line.strip():
             i += 1

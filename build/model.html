@@ -57,10 +57,7 @@ footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
 <p>We publish these heads, each with what it was measured to do, at <a href="https://github.com/intomind/eeg-foundation-model-heads">github.com/intomind/eeg-foundation-model-heads</a>. A head names the encoder it was trained for, and a device reports the encoder it runs.</p>
 <h2>Embeddings from the device</h2>
 <p>The encoder runs on the device. Ask, and the device sends its output for each window while it streams, in two forms:</p>
-<ul><li><strong>the window embedding</strong>, the seventy six numbers a head consumes, one</li></ul>
-<p>  vector per window. This is what you train heads on.</p>
-<ul><li><strong>the tokens</strong>, the eighty vectors that the window embedding is the mean</li></ul>
-<p>  of, one per channel per fifth of a second. This is what generation   starts from.</p>
+<ul><li><strong>the window embedding</strong>, the seventy six numbers a head consumes, one vector per window. This is what you train heads on.</li><li><strong>the tokens</strong>, the eighty vectors that the window embedding is the mean of, one per channel per fifth of a second. This is what generation starts from.</li></ul>
 <pre><code>await device.start()
 windows = await device.collect_embeddings(100, form=&quot;window&quot;)  # about seven minutes
 tokens = await device.collect_embeddings(1, form=&quot;tokens&quot;)     # one window&#x27;s tokens</code></pre>

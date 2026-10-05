@@ -94,10 +94,7 @@ footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
 </tbody></table>
 <p>A score between 0.38 and 0.58 is what real EEG from a study the classifier never saw gets, so on that classifier the synthetic signal passes for real EEG. The generator was trained with the encoder in the loop, so that result is partly by construction. The spectrum and the coherence are the independent checks, and they are close but not equal.</p>
 <p>It is not a recording of anyone and cannot stand in for one:</p>
-<ul><li>It contains no events: no blinks, no muscle bursts, no spindles.</li><li>A nonlinear classifier tells it from real EEG every time. It is close in</li></ul>
-<p>  the way the encoder&#x27;s linear view sees it, and not beyond that.</p>
-<ul><li>It varies less over time than one real person does, and above 45 Hz it</li></ul>
-<p>  is 3 dB from real EEG.</p>
+<ul><li>It contains no events: no blinks, no muscle bursts, no spindles.</li><li>A nonlinear classifier tells it from real EEG every time. It is close in the way the encoder&#x27;s linear view sees it, and not beyond that.</li><li>It varies less over time than one real person does, and above 45 Hz it is 3 dB from real EEG.</li></ul>
 <p>It is a demonstration signal, not data. Nothing should be trained or validated on it.</p>
 <h2>Updating it</h2>
 <p>Updates arrive through the Command Center and are written to the spare half of the device&#x27;s memory, so the copy you are running is never touched. The device checks the signature before it will run anything, and if a new version cannot start, the device goes back to the old one by itself. There is no state in which an update leaves you with a device that does not work.</p>

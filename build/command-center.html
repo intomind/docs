@@ -53,25 +53,7 @@ python3 hub.py</code></pre>
 <p>Then open <code>http://localhost:8080</code>.</p>
 <p>The page serves whether or not a device is connected, so you can go back through recordings with no hardware present.</p>
 <h2>What it does</h2>
-<ul><li>Connects to a device and shows what it is: its firmware, its channels,</li></ul>
-<p>  its rates, and what it says it can do.</p>
-<ul><li>Shows the live signal, and contact quality when lead-off detection is on.</li><li>Runs the cued protocols the instrument library provides, and records</li></ul>
-<p>  them with everything about how they were produced.</p>
-<ul><li>Reads recordings back, runs the analyses on them, and exports them.</li><li>Where a device carries a model, selects a head and shows what it</li></ul>
-<p>  predicts, and collects the model&#x27;s embeddings from the live stream into   a file for training heads or generating signal.</p>
-<ul><li>Sets the device&#x27;s light: silent, reserved, or verbose, and makes it</li></ul>
-<p>  identify itself with a blink.</p>
-<ul><li>Names the device: your name and an adjective, shown composed as you type</li></ul>
-<p>  and counted against the 29 bytes a scan list can show.</p>
-<ul><li>Sets how often the model describes a window, and shows how long one</li></ul>
-<p>  pass takes on the device.</p>
-<ul><li>Says above the trace whenever the signal is not your electrodes: the</li></ul>
-<p>  converter&#x27;s test signal, shorted inputs, or the device&#x27;s synthetic   signal.</p>
-<ul><li>Lists the devices it hears and connects only the one you pick. Nothing</li></ul>
-<p>  connects by itself.</p>
-<ul><li>Says when another program on this computer is also listening to the</li></ul>
-<p>  device. Each packet then arrives twice, and the copy is dropped.</p>
-<ul><li>In Intermediate, reads the converter&#x27;s registers in words, for debugging.</li></ul>
+<ul><li>Connects to a device and shows what it is: its firmware, its channels, its rates, and what it says it can do.</li><li>Shows the live signal, and contact quality when lead-off detection is on.</li><li>Runs the cued protocols the instrument library provides, and records them with everything about how they were produced.</li><li>Reads recordings back, runs the analyses on them, and exports them.</li><li>Where a device carries a model, selects a head and shows what it predicts, and collects the model&#x27;s embeddings from the live stream into a file for training heads or generating signal.</li><li>Sets the device&#x27;s light: silent, reserved, or verbose, and makes it identify itself with a blink.</li><li>Names the device: your name and an adjective, shown composed as you type and counted against the 29 bytes a scan list can show.</li><li>Sets how often the model describes a window, and shows how long one pass takes on the device.</li><li>Says above the trace whenever the signal is not your electrodes: the converter&#x27;s test signal, shorted inputs, or the device&#x27;s synthetic signal.</li><li>Lists the devices it hears and connects only the one you pick. Nothing connects by itself.</li><li>Says when another program on this computer is also listening to the device. Each packet then arrives twice, and the copy is dropped.</li><li>In Intermediate, reads the converter&#x27;s registers in words, for debugging.</li></ul>
 <h2>It only listens to your own machine</h2>
 <p>The server refuses any request whose Host header is not localhost, and any request or websocket whose Origin is a page somewhere else. That is not paranoia: a page on the internet can otherwise reach a server running on your machine, and read what it says, including over a websocket, which ordinary cross origin rules do not cover.</p>
 <h2>Exports</h2>

@@ -70,14 +70,7 @@ const state = P.decodePipelineState((await link.request(link.session.pipeline())
 <p><code>link.info</code> is what the device said it is, read before anything was asked of it. Scaling a count needs it, because the reference voltage and the converter width are the device&#x27;s to state and not this library&#x27;s to assume.</p>
 <p>Pass <code>onEvent</code> to <code>requestAndConnect</code> instead if you need the events that arrive while the link is still being set up. That callback cannot refer to the link, because the link does not exist yet.</p>
 <h2>The same rules as everywhere else</h2>
-<ul><li>What a device can do is the bits it reports, not a version number.</li><li>A gap is announced before the samples that follow it, so anything</li></ul>
-<p>  writing samples down writes the break down first and can never splice.</p>
-<ul><li>A loss carries an exact count. A break carries none, because zero</li></ul>
-<p>  missing samples is a different statement from an unknown extent.</p>
-<ul><li>A packet that arrives twice is dropped and counted, and a <code>duplicate</code></li></ul>
-<p>  event says so. It means another program on the same computer is   listening to the device.</p>
-<ul><li>Nothing assumes a channel count, a converter width, or a reference</li></ul>
-<p>  voltage. They come from the device.</p>
+<ul><li>What a device can do is the bits it reports, not a version number.</li><li>A gap is announced before the samples that follow it, so anything writing samples down writes the break down first and can never splice.</li><li>A loss carries an exact count. A break carries none, because zero missing samples is a different statement from an unknown extent.</li><li>A packet that arrives twice is dropped and counted, and a <code>duplicate</code> event says so. It means another program on the same computer is listening to the device.</li><li>Nothing assumes a channel count, a converter width, or a reference voltage. They come from the device.</li></ul>
 <h2>Held to the same vectors</h2>
 <p>The package is tested against <code>contract/conformance.json</code>, which the device firmware emits from the codec it runs: 66 messages to decode and 56 to refuse. So is the Rust crate, and so is the Python library. An implementation that drifts fails a test rather than a session.</p>
 <p>One warning if you read that file yourself. It writes every 64-bit field as a decimal string, because a device time runs past what a JSON number holds exactly. Parse it with <code>BigInt</code>, not <code>Number</code>.</p>
