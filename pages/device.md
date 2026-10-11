@@ -6,11 +6,10 @@
 
 - The IntoMind One, with four electrodes and a reference.
 - A strap.
-- A USB-C cable for charging.
 
 ## Charging
 
-Plug the USB-C cable into any ordinary charger or a computer. The charge
+Plug a USB-C cable into any ordinary charger or a computer. The charge
 indicator shows what the charger is doing. Charging from empty takes
 about an hour and three quarters.
 

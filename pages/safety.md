@@ -32,7 +32,7 @@ a distraction matters.
 It is a lithium polymer cell. Treat it the way you would treat the one in
 a phone.
 
-- Charge it with the cable provided, from an ordinary USB source.
+- Charge it from an ordinary USB source.
 - Do not charge it unattended on a soft surface.
 - Do not puncture, crush, or take the device apart.
 - If the device becomes hot, swells, or smells, stop using it, put it
