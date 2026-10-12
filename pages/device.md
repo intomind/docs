@@ -1,246 +1,152 @@
+---
+title: The device
+description: The IntoMind One manual: what is in the box, charging, turning it on, wearing it, the lights, connecting, its name, the synthetic signal, firmware updates, troubleshooting, and specifications.
+---
+
 # The device
 
 **IntoMind One (IM-1)**
 
 ## What is in the box
 
-- The IntoMind One, with four electrodes and a reference.
-- A strap.
+- The IntoMind One, assembled and programmed, in its 3D printed enclosure, with its rechargeable battery and comfort strap.
+- A T-shirt in the size you chose at checkout.
+
+A charging cable is not included.
 
 ## Charging
 
-Plug a USB-C cable into any ordinary charger or a computer. The charge
-indicator shows what the charger is doing. Charging from empty takes
-about an hour and three quarters.
+> **Warning.** To ensure safety, never wear the device or touch its electrodes while USB is plugged in.
 
-The device records on its battery only. While it is plugged in it charges
-and stays connected, but it does not record from the electrodes: a
-recording started on the cable is refused, and one that is running stops
-the moment the cable goes in, keeping everything recorded until then.
-Unplug it to record. The generated signal, which needs no one wearing the
-device, still runs while it charges.
+Plug a USB-C cable into any USB charger or computer. The charge light shows what the charger is doing. Charging from empty takes about an hour and three quarters, and a full charge streams for about 25 hours.
 
-A full charge lasts about a day of streaming, roughly 25 hours, at 250 or
-500 samples per second. That is an estimate from the battery's voltage
-over two hours of streaming on one pre-production unit, not a run from
-full to empty. The charging time comes from the same unit. A number
-measured before production says so until it has been measured on a
-shipping unit.
+While USB is plugged in, the device charges and stays connected, but it does not stream from its electrodes. A stream cannot be started, and a stream that is running stops when the cable goes in. The [synthetic signal](#the-synthetic-signal) still streams.
 
-## Turning it on
+## Turning it on and off
 
-The switch on the edge. Off is off: the device draws nothing and does not
-advertise.
+Slide the power switch to turn the device on. The amber power light is lit while the device is on, and your computer can find it.
+
+The battery drains slowly even while the device is off, so charge it before you store it.
 
 ## Wearing it
 
-The electrodes have to touch skin, not hair. Part the hair where each one
-sits and press the device down until the electrodes are against the
-scalp. The strap holds it there. It should feel firm and not tight.
+The electrodes must touch skin, not hair. Part the hair where each electrode sits, and press the device down until the electrodes rest on the scalp. The comfort strap holds it in place and lets you place the electrodes anywhere on the head. It should feel firm but not tight.
 
-Contact is most of the quality of a recording. If a channel is noisy, it
-is almost always contact and almost never the device. Lift it, part the
-hair again, and press it back down.
+A noisy channel almost always means poor contact. Lift the device, part the hair again, and press it back down. If every channel is noisy, check the reference electrode.
 
-The Command Center can turn on lead-off detection, which tells you which
-electrodes the device believes are attached. It passes a very small
-current to do that, so it is off unless you ask for it.
+The Command Center can turn on lead-off detection, which shows which electrodes are in contact with the skin. It passes a very small current through the electrodes, so it stays off until you turn it on.
 
-## What the light means
+## The lights
 
-One light, one language, and you choose how much of it you want to see.
-By default the light is dark, and it says only the two things that matter
-when no screen is near: the battery is low, or the device failed its
-start-up check. A blink means the same thing whichever setting you choose.
-
-| Light | What it means | Shown when |
+| Light | Color | What it shows |
 |---|---|---|
-| Two blinks, then a pause | the battery is below twenty percent; it stops above twenty five, or on the charger | always, unless you chose silent |
-| Three blinks, then a pause | the device failed its start-up check | always, unless you chose silent |
-| Lit, with a short dark wink once a second | this is the device your software just asked to identify itself | always, for as long as you asked |
-| A slow blink, once a second | on, waiting to be connected | verbose only |
-| Steady | connected | verbose only |
-| A brief pulse every two seconds | streaming | verbose only |
-| Blinking quickly | an update is being written | verbose only |
+| {{lamp}} Power | amber | lit while the device is on |
+| Charge | yellow, magenta or red | lit only while USB is plugged in: yellow while charging, magenta when full, red when no battery is connected |
+| Status | amber | what the device is doing, in the patterns below |
 
-The three settings are silent, reserved, and verbose. Reserved is the
-default and shows the first two rows. Verbose shows everything, which is
-useful while you learn the device or debug a connection. Silent shows
-nothing at all, not even low battery, for someone who wants a dark device
-on a sleeping head. Your software sets it, and the device remembers it
-across power cycles; the Command Center has it under the device's settings.
+The status light has three settings: silent, reserved and verbose. The device ships set to reserved and keeps its setting when it is turned off. The Command Center sets it under the device's settings.
 
-When several things are true the light shows the most important: a failed
-check, then low battery, then an update, then streaming, connected, and
-waiting. Three blinks means the device could not bring up its own front
-end. It still connects, so the Command Center can tell you what it found.
+{{light-patterns}}
+
+| Pattern | Meaning | Shown in |
+|---|---|---|
+| Lit, with a short dark wink once a second | your software asked this device to identify itself | every setting |
+| Three blinks, then a pause | the ADC failed its check at power on, so the device cannot record | reserved and verbose |
+| Two blinks, then a pause | the battery is below 20 percent, until it reaches 25 percent or USB is plugged in | reserved and verbose |
+| Fast blinking | an update is being written | verbose |
+| A brief pulse every two seconds | streaming | verbose |
+| Steady | connected | verbose |
+| A short blink once a second | on, and waiting for a computer | verbose |
+
+When more than one applies, the light shows the one highest in the table.
 
 ## Connecting
 
-Turn it on, open the Command Center, and connect. The first time, your
-computer will pair with it. After that it connects without pairing again,
-whenever you choose it.
+Turn the device on and connect from the [Command Center](/command-center.html) or your own software. The first time, your computer pairs with the device, with no code to enter. After that it connects without pairing again. The link is encrypted.
 
-The link is encrypted, and everything except the device's own identity
-requires that encryption. Pairing is the kind with no code to type,
-because the device has no display and no buttons to type one on. That
-stops anybody listening from reading your recording. It does not stop
-somebody who is physically present at the moment you first pair, which is
-the honest limit of a device with no screen.
-
-The device remembers four computers. A fifth replaces the one you have
-not used for longest.
+The device remembers four computers. When a fifth pairs, it forgets the one used least recently.
 
 ## Several devices at once
 
-One computer can stream from two devices at once at 250 samples per
-second each. That was verified for an hour on one laptop, with no sample
-lost from either device.
-
-At 500 or 1000 samples per second, stream from one device per computer.
-In a test with two devices at 500, one of them could not get all of its
-samples through. It marked the ones it could not send as gaps, so the recording
-showed exactly where they were missing.
+One computer can stream from two devices at 250 samples per second each. At 500 or 1000 samples per second, stream from one device per computer.
 
 ## Its name
 
-The device can carry your name and an adjective, and it shows them to
-every computer and phone that scans for it: Ada's Blue IntoMind One. With
-only a name it is Ada's IntoMind One, with only an adjective Blue IntoMind
-One, and with neither it is IntoMind One. The Command Center sets both
-under the device's settings, and the device keeps them across power
-cycles. A new name shows in scans once the computer that set it lets go
-of the device.
+The device can carry a name and an adjective that you choose, and every computer and phone that scans for Bluetooth devices sees them with the product's name: Ada's Blue IntoMind One. With only a name it is Ada's IntoMind One, with only an adjective Blue IntoMind One, and with neither IntoMind One. The device keeps them when it is turned off, and a new name appears in scans once the computer that set it disconnects.
 
-The whole name is at most 29 bytes, which is what a scan list can show,
-so it is never cut short. Plain English letters, digits and spaces are
-one byte each. Accented letters and other scripts take two to four, and
-the Command Center counts them as you type.
+The whole name is at most 29 bytes. English letters, digits and spaces take one byte each. Accented letters and other scripts take two to four.
 
-When two devices near your computer share a name, your computer numbers
-the later ones: Ada's IntoMind One 2. The number is your computer's, it
-lasts as long as the list, and the device never holds it.
+{{name-composer}}
 
-## A synthetic signal
+When two devices near your computer have the same name, the software numbers the second one: Ada's IntoMind One 2. The number exists only on your computer.
 
-The device can stream a signal it generates itself, in place of its
-electrodes. It is for building and testing software against the device's
-real timing without anyone wearing it, for demonstrations, and for
-sharing a session that holds no one's brain data. The converter is off
-while it runs, and it runs at 500 samples per second.
+## The synthetic signal
 
-Everything made from it is marked. Every packet says it was generated,
-and so does a recording made from it. The Command Center says so above
-the trace for as long as it lasts.
+The device can stream a signal it generates itself, in place of its electrodes, to test software without anyone wearing it and for demonstrations. It runs at 500 samples per second, and every packet and recording of it is marked as generated. The Command Center says so above the trace.
 
-The device runs one AI model at a time: the generator behind this signal,
-or the foundation model that describes your own signal. While it
-generates, there are no embeddings and no predictions, and it will not
-start generating while either is on. Only the generator needs the
-converter off. Turning your own recording's tokens back into signal needs
-the converter and the foundation model, and works as it always does.
+The device runs one neural network at a time. While it generates the signal, it sends no embeddings and no predictions, and it does not start generating while either is on.
 
-A small model on the device draws the encoder's description of the next
-fifth of a second, channel by channel, and the reconstruction head turns
-it back into signal. How close that comes to real EEG was measured on
-19,459 windows from 37 recording studies the generator was not trained on:
+The generator draws the encoder's tokens, and the reconstruction head turns them back into signal. Compared with 19,459 windows of real EEG from 37 studies it was not trained on:
 
-| Measure | Synthetic | Real EEG |
+| | Synthetic | Real EEG |
 |---|---|---|
-| a linear classifier reading the encoder's embeddings, telling generated windows from real ones (area under the curve, 0.5 is chance) | 0.56, with a 95 percent interval of 0.51 to 0.63 | 0.38 to 0.58, one set of real studies against another |
-| the same classifier over ten minutes without a reset | 0.53 to 0.55 in every minute | |
-| power spectrum, 1 to 45 Hz | within 1.5 dB of real EEG | |
-| coherence between channels, 8 to 13 Hz | 0.18 | 0.28 |
+| A linear classifier on the encoder's embeddings, telling generated from real (0.5 means it cannot tell) | 0.56 | 0.38 to 0.58, between real studies |
+| The same classifier, trained and scored on studies the generator never saw | 0.64 | |
+| A nonlinear classifier on the same embeddings | 1.00, it always tells them apart | |
+| Power spectrum, 1 to 45 Hz | 1.5 dB from real EEG on average | |
+| Coherence between channels, 8 to 13 Hz | 0.18 | 0.28 |
 
-A score between 0.38 and 0.58 is what real EEG from a study the classifier
-never saw gets, so on that classifier the synthetic signal passes for real
-EEG. The generator was trained with the encoder in the loop, so that
-result is partly by construction. The spectrum and the coherence are the
-independent checks, and they are close but not equal.
+The generator was trained with the encoder in the loop, so the first result is partly by design. The signal describes no one and varies less over time than a real person does. Use it to test software, never as data.
 
-It is not a recording of anyone and cannot stand in for one:
+## Firmware updates
 
-- It contains no events: no blinks, no muscle bursts, no spindles.
-- A nonlinear classifier tells it from real EEG every time. It is close in
-  the way the encoder's linear view sees it, and not beyond that.
-- It varies less over time than one real person does, and above 45 Hz it
-  is 3 dB from real EEG.
-
-It is a demonstration signal, not data. Nothing should be trained or
-validated on it.
-
-## Updating it
-
-Updates arrive through the Command Center and are written to the spare
-half of the device's memory, so the copy you are running is never touched.
-The device checks the signature before it will run anything, and if a new
-version cannot start, the device goes back to the old one by itself. There
-is no state in which an update leaves you with a device that does not
-work.
-
-## Care
-
-Wipe the electrodes with a damp cloth after use and let them dry. They are
-gold plated: no solvents, no abrasives, nothing that would take the
-plating off.
-
-Do not submerge the device. It is not sealed.
-
-Store it somewhere dry. If you are not going to use it for months, charge
-it first: a lithium cell left flat for a long time does not recover.
+Firmware updates install over Bluetooth. The device keeps two copies of its firmware, writes an update to the copy it is not running, and runs only firmware signed by IntoMind. If your computer cannot connect after an update, turn the device off and on. If it still cannot connect, turn it off and on once more, and the device returns to the previous firmware.
 
 ## If something is wrong
 
-| What you see | What to try |
+| What you see | What to do |
 |---|---|
-| It does not appear | check the switch, then charge it for an hour |
-| One channel is noisy | contact. Lift, part the hair, press down |
-| Every channel is noisy | you are probably on a charger. Unplug and record on the battery |
-| It disconnects | distance, or something else on the same radio. Move closer |
-| It connects but never answers, or a new feature is missing after an update | your computer is holding an older description of the device. Remove the device from your system's Bluetooth settings (on Linux, `bluetoothctl remove` with its address) and connect again |
-| Three blinks | it failed its start-up check. Connect and read what the Command Center says |
-| The Command Center says another program is listening | a second program on this computer subscribed to the device, so every packet arrives twice. The copies are dropped and your recording is intact. Close the other program if it should not be listening |
+| It does not appear in a scan | Check that the power light is on. If it is not, charge the device. |
+| One channel is noisy | Improve that electrode's contact: lift the device, part the hair, and press it down. |
+| Every channel is noisy | Improve the reference electrode's contact. |
+| A stream will not start, or stops | Unplug USB. The device does not stream from its electrodes while USB is plugged in. |
+| It disconnects | Move the computer closer, and away from other devices on the same radio band. |
+| It connects but never answers, or a feature is missing after an update | Remove the device in your computer's Bluetooth settings (on Linux, `bluetoothctl remove` and its address) and connect again. |
+| Three blinks | Turn the device off and on. If it happens again, write to support@intomind.com. |
+| The Command Center says another program is listening | Another program on this computer is subscribed to the device, so every packet arrives twice. The copies are dropped and the recording is complete. |
 
-## What it is
+## Specifications
 
 | | |
 |---|---|
-| Channels | four, and a shared reference |
-| Converter | Texas Instruments ADS1299-4, a twenty four bit biopotential front end; its registers can be read over the link for debugging |
-| Radio | Raytac MDBT50Q-1MV2 module, a Nordic nRF52840 |
-| Resolution | twenty four bits |
-| Sample rates | 250, 500, or 1000 per second |
-| Gain | up to twenty four |
-| Noise floor | 0.14 microvolts root mean square with the inputs shorted at 250 samples per second, measured on a prototype of this design |
-| Link | Bluetooth Low Energy, encrypted and bonded |
-| Battery | a single rechargeable lithium polymer cell, charged over USB-C |
-| Processing | on the device: a high-pass, a low-pass, and notch bands, on from the first use with a sensible default; the stream always says what produced it |
-| Embeddings | the model's description of each four second window, sent to your computer on request in two forms: one vector for training heads, and the per-slice vectors that turn back into signal for generating it |
-| The light | one status light with three settings: silent, reserved (the default), verbose; an identify blink on request |
-| Name | yours to set: a name and an adjective, composed with the product's name, at most 29 bytes in all |
-| Synthetic signal | a generated stream in place of the electrodes, at 500 samples per second, marked as generated wherever it goes |
+| Channels | 4, with a shared reference |
+| Electrodes | five, dry and gold-plated |
+| ADC | Texas Instruments ADS1299-4, 24 bits |
+| Sample rates | 250, 500 or 1000 per second |
+| Gain | 1, 2, 4, 6, 8, 12 or 24 |
+| Noise | 0.14 µV root mean square, inputs shorted, at 250 samples per second |
+| Timestamps | every sample, from the device's own clock |
+| Processing | high-pass, notch and low-pass filters on the device, which you can read and set |
+| Model | an encoder that describes each 4-second window with 76 numbers, and four slots for your heads |
+| Radio | Raytac MDBT50Q-1MV2 module, Nordic nRF52840 |
+| Link | Bluetooth Low Energy, encrypted |
+| Battery | rechargeable lithium polymer, charged over USB-C |
+| Lights | power, charge and status |
+| Enclosure | 3D printed bioplastic, with an adjustable comfort strap |
 
 ## What the IntoMind One supports
 
-The protocol is one contract for every IntoMind device, and no device
-does all of it. This is what the IntoMind One answers to.
+The [protocol](/protocol.html) covers every IntoMind device, and each device reports which parts it supports.
 
-| Operation | IntoMind One |
+| Feature | IntoMind One |
 |---|---|
-| stream, rate, gain, input mode, contact detection, time sync, epoch reset | yes |
-| battery and charger state | yes |
-| boot record and self-confirmation | yes |
-| updates over the air, signed | yes |
-| the model, heads, predictions | yes |
-| the processing chain: catalog, read, set, clear, restore | yes |
-| where the model's input comes from | yes |
-| the bias drive, set and read | no: its bias output reaches a pad and no further |
-| the light: its setting read and set, and identify | yes |
-| the converter's registers, read for debugging | yes, while not streaming |
-| embeddings: the window embedding and the tokens, on request | yes |
-| how often the model describes a window, read and set | yes |
-| its name, read and set | yes |
-| a synthetic signal | yes, at 500 samples per second |
-
-The device carries a small neural network that turns four seconds of
-signal into a compact description of it. See [the model](model.html).
+| Streaming at three rates and seven gains, the ADC's test signal and shorted inputs, lead-off detection, time sync | yes |
+| Battery and charger state | yes |
+| Signed firmware updates over Bluetooth | yes |
+| The processing chain: read, set, clear, and restore the default | yes |
+| The model: embeddings, heads, predictions, and how often it runs | yes |
+| The status light: its setting, and identify | yes |
+| The ADC's registers, read while not streaming | yes |
+| Its name | yes |
+| The synthetic signal | yes, at 500 samples per second |
+| The bias drive | no |

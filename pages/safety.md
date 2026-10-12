@@ -1,61 +1,48 @@
+---
+title: Safety and care
+description: Safety information for the IntoMind One: it is not a medical device, who should not use it, wearing it safely, the battery, cleaning, storage, and your recordings.
+---
+
 # Safety and care
 
-## This is not a medical device
+## Not a medical device
 
-It is not intended to diagnose, treat, cure, or prevent any disease or
-condition. It is a research and development instrument. Nothing it
-records or reports is a clinical measurement, and nothing on this site is
-medical advice.
+The IntoMind One is not intended to diagnose, treat, cure, or prevent any disease or condition. It is a research and development instrument. Nothing it records or reports is a clinical measurement, and nothing on this site is medical advice. You use it at your own risk.
 
 ## Who should not use it
 
-- Anyone with an implanted electrical device, including a pacemaker, a
-  neurostimulator, or a cochlear implant, without asking the doctor who
-  manages it first.
-- Anyone with broken or irritated skin where the electrodes would sit.
-- Children, unsupervised.
+- Infants, young children, and anyone with a weak or sensitive scalp.
+- Anyone with an implanted electrical device, such as a pacemaker, a neurostimulator, or a cochlear implant, without first asking the doctor who manages it.
+- Anyone with broken or irritated skin where the electrodes would rest.
 
-## While you are wearing it
+## While you wear it
 
-The device is powered by a small battery and the electrodes are passive:
-they listen. Lead-off detection, which you turn on deliberately, passes a
-current far below anything you can feel.
+The device is designed to be safe against a single electrical fault on battery power only. To ensure safety, never wear it or touch its electrodes while USB is plugged in.
 
-Take it off if the skin under an electrode becomes sore or red. Some
-people react to prolonged pressure rather than to the metal.
+Do not use it in wet or damp conditions, or while driving, operating machinery, or doing anything else where a distraction could cause harm.
 
-Do not use it while driving, operating machinery, or doing anything where
-a distraction matters.
+The electrodes only measure, except when you turn on lead-off detection, which passes a very small current through them. Take the device off if the skin under an electrode becomes sore or red.
 
 ## The battery
 
-It is a lithium polymer cell. Treat it the way you would treat the one in
-a phone.
+The device has a lithium polymer battery. Treat it as you would the battery in a phone.
 
-- Charge it from an ordinary USB source.
+- Charge it from an ordinary USB charger or computer.
 - Do not charge it unattended on a soft surface.
-- Do not puncture, crush, or take the device apart.
-- If the device becomes hot, swells, or smells, stop using it, put it
-  somewhere with nothing flammable nearby, and do not charge it again.
+- Do not puncture or crush the device.
+- If the device becomes hot, swells, or smells, stop using it, move it away from anything that can burn, and do not charge it again.
 - Do not put it in household waste. Take it to a battery recycling point.
 
 ## Cleaning
 
-Make sure the device is completely powered off and the charging cable and
-battery are unplugged.
+With the power off, charger disconnected, and ideally the battery disconnected as well, wipe the electrodes with a damp cloth and let them dry. Do not use solvents, alcohol or abrasives on them.
 
-A damp cloth on the electrodes, then let them dry. No solvents, no
-alcohol, no abrasives: the electrodes are gold plated and the plating is
-what keeps them quiet.
+Do not submerge the device or hold it under running water. It is not sealed.
 
-Do not submerge the device and do not run it under a tap. It is not
-sealed.
+## Storage
+
+Store the device dry and charged. The battery drains slowly even while the device is off, and a lithium battery left empty for a long time may not recover.
 
 ## Your recordings
 
-Everything the device records goes to your computer and stays there. No
-account is needed, nothing is uploaded, and the software works with no
-network at all.
-
-A recording of your brain is about as personal as data gets. If you share
-one, share it deliberately.
+Recordings are written to your own computer. The Command Center and the Python API send nothing over the internet and need no account. A recording of brain activity is personal data, so share one only on purpose.

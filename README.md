@@ -19,6 +19,14 @@ released version and its documentation cannot disagree. `build.py` names
 which, and says so on the page. The protocol's documents are read from the
 folder `INTOMIND_PROTOCOL_DIR` names, or `~/.config/intomind/protocol`.
 
+Besides the pages, the build writes each page again as Markdown,
+`llms.txt` and `llms-full.txt` for AI assistants, a sitemap, and the index
+the search box reads. Everything the pages load is in `assets/`: the
+stylesheet, the Sen typeface with its license, and the scripts. The
+interactive parts use a copy of the published `@intomind/sdk` 1.4.0, kept
+byte for byte in `assets/vendor/`, so what they show is what the package
+does. Nothing is loaded from another site.
+
 ```
 python3 check.py            # builds, then checks
 ```
@@ -30,8 +38,14 @@ cannot fail is not a gate. It also reads every page and every tracked file
 for words nothing published may carry. Those words are themselves private,
 so they are kept on the maintainers' machines, in the file
 `INTOMIND_PRIVATE_WORDS` names or `~/.config/intomind/private-words.tsv`,
-and the check fails without them. The JavaScript and Rust examples are compiled
-in the SDK repository, where the types are.
+and the check fails without them. It also checks every link and section
+anchor, that every page has a description and is in the sitemap and
+`llms.txt`, that no page loads anything from another site, and that the
+copy of the SDK is still the published one.
+
+The JavaScript and Rust examples are not compiled here. They were compiled
+against the published 1.4.0 packages when they were written, and need
+compiling again when either package changes.
 
 ## How the site is published
 

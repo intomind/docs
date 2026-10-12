@@ -1,0 +1,998 @@
+# IntoMind One documentation
+
+<!-- https://docs.intomind.com/index.html -->
+
+# IntoMind™ One
+
+IntoMind One is a research grade EEG device that you wear. It streams four channels of your brain's electrical activity to your computer over Bluetooth, and the software that records, analyzes and builds on it is open.
+
+## Start here
+
+| | |
+|---|---|
+| [The device](https://docs.intomind.com/device.html) | what is in the box, charging, wearing it, the lights, and connecting |
+| [Command Center](https://docs.intomind.com/command-center.html) | the app for seeing the signal, recording, and exporting |
+| [Python](https://docs.intomind.com/python.html) | the API, for scripts, recordings and analysis |
+| [Rust](https://docs.intomind.com/rust.html) and [JavaScript](https://docs.intomind.com/javascript.html) | the SDK, for building your own applications |
+| [The model and heads](https://docs.intomind.com/model.html) | the neural network on the device, and training your own heads |
+| [The protocol](https://docs.intomind.com/protocol.html) | the Bluetooth contract, for writing your own client |
+| [Safety and care](https://docs.intomind.com/safety.html) | warnings, the battery, and cleaning |
+| [Glossary](https://docs.intomind.com/glossary.html) | the terms used on this site |
+
+## How it works
+
+![The signal from the scalp to your computer](https://docs.intomind.com/assets/img/signal-path.svg)
+
+Four electrodes and a reference rest on the scalp. The ADC converts what they pick up into 24-bit samples, at 250, 500 or 1000 samples per second, and the device stamps each sample with its own clock. The device filters the signal through a processing chain you can read and change, and every stream states the chain that produced it. If a sample is lost on the way, the stream says where and how many. Nothing is filled in.
+
+The device also runs a neural network that describes every 4 seconds of signal with 76 numbers. You can train heads on those numbers and run them on the device. In place of the electrodes, a generator on the device can stream a synthetic signal, marked as generated wherever it goes.
+
+## What you need
+
+A computer with Bluetooth Low Energy. The Command Center runs on it and shows its page in your browser. Once installed, it needs no account and no internet connection.
+
+## Open source
+
+The Command Center, the API, the SDK and the open heads are free software under the [GNU Affero General Public License, version 3](https://www.gnu.org/licenses/agpl-3.0.html). For a commercial license, write to contact@intomind.com.
+
+| | |
+|---|---|
+| [github.com/intomind/commandcenter](https://github.com/intomind/commandcenter) | the Command Center |
+| [github.com/intomind/api](https://github.com/intomind/api) | the Python API, `pip install 'intomind[analysis]'` |
+| [github.com/intomind/sdk](https://github.com/intomind/sdk) | the SDK, `cargo add intomind` and `npm install @intomind/sdk` |
+| [github.com/intomind/eeg-foundation-model-heads](https://github.com/intomind/eeg-foundation-model-heads) | the open heads for the model on the device |
+
+<!-- https://docs.intomind.com/device.html -->
+
+# The device
+
+**IntoMind One (IM-1)**
+
+## What is in the box
+
+- The IntoMind One, assembled and programmed, in its 3D printed enclosure, with its rechargeable battery and comfort strap.
+- A T-shirt in the size you chose at checkout.
+
+A charging cable is not included.
+
+## Charging
+
+> **Warning.** To ensure safety, never wear the device or touch its electrodes while USB is plugged in.
+
+Plug a USB-C cable into any USB charger or computer. The charge light shows what the charger is doing. Charging from empty takes about an hour and three quarters, and a full charge streams for about 25 hours.
+
+While USB is plugged in, the device charges and stays connected, but it does not stream from its electrodes. A stream cannot be started, and a stream that is running stops when the cable goes in. The [synthetic signal](#the-synthetic-signal) still streams.
+
+## Turning it on and off
+
+Slide the power switch to turn the device on. The amber power light is lit while the device is on, and your computer can find it.
+
+The battery drains slowly even while the device is off, so charge it before you store it.
+
+## Wearing it
+
+The electrodes must touch skin, not hair. Part the hair where each electrode sits, and press the device down until the electrodes rest on the scalp. The comfort strap holds it in place and lets you place the electrodes anywhere on the head. It should feel firm but not tight.
+
+A noisy channel almost always means poor contact. Lift the device, part the hair again, and press it back down. If every channel is noisy, check the reference electrode.
+
+The Command Center can turn on lead-off detection, which shows which electrodes are in contact with the skin. It passes a very small current through the electrodes, so it stays off until you turn it on.
+
+## The lights
+
+| Light | Color | What it shows |
+|---|---|---|
+| Power | amber | lit while the device is on |
+| Charge | yellow, magenta or red | lit only while USB is plugged in: yellow while charging, magenta when full, red when no battery is connected |
+| Status | amber | what the device is doing, in the patterns below |
+
+The status light has three settings: silent, reserved and verbose. The device ships set to reserved and keeps its setting when it is turned off. The Command Center sets it under the device's settings.
+
+| Pattern | Meaning | Shown in |
+|---|---|---|
+| Lit, with a short dark wink once a second | your software asked this device to identify itself | every setting |
+| Three blinks, then a pause | the ADC failed its check at power on, so the device cannot record | reserved and verbose |
+| Two blinks, then a pause | the battery is below 20 percent, until it reaches 25 percent or USB is plugged in | reserved and verbose |
+| Fast blinking | an update is being written | verbose |
+| A brief pulse every two seconds | streaming | verbose |
+| Steady | connected | verbose |
+| A short blink once a second | on, and waiting for a computer | verbose |
+
+When more than one applies, the light shows the one highest in the table.
+
+## Connecting
+
+Turn the device on and connect from the [Command Center](https://docs.intomind.com/command-center.html) or your own software. The first time, your computer pairs with the device, with no code to enter. After that it connects without pairing again. The link is encrypted.
+
+The device remembers four computers. When a fifth pairs, it forgets the one used least recently.
+
+## Several devices at once
+
+One computer can stream from two devices at 250 samples per second each. At 500 or 1000 samples per second, stream from one device per computer.
+
+## Its name
+
+The device can carry a name and an adjective that you choose, and every computer and phone that scans for Bluetooth devices sees them with the product's name: Ada's Blue IntoMind One. With only a name it is Ada's IntoMind One, with only an adjective Blue IntoMind One, and with neither IntoMind One. The device keeps them when it is turned off, and a new name appears in scans once the computer that set it disconnects.
+
+The whole name is at most 29 bytes. English letters, digits and spaces take one byte each. Accented letters and other scripts take two to four.
+
+When two devices near your computer have the same name, the software numbers the second one: Ada's IntoMind One 2. The number exists only on your computer.
+
+## The synthetic signal
+
+The device can stream a signal it generates itself, in place of its electrodes, to test software without anyone wearing it and for demonstrations. It runs at 500 samples per second, and every packet and recording of it is marked as generated. The Command Center says so above the trace.
+
+The device runs one neural network at a time. While it generates the signal, it sends no embeddings and no predictions, and it does not start generating while either is on.
+
+The generator draws the encoder's tokens, and the reconstruction head turns them back into signal. Compared with 19,459 windows of real EEG from 37 studies it was not trained on:
+
+| | Synthetic | Real EEG |
+|---|---|---|
+| A linear classifier on the encoder's embeddings, telling generated from real (0.5 means it cannot tell) | 0.56 | 0.38 to 0.58, between real studies |
+| The same classifier, trained and scored on studies the generator never saw | 0.64 | |
+| A nonlinear classifier on the same embeddings | 1.00, it always tells them apart | |
+| Power spectrum, 1 to 45 Hz | 1.5 dB from real EEG on average | |
+| Coherence between channels, 8 to 13 Hz | 0.18 | 0.28 |
+
+The generator was trained with the encoder in the loop, so the first result is partly by design. The signal describes no one and varies less over time than a real person does. Use it to test software, never as data.
+
+## Firmware updates
+
+Firmware updates install over Bluetooth. The device keeps two copies of its firmware, writes an update to the copy it is not running, and runs only firmware signed by IntoMind. If your computer cannot connect after an update, turn the device off and on. If it still cannot connect, turn it off and on once more, and the device returns to the previous firmware.
+
+## If something is wrong
+
+| What you see | What to do |
+|---|---|
+| It does not appear in a scan | Check that the power light is on. If it is not, charge the device. |
+| One channel is noisy | Improve that electrode's contact: lift the device, part the hair, and press it down. |
+| Every channel is noisy | Improve the reference electrode's contact. |
+| A stream will not start, or stops | Unplug USB. The device does not stream from its electrodes while USB is plugged in. |
+| It disconnects | Move the computer closer, and away from other devices on the same radio band. |
+| It connects but never answers, or a feature is missing after an update | Remove the device in your computer's Bluetooth settings (on Linux, `bluetoothctl remove` and its address) and connect again. |
+| Three blinks | Turn the device off and on. If it happens again, write to support@intomind.com. |
+| The Command Center says another program is listening | Another program on this computer is subscribed to the device, so every packet arrives twice. The copies are dropped and the recording is complete. |
+
+## Specifications
+
+| | |
+|---|---|
+| Channels | 4, with a shared reference |
+| Electrodes | five, dry and gold-plated |
+| ADC | Texas Instruments ADS1299-4, 24 bits |
+| Sample rates | 250, 500 or 1000 per second |
+| Gain | 1, 2, 4, 6, 8, 12 or 24 |
+| Noise | 0.14 µV root mean square, inputs shorted, at 250 samples per second |
+| Timestamps | every sample, from the device's own clock |
+| Processing | high-pass, notch and low-pass filters on the device, which you can read and set |
+| Model | an encoder that describes each 4-second window with 76 numbers, and four slots for your heads |
+| Radio | Raytac MDBT50Q-1MV2 module, Nordic nRF52840 |
+| Link | Bluetooth Low Energy, encrypted |
+| Battery | rechargeable lithium polymer, charged over USB-C |
+| Lights | power, charge and status |
+| Enclosure | 3D printed bioplastic, with an adjustable comfort strap |
+
+## What the IntoMind One supports
+
+The [protocol](https://docs.intomind.com/protocol.html) covers every IntoMind device, and each device reports which parts it supports.
+
+| Feature | IntoMind One |
+|---|---|
+| Streaming at three rates and seven gains, the ADC's test signal and shorted inputs, lead-off detection, time sync | yes |
+| Battery and charger state | yes |
+| Signed firmware updates over Bluetooth | yes |
+| The processing chain: read, set, clear, and restore the default | yes |
+| The model: embeddings, heads, predictions, and how often it runs | yes |
+| The status light: its setting, and identify | yes |
+| The ADC's registers, read while not streaming | yes |
+| Its name | yes |
+| The synthetic signal | yes, at 500 samples per second |
+| The bias drive | no |
+
+<!-- https://docs.intomind.com/command-center.html -->
+
+# Command Center
+
+The Command Center is the app for using an IntoMind One from your computer. It runs a small server on your computer and shows its page in your browser, where you connect to the device, watch the signal, record, and export.
+
+```sh
+git clone https://github.com/intomind/commandcenter
+cd commandcenter
+pip install 'intomind[analysis]' aiohttp
+python3 hub.py
+```
+
+Then open http://localhost:8080. It needs Python 3.11 or newer. The page also works with no device connected, so you can review recordings anywhere. On Linux, `./install-launcher.sh` adds it to your applications.
+
+## What it does
+
+- Lists the devices it hears and connects only the one you pick. It shows the device's firmware, channels and protocol version.
+- Shows the live signal, and which electrodes are in contact when lead-off detection is on.
+- Records, with markers or with cued protocols such as eyes open and closed, blinks, jaw clenches and eye movements.
+- Reads recordings back, runs analyses on them, and exports them.
+- Selects a head on the device and shows its predictions, sets how often the model runs, and saves the model's embeddings to a file for training heads.
+- Sets the status light and the device's name, and makes the device identify itself.
+- Says above the trace whenever the signal does not come from the electrodes, and when another program on the computer is also listening to the device.
+
+The page has three levels. Basic shows every setting and lets you change a few everyday ones. Intermediate also lets you change the device's settings and its processing chain, and shows the ADC's registers. Advanced also lets you change the signal source and the analysis settings.
+
+## Recordings
+
+Recordings are saved in the `captures` folder inside the Command Center's folder, and exports in `exports`. A recording holds its samples, its events, and a record of how it was made: the device and its firmware, its settings, the processing chain, whether the signal was measured or generated, and where any gaps are. Checksums are written last, so a recording that stopped partway is never mistaken for a complete one.
+
+## Exports
+
+| Format | |
+|---|---|
+| BDF | 24-bit biosignal format, every value kept |
+| EDF | the older 16-bit format, rounded to 16 bits |
+| npz | NumPy arrays |
+| CSV and TSV | text tables |
+| MATLAB | version 7.3 files, every value kept |
+
+Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is not exported. The Command Center uses the Python API's exporters, so a file exported here matches one exported from a script.
+
+## It answers only your computer
+
+The server listens only on your own computer, and it refuses requests from web pages on other sites, so a page you visit cannot reach it. The page loads nothing from the internet.
+
+## License
+
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.
+
+<!-- https://docs.intomind.com/python.html -->
+
+# Python
+
+The `intomind` package is the Python API for the IntoMind One. It connects to the device, streams its signal, and reads, exports and analyzes recordings. The [Command Center](https://docs.intomind.com/command-center.html) is built on it.
+
+```sh
+pip install 'intomind[analysis]'
+```
+
+It needs Python 3.11 or newer. The `analysis` extra installs SciPy, which reading recordings, exporting and the analyses need. For MATLAB export, install `'intomind[analysis,mat]'`.
+
+```python
+import asyncio
+
+from intomind.client import display_names, scan
+from intomind.session import Session
+
+
+async def main():
+    found = await scan()                       # every device that answered
+    names = display_names(found)               # address to name, numbered when two share one
+    device = next(d for d in found if names[d.address] == "Ada's IntoMind One")
+
+    session = Session()
+    await session.connect(device)              # only the device you picked
+    device = session.devices[0]
+
+    device.on_sample = lambda dev, sample: print(sample.index, sample.uv)
+    await device.start()
+    await asyncio.sleep(5)
+    await device.stop()
+    await session.close()
+
+
+asyncio.run(main())
+```
+
+Each sample carries the device's index (`sample.index`), the device time at which it was converted (`sample.device_time`), that time on your computer's clock (`sample.host_time`), and one value per channel in microvolts (`sample.uv`).
+
+The first connection pairs the device with your computer, and later connections reuse the pairing. On Linux the library answers the pairing request itself, so no settings window is needed and a computer without a screen works. If a connection fails because the link could not be secured, the error says what to do.
+
+## What the device reports
+
+The library holds no table of hardware. What a device can do is what it reports, and a request for anything else is refused before it is sent, with an error that names the missing capability.
+
+```python
+device.info.channels          # 4
+device.info.adc_bits          # 24
+device.info.rates             # the sample rates it offers
+device.can("model")           # True when it reports that capability
+```
+
+## Processing on the device
+
+The device filters its signal through a chain you can read and change, and only the chain's output streams. The device refuses changes while it streams: stop, set, and start again.
+
+```python
+from intomind import protocol
+
+state = await device.pipeline()                        # the chain in force
+await device.set_pipeline([protocol.highpass(0.5),
+                           *protocol.mains_bands(60, 500),  # 60 Hz and the harmonics 500 per second can carry
+                           protocol.lowpass()])        # the automatic corner
+await device.restore_pipeline_default()
+await device.clear_pipeline()                          # no processing
+```
+
+A chain that cannot run at the device's rate is refused, with the reason, before anything is sent.
+
+## The light, the name, and the registers
+
+```python
+await device.set_indicator("verbose")       # "silent", "reserved" or "verbose"
+await device.identify(5)                    # the status light winks for five seconds
+
+await device.set_name("Ada", "Blue")        # refused if the whole name would not fit
+protocol.compose_name("Ada", "Blue")        # "Ada's Blue IntoMind One"
+
+regs = await device.converter_registers()   # the ADC's registers, while not streaming
+regs.describe()                             # its settings, in words
+```
+
+## The synthetic signal
+
+```python
+await device.set_mode("synthetic")          # the generator, at 500 samples per second
+await device.set_mode("normal")             # back to the electrodes
+```
+
+Turn embeddings and predictions off first, because the device runs one neural network at a time. Every generated sample has `sample.synthetic` set. See [the device](https://docs.intomind.com/device.html#the-synthetic-signal) for what the signal is.
+
+## The model
+
+This example collects four minutes of embeddings with eyes open and four with eyes closed, trains a head that tells them apart, and runs it on the device.
+
+```python
+from intomind.model import train_head
+
+await device.start()
+opened = await device.collect_embeddings(60, form="window")    # 60 windows, 4 minutes, eyes open
+closed = await device.collect_embeddings(60, form="window")    # eyes closed
+
+head = train_head([w.embedding for w in opened + closed],
+                  [0] * len(opened) + [1] * len(closed),
+                  name="eyes closed", encoder_id=opened[0].encoder_id)
+
+await device.upload_head(head, slot=2, select=True)
+device.on_prediction = lambda dev, p: print(p.outputs)
+await device.set_predictions(True)
+```
+
+[The model and heads](https://docs.intomind.com/model.html) explains embeddings, heads, and how often the model runs.
+
+## Gaps and repeated packets
+
+```python
+from intomind import analysis
+
+capture = analysis.load("my-recording")    # checks the checksums first
+capture.gap_before                         # one flag per sample: True where samples were lost before it
+capture.meta["synthetic"]                  # True when the device generated the signal
+```
+
+The device numbers every sample, so a loss has an exact count. When the device restarts its count, the library reports a break of unknown length, never a count.
+
+When another program on the same computer listens to the device, every packet arrives twice. The library drops the copies and counts them in `device.duplicates`.
+
+## Where recordings go
+
+```python
+from intomind import provenance
+
+provenance.use_captures_dir("~/study/captures")
+provenance.use_site({"mains_hz": 60, "electrode_montage": "four over the forehead"})
+```
+
+Recordings go to `~/.local/share/intomind/captures` unless `INTOMIND_CAPTURES` or `use_captures_dir` names another folder. `use_site` records facts about where you record. Anything you do not declare is recorded as unknown.
+
+## Exports
+
+```python
+from intomind import export
+
+export.export("my-recording", "bdf")       # also "edf", "npz", "csv", "tsv" and "mat"
+```
+
+Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is refused.
+
+## Analyses
+
+```python
+analysis.summary("my-recording")           # offset, noise, band power, spectral slope
+analysis.psd_curve("my-recording")         # the power spectrum of every channel
+analysis.berger("my-recording")            # alpha with eyes closed against eyes open
+```
+
+## Other hardware
+
+An adapter, in a package of its own, adds methods under `device.extra` for the devices it claims. A device without one behaves as documented here. See `adapters.py` in the [repository](https://github.com/intomind/api).
+
+## License
+
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.
+
+<!-- https://docs.intomind.com/rust.html -->
+
+# Rust
+
+The `intomind` crate is a client for the IntoMind One that does no input or output of its own. You give it the bytes your Bluetooth stack received, and it returns events and the bytes to send. It works with any Bluetooth library and any async runtime, or none.
+
+```sh
+cargo add intomind
+```
+
+| Crate | |
+|---|---|
+| `intomind` | the client, with the timebase and head uploads |
+| `intomind-protocol` | the protocol's messages as code. `no_std`, with no dependencies |
+| `intomind-pipeline` | the device's processing chain, so a chain can be checked before it is sent |
+| `intomind-model` | the encoder's arithmetic, as the device does it. `no_std`. Enable it with `--features model` |
+| `intomind-capture` | a recording format of flat files and a manifest |
+
+## Connect and stream
+
+Your Bluetooth library reads Device Info once, writes the commands the session builds, and passes every notification to the session.
+
+```rust
+use intomind::protocol::uuid_fill;
+use intomind::{Event, Session};
+
+fn stream(stack: &mut impl Stack) -> Result<(), Box<dyn std::error::Error>> {
+    let mut session = Session::new();
+    session.on_device_info(&stack.read(uuid_fill::DEVICE_INFO)?)?;
+    let info = *session.info()?;
+
+    let start = session.start_stream();
+    stack.write(start.characteristic, &start.bytes, start.with_response)?;
+
+    while let Some((characteristic, bytes)) = stack.next_notification() {
+        for event in session.on_notification(characteristic, &bytes) {
+            match event {
+                Event::Samples(batch) => {
+                    for row in 0..batch.rows() {
+                        let uv = batch.microvolts(row, 0, &info); // channel 1, in microvolts
+                        println!("{} {uv:.2}", batch.index + row as u32);
+                    }
+                }
+                // None when the device restarted its count.
+                Event::Gap(gap) => println!("gap {:?}", gap.samples_lost),
+                Event::Duplicate { .. } => {} // another program is listening: dropped
+                _ => {}
+            }
+        }
+    }
+    Ok(())
+}
+
+/// What your Bluetooth library provides.
+trait Stack {
+    fn read(&mut self, fill: u16) -> Result<Vec<u8>, Box<dyn std::error::Error>>;
+    fn write(&mut self, fill: u16, bytes: &[u8], with_response: bool) -> Result<(), Box<dyn std::error::Error>>;
+    fn next_notification(&mut self) -> Option<(u16, Vec<u8>)>;
+}
+```
+
+`intomind::protocol::uuid128(fill)` gives each characteristic's full UUID.
+
+## Commands
+
+Every command is checked against what the device reported, and one the device cannot carry out returns an error rather than bytes.
+
+```rust
+use intomind::protocol::control::{indicator, mode};
+use intomind::protocol::device_info::capability;
+
+if session.can(capability::LEADOFF) {
+    let command = session.set_leadoff(true)?;
+}
+let verbose = session.set_indicator(indicator::VERBOSE)?;          // silent, reserved, verbose
+let identify = session.identify(5)?;                               // the status light winks for five seconds
+let name = session.set_name("Ada", "Blue", "IntoMind One")?;       // refused unless it fits 29 bytes
+let synthetic = session.set_mode(mode::SYNTHETIC)?;                // the generated signal
+```
+
+## Processing on the device
+
+```rust
+use intomind::protocol::pipeline::{kind, Chain, Stage};
+use intomind::{Command, Error, Session};
+
+fn my_chain(session: &Session) -> Result<Command, Error> {
+    let mut chain = Chain::NATURAL;                    // no stages
+    chain.push(Stage::one(kind::HIGH_PASS, 5))?;       // 0.5 Hz, in tenths of a hertz
+    chain.push(Stage::two(kind::NOTCH, 580, 620))?;    // 58 to 62 Hz
+    chain.push(Stage::one(kind::LOW_PASS, 0))?;        // the automatic corner
+    session.set_pipeline(&chain, 500)                  // refused, with the reason, if it cannot run at 500
+}
+```
+
+## Embeddings
+
+```rust
+use intomind::embeddings::{Assembler, Form};
+
+let ask = session.set_embeddings(Some(Form::Window))?;
+let mut windows = Assembler::new(4, 20, Form::Window);  // channels, tokens per channel
+// for each Event::Embedding(part): if let Some(window) = windows.feed(part) { ... }
+```
+
+## Run your own head
+
+A transfer tells you what to write, and you tell it what the device answered.
+
+```rust
+use intomind::{Step, Transfer};
+
+let mut transfer = Transfer::head(&session, 2, &blob)?;   // slot 2: slot 1 holds the open sex head
+loop {
+    match transfer.step(&blob) {
+        Step::Send(command) => {
+            write(&command);
+            transfer.on_answer(&update_answer()?, &blob)?;
+        }
+        Step::Data { from, to, .. } => {
+            write_data(&blob[from..to]);
+            transfer.sent(to - from);
+        }
+        Step::Verified(_) => break,
+    }
+}
+```
+
+Then select it with `session.select_head(2)` and turn predictions on with `session.set_predictions(true)`. Heads are trained in [Python](https://docs.intomind.com/python.html#the-model).
+
+## The timebase
+
+`Timebase` maps device time onto your computer's clock from time exchanges with the device. One exchange gives the offset between the clocks, and a rate needs at least three.
+
+```rust
+use intomind::{Exchange, Timebase};
+
+let mut timebase = Timebase::new(info.time_tick_hz);
+timebase.observe(Exchange { before, after, device_ticks });
+let seconds = timebase.host_time(device_ticks);
+```
+
+The crates are tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
+
+## License
+
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.
+
+<!-- https://docs.intomind.com/javascript.html -->
+
+# JavaScript
+
+The `@intomind/sdk` package connects a web page to an IntoMind One over Web Bluetooth, with nothing for the user to install. It is written in TypeScript and also decodes the protocol in Node.
+
+```sh
+npm install @intomind/sdk
+```
+
+## Try it
+
+With an IntoMind One switched on and unplugged, and a browser that has [Web Bluetooth](#browsers), you can connect to it from this page. Nothing is recorded, and nothing leaves your browser.
+
+## Connect and stream
+
+```ts
+import { requestAndConnect } from "@intomind/sdk";
+
+document.querySelector("#connect")?.addEventListener("click", async () => {
+  const link = await requestAndConnect();              // the browser lists the devices nearby
+
+  link.on((event) => {
+    if (event.type === "samples") {
+      const batch = event.batch;
+      for (let row = 0; row < batch.rows; row++) {
+        const uv = batch.microvolts(row, 0, link.info);  // channel 1, in microvolts
+      }
+    } else if (event.type === "gap") {
+      console.log("lost", event.gap.samplesLost);        // null when the device restarted its count
+    }
+  });
+
+  const answer = await link.request(link.session.startStream());
+  if (!answer.ok) console.log("refused:", answer.statusName);
+});
+```
+
+`requestAndConnect` must run from a click, on a page served over HTTPS or from `localhost`. The first connection pairs the device. `link.info` is what the device reported when it connected, and scaling a sample to microvolts needs it. Each batch carries the index and device time of its first sample, and a gap is announced before the batch that follows it.
+
+## Events
+
+| Event | Carries |
+|---|---|
+| `samples` | samples, with `microvolts(row, channel, info)`, the first sample's index and device time, and whether the device generated them |
+| `gap` | how many samples were lost, or `null` when the device restarted its count |
+| `status` | battery, charger, whether USB is plugged in, and whether the device is streaming |
+| `answer` | the device's answer to a command |
+| `prediction` | a head's outputs for one window |
+| `duplicate` | a packet that arrived twice and was dropped, because another program is listening to the device |
+
+## Commands
+
+`link.request` sends a command and waits for the device's answer. A command for something the device does not report is refused before it is sent.
+
+```ts
+import { protocol as P } from "@intomind/sdk";
+
+const s = link.session;
+await link.request(s.setRate(250));                     // refused while streaming
+await link.request(s.setIndicator("verbose"));          // "silent", "reserved" or "verbose"
+await link.request(s.identify(5));                      // the status light winks for five seconds
+await link.request(s.setName("Ada", "Blue"));           // "Ada's Blue IntoMind One"
+await link.request(s.setPipeline([P.highpass(0.5), ...P.mainsBands(60, 500), P.lowpass()], 500));
+await link.request(s.setMode("synthetic"));             // the generated signal, at 500 per second
+```
+
+A stream started while USB is plugged in answers status 7: the device does not stream from its electrodes on USB power.
+
+## Run your own head
+
+Train a head in [Python](https://docs.intomind.com/python.html#the-model), then upload it from a page.
+
+```ts
+import { Transfer } from "@intomind/sdk";
+
+const transfer = Transfer.head(link.session, 2, blob);   // slot 2: slot 1 holds the open sex head
+await link.transfer(transfer, blob, ({ taken, total }) => console.log(`${taken} of ${total}`));
+await link.request(link.session.selectHead(2));
+await link.request(link.session.setPredictions(true));
+```
+
+## Browsers
+
+Web Bluetooth is in Chrome on Windows, macOS, ChromeOS and Android, and in Edge and Opera on Windows and macOS. On Linux, Chrome needs `chrome://flags/#enable-web-bluetooth` turned on. Safari and Firefox do not have it, and neither does any browser on an iPhone or iPad.
+
+## Node
+
+Node has no Web Bluetooth, but everything except the connection works there. Pass the session the bytes your Bluetooth library receives, and write the bytes it returns.
+
+```ts
+import { Session, FILL } from "@intomind/sdk";
+
+const session = new Session();
+session.onDeviceInfo(deviceInfoBytes);                  // read from the Device Info characteristic
+for (const event of session.onNotification(FILL.EEG_DATA, notificationBytes)) {
+  // the same events as in a browser
+}
+const command = session.startStream();                  // write command.bytes to its characteristic
+```
+
+The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
+
+## License
+
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.
+
+<!-- https://docs.intomind.com/model.html -->
+
+# The model and heads
+
+The IntoMind One runs a small neural network, an encoder, that reads 4 seconds of signal and describes it with 76 numbers, called an embedding. A head turns an embedding into the numbers you care about. You train heads on your own recordings, and the device runs them.
+
+![The encoder on the device, and the heads around it](https://docs.intomind.com/assets/img/model.svg)
+
+## Why it works this way
+
+The encoder was trained on EEG from many people and many studies, so it describes EEG in general. It knows nothing about you or your question. A head is where your question goes: a small set of weights, trained on a laptop in seconds, that reads the embedding and produces up to 32 numbers. The device then runs it on every window.
+
+A head is weights, never code. The device does not run code you send it.
+
+## What ships
+
+Every IntoMind One carries three open heads. Age is built into the model and selected when the device starts. Sex is in slot 1, one of the four slots that are yours. The reconstruction head is built into the model, where the device uses it for the [synthetic signal](https://docs.intomind.com/device.html#the-synthetic-signal).
+
+Age and sex show what an embedding carries. They are not useful predictors of either. The heads and how they were measured are published at [github.com/intomind/eeg-foundation-model-heads](https://github.com/intomind/eeg-foundation-model-heads).
+
+## Embeddings from the device
+
+The device sends the encoder's output on request while it streams, in two forms:
+
+- **The embedding**, 76 numbers per window. Heads read it, so train heads on it.
+- **The tokens**, 80 vectors per window, one per channel for each fifth of a second. The embedding is their mean, and they turn back into signal.
+
+```python
+await device.start()
+windows = await device.collect_embeddings(100, form="window")   # about seven minutes
+tokens = await device.collect_embeddings(1, form="tokens")      # one window's tokens
+```
+
+Each window carries the index and device time of its first sample, so it lines up with your recording, and the identity of the encoder that produced it.
+
+## Training a head
+
+```python
+from intomind.model import train_head
+
+head = train_head([w.embedding for w in windows], targets, name="focus",
+                  encoder_id=windows[0].encoder_id)
+```
+
+`train_head` fits a linear model with a ridge penalty that it chooses from your embeddings, and returns the head exactly as the device runs it. It refuses to fit unless there are more windows than the embedding has numbers. The embeddings you train on are the device's own, quantized as its heads receive them, so a head gives on your computer what it gives on the device.
+
+## Running it on the device
+
+```python
+await device.upload_head(head, slot=2, select=True)    # slots 1 to 4 are yours; 1 holds the sex head
+device.on_prediction = lambda dev, p: print(p.outputs)
+await device.set_predictions(True)
+```
+
+The device checks a head's hash and its shape before it stores it. It never checks for a signature of ours, so you can run any head you train. A head records the encoder it was trained on, and the library and the Command Center warn you when it differs from the device's.
+
+Each prediction names the head that made it and the index of the window's first sample, so predictions line up with the signal. It also says whether the window had a gap or an electrode off. The model runs only on time the stream does not need, so it never costs you samples.
+
+The [JavaScript](https://docs.intomind.com/javascript.html#run-your-own-head) and [Rust](https://docs.intomind.com/rust.html#run-your-own-head) packages upload heads too.
+
+## How often it runs
+
+By default the model describes every window, a new one every 4 seconds. You can ask for one window every so many seconds instead, on a grid that starts with the stream. The device keeps the setting when it is turned off.
+
+```python
+interval = await device.model_interval()    # the interval in force, and the shortest the device allows
+await device.set_model_interval(60)         # one window a minute; 0 is every window
+```
+
+## What the model reads
+
+The model reads the stream: the processing chain's output, or the unfiltered signal when there is no chain. You can point it at the unfiltered signal or at a chain of its own without changing the stream, and every prediction says which it read. The model always works at 500 samples per second, from its own copy of the stream. The stream you receive is never resampled.
+
+## Turning tokens back into signal
+
+The open reconstruction head ships with the Python API and turns each token back into the fifth of a second it came from.
+
+```python
+from intomind.model import Reconstructor
+
+reconstruct = Reconstructor.shipped()
+window = (await device.collect_embeddings(1, form="tokens"))[0]
+signal = reconstruct.from_tokens(window.tokens, channels=4, tokens_per_channel=20)   # (channels, samples)
+```
+
+What comes back is what the encoder kept of the window, in the model's normalized units. On windows from studies it was not fitted on, it returns about two thirds of the signal's variance: most of the rhythms below 13 Hz, less of those from 13 to 30 Hz, and little above 30 Hz. Windows with large artifacts do not come back in amplitude.
+
+## The weights
+
+The encoder's weights stay on the device. They arrive only in signed updates from IntoMind, cannot be read over the link, and are not published. Everything you work with is open: the embeddings and tokens the device sends, the heads you train, and the reconstruction head.
+
+<!-- https://docs.intomind.com/protocol.html -->
+
+# IntoMind BLE Protocol v1.4
+
+Status: as built in firmware 1.4.2 and later. Units ship firmware 1.4.5,
+2026-10-05, which also keeps every queued sample at a numbering restart.
+Firmware 1.4.1 built all of it but section 27, and firmware 1.4.0,
+2026-10-02, all but sections 26 and 27. It supersedes 1.3 under the
+rules of section 0 of 1.1: a 1.3 host works against a 1.4 device, and a
+1.4 host reads a 1.3 device's version and asks it nothing new.
+
+What 1.4 adds:
+
+- **USB power** (section 25): a device that is not run on its wearer while
+  plugged in refuses to stream the natural signal while USB power is
+  present, and stops a stream of it when USB power appears. The generated
+  signal of section 22 still streams. One control status.
+- **The heads' encoder ids in a request of their own** (section 26), so
+  that every answer fits. One control opcode.
+- **Every embedding notification within 156 bytes** (section 27), so that
+  every notification but EEG Data fits the smallest MTU the contract
+  allows, as section 3 of 1.0 has always said. No new number.
+
+Two things defined earlier change. The LIST_HEADS trailer of 1.3 is
+withdrawn, because with it the answer is longer than any answer may be,
+and no device ever sent it (section 26.1). And the size of an embedding
+notification, which section 19.2 of 1.2 tied to the negotiated MTU with a
+wrong count, is now at most 156 bytes on every link (section 27). Nothing
+else already defined in 1.0, 1.1, 1.2, or 1.3 changes meaning, size, or
+number.
+
+Device Info's `app_slot_bytes` and `weights_image_bytes` keep their
+meaning. Firmware 1.4.0 divides its flash anew and reports 290816 and
+401408 in them, where the field list of 1.0 shows the earlier
+237568 and 507904. A host reads the two fields and never assumes them.
+
+## Numbers assigned by 1.4
+
+| Kind | Number | Meaning |
+|---|---|---|
+| Control status | 7 | refused while USB power is present, section 25 |
+| Control opcode | 0x8A | LIST_HEAD_ENCODERS, section 26 |
+
+None of these collides with a number in use or reserved (section 14 of
+1.1, the numbers of 1.2 and 1.3). Control status 6 stays unassigned,
+because the Update service answers 6 for a failed verification, and a
+reader that sees both services should never meet one number with two
+meanings.
+
+## 25. USB power
+
+The IntoMind One is not worn while it is plugged in. From 1.4 the device
+holds to that itself: nothing that needs the device on someone's head runs
+while USB power is present. USB power is what Status reports as
+`usb_present`, flag bit 0.
+
+### 25.1 What is refused
+
+While `usb_present` is set, START_STREAM answers status 7 unless the
+device is in the synthetic mode of section 22. That covers every mode that
+reads the converter: the natural signal from the electrodes (mode 0), the
+converter's own test signal (mode 1), and its shorted inputs (mode 2). The
+converter is not started. Electrode contact quality and everything the
+device computes from the natural signal ride on such a stream, so they do
+not run either.
+
+Settings are not refused: a host may choose a mode, a rate, a gain or a
+chain while plugged in, and they take effect on the next stream.
+
+Precedence, extending section 6 of 1.0: invalid argument, then
+unsupported, then busy, then USB power, then hardware.
+
+### 25.2 What stops
+
+A stream of the natural signal that is running when USB power appears
+ends at once. Its last sample is the last one converted before the device
+saw USB power, and no sample after it is streamed. Samples already queued
+are still sent, and every packet sent after the device saw USB power
+carries `usb_present`, data flag bit 4, so a host can tell from the
+packets alone. The next Status message, within one second, reads state 0
+with `usb_present` set, and that pair is the reason. A host tells its user
+to unplug to record. The samples streamed are complete and the stream
+simply ends, so there is no gap inside it to mark. The device does not
+resume when USB power goes away. A host starts a new stream.
+
+### 25.3 What runs
+
+The synthetic signal of section 22 streams while plugged in, with its
+processing chain and the one model of section 22. So does everything that
+does not read the electrodes: the connection, Device Info, settings, the
+name, the lamp, updates, battery and charger state.
+
+### 25.4 A 1.3 host
+
+A 1.3 host does not know status 7. Under section 0 of 1.1 it treats any
+status other than 0 as a refusal, so its user sees a stream that did not
+start, or one that ended, with `usb_present` set in the same Status.
+
+## 26. The heads' encoder ids
+
+### 26.1 LIST_HEADS answers as it did in 1.2
+
+1.3 appended to LIST_HEADS the encoder id each head names, one eight byte
+id per record after the records (section 21.1 of 1.3). An IntoMind One
+lists five records, the built-in slot and its four user slots, and with
+the trailer that answer is 194 bytes. No answer on Control Response may be
+longer than 156 bytes (section 3 of 1.0), so no device ever sent it:
+firmware 1.3 and 1.4.0 answered LIST_HEADS with status 2.
+
+From 1.4 LIST_HEADS answers exactly as in 1.2: `u8 active_slot, u8
+n_entries`, then the records, and nothing after them. On the IntoMind One
+the answer is 154 bytes. A 1.2 or 1.3 host parses it as it always has. The
+encoder ids are in LIST_HEAD_ENCODERS.
+
+### 26.2 LIST_HEAD_ENCODERS
+
+| Opcode | Name | Arg | Response payload | Notes |
+|---|---|---|---|---|
+| 0x8A | LIST_HEAD_ENCODERS | | `u8 n_entries`, then `n_entries` records of 9 bytes | one record for each LIST_HEADS record, in the same order |
+
+```
+u8     slot
+u8[8]  encoder_id   the id the head names, all zero for an empty slot or a head that does not say
+```
+
+On the IntoMind One the answer is 48 bytes. Without a model runtime the
+request answers status 2, as LIST_HEADS does. A device before 1.4 answers
+it with status 1, so a host asks it only of a device that reports 1.4 or
+later.
+
+A host does with these ids what section 21.1 of 1.3 says. A host that is
+refused this request knows nothing of which encoder the heads name, and
+shows each head as it shows one that does not say.
+
+### 26.3 Every answer fits
+
+No answer on Control Response, at its largest, is longer than 156 bytes.
+A device that fails to compose an answer, which a device that keeps to
+this contract never does, answers status 5. It never answers status 2,
+which says the device does not do what was asked, and never answers
+status 0 with less than the whole answer. The same holds on Update
+Control, where the status is 5 as well.
+
+## 27. Embedding notifications fit 156 bytes
+
+Section 3 of 1.0 holds every notification and indication but EEG Data to
+156 bytes, so that an MTU of 159, the smallest the contract allows for
+them, carries each one whole. Section 19.2 of 1.2 said instead that an
+embedding notification carries as many values as fit the negotiated MTU,
+and that 96 values fit at that smallest MTU. The count is wrong: after the
+28 byte header, 64 values fit. And firmware 1.2 to 1.4.1 kept neither
+rule. It filled a part with up to 108 values, 244 bytes, whatever the MTU,
+so the launch model's 76 value vectors each went as one notification of
+180 bytes, which a host below an MTU of 183 received cut short.
+
+From 1.4, as built in firmware 1.4.2, an embedding notification carries at
+most 64 values, 156 bytes, on every link. A vector wider than that goes in
+parts exactly as section 19.2 of 1.2 defines: each part names its `first`
+value, and every part but the last sets `more_parts`. The launch model's
+vectors go in two parts, 64 values and 12. A host puts parts back together
+as it always has, so a 1.2 or 1.3 host reads them unchanged, and a
+notification from an earlier firmware reads as it did.
+
+No number is assigned, and nothing else changes.
+
+<!-- https://docs.intomind.com/safety.html -->
+
+# Safety and care
+
+## Not a medical device
+
+The IntoMind One is not intended to diagnose, treat, cure, or prevent any disease or condition. It is a research and development instrument. Nothing it records or reports is a clinical measurement, and nothing on this site is medical advice. You use it at your own risk.
+
+## Who should not use it
+
+- Infants, young children, and anyone with a weak or sensitive scalp.
+- Anyone with an implanted electrical device, such as a pacemaker, a neurostimulator, or a cochlear implant, without first asking the doctor who manages it.
+- Anyone with broken or irritated skin where the electrodes would rest.
+
+## While you wear it
+
+The device is designed to be safe against a single electrical fault on battery power only. To ensure safety, never wear it or touch its electrodes while USB is plugged in.
+
+Do not use it in wet or damp conditions, or while driving, operating machinery, or doing anything else where a distraction could cause harm.
+
+The electrodes only measure, except when you turn on lead-off detection, which passes a very small current through them. Take the device off if the skin under an electrode becomes sore or red.
+
+## The battery
+
+The device has a lithium polymer battery. Treat it as you would the battery in a phone.
+
+- Charge it from an ordinary USB charger or computer.
+- Do not charge it unattended on a soft surface.
+- Do not puncture or crush the device.
+- If the device becomes hot, swells, or smells, stop using it, move it away from anything that can burn, and do not charge it again.
+- Do not put it in household waste. Take it to a battery recycling point.
+
+## Cleaning
+
+With the power off, charger disconnected, and ideally the battery disconnected as well, wipe the electrodes with a damp cloth and let them dry. Do not use solvents, alcohol or abrasives on them.
+
+Do not submerge the device or hold it under running water. It is not sealed.
+
+## Storage
+
+Store the device dry and charged. The battery drains slowly even while the device is off, and a lithium battery left empty for a long time may not recover.
+
+## Your recordings
+
+Recordings are written to your own computer. The Command Center and the Python API send nothing over the internet and need no account. A recording of brain activity is personal data, so share one only on purpose.
+
+<!-- https://docs.intomind.com/glossary.html -->
+
+# Glossary
+
+| Term | Meaning |
+|---|---|
+| ADC | The analog-to-digital converter, which turns the electrodes' voltages into numbers. The IntoMind One uses a Texas Instruments ADS1299-4. |
+| API | The Python package `intomind`, for scripts, recordings and analysis. |
+| Capability | A feature a device reports that it supports. Software asks a device only for what it reports. |
+| Channel | One electrode, measured against the reference. The IntoMind One has four. |
+| Command Center | The app for using the device from your computer, in your browser. |
+| Device time | The device's own clock, which stamps every sample. Software maps it onto your computer's clock. |
+| Embedding | The 76 numbers the encoder produces for each window. Heads read them. |
+| Encoder | The neural network on the device that produces embeddings and tokens. |
+| Filter | A high-pass filter removes slow drift, a low-pass filter removes fast content, and a notch filter removes a narrow band, such as the mains frequency. |
+| Gain | How much the ADC amplifies the signal before converting it, from 1 to 24. |
+| Gap | A place in a stream where samples were lost. The stream says where and how many. |
+| Generator | The small model on the device that produces the synthetic signal. |
+| Head | A small set of weights that turns an embedding into up to 32 numbers. You train heads and run them on the device. |
+| Lead-off detection | A check that shows which electrodes touch the skin, by passing a very small current through them. |
+| Mains frequency | The frequency of household electricity, 50 or 60 Hz, which every EEG picks up. |
+| Pairing | The first connection between a computer and the device, which sets up the encryption for every later one. |
+| Processing chain | The filters the device applies to its signal before streaming it. Every stream states its chain. |
+| Protocol | The contract for the Bluetooth messages between an IntoMind device and any software. |
+| Reconstruction head | The open head that turns tokens back into signal. |
+| Reference | The electrode every channel is measured against. |
+| Sample | One measurement of every channel at one moment. |
+| Sample rate | How many samples the device takes per second: 250, 500 or 1000. |
+| SDK | The Rust crates and the JavaScript package for building your own applications. |
+| Slot | One of four places on the device for a head you upload. |
+| Synthetic signal | A signal the device generates in place of its electrodes, marked as generated wherever it goes. |
+| Token | One of the 80 vectors the encoder produces for each window, one per channel for each fifth of a second. |
+| Web Bluetooth | The browser feature that lets a web page connect to a Bluetooth device. |
+| Window | Four seconds of signal, the span the model describes at once. |
+| µV | A microvolt, one millionth of a volt. EEG is measured in microvolts. |

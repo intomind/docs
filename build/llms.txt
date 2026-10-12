@@ -1,0 +1,28 @@
+# IntoMind One documentation
+
+> IntoMind One (model IM-1) is a four-channel wearable EEG device. It streams timestamped 24-bit signal to a computer over Bluetooth Low Energy, runs a small neural network on the device, and marks every lost sample. This site documents the device, the Command Center, the Python API, the JavaScript and Rust SDK, the model on the device, and the Bluetooth protocol.
+
+Every page is also published as Markdown, at the same address with `.md` in place of `.html`.
+
+## Docs
+
+- [IntoMind One](https://docs.intomind.com/index.md): Documentation for IntoMind One, a four-channel wearable EEG device, and for its open software: the Command Center, the Python API, and the SDK for Rust and JavaScript.
+- [The device](https://docs.intomind.com/device.md): The IntoMind One manual: what is in the box, charging, turning it on, wearing it, the lights, connecting, its name, the synthetic signal, firmware updates, troubleshooting, and specifications.
+- [Command Center](https://docs.intomind.com/command-center.md): The Command Center app for the IntoMind One: install and run it, connect, watch the signal, record, export, use the model, and set up the device, in your own browser.
+- [Python](https://docs.intomind.com/python.md): The intomind Python API for the IntoMind One: install, connect, stream, set up the device, collect embeddings and run heads, read recordings, export, and analyze.
+- [Rust](https://docs.intomind.com/rust.md): The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, and the timebase.
+- [JavaScript](https://docs.intomind.com/javascript.md): The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.
+- [The model and heads](https://docs.intomind.com/model.md): The neural network on the IntoMind One describes every 4 seconds of EEG with 76 numbers. Collect them, train your own heads, run the heads on the device, and turn the model's tokens back into signal.
+- [Safety and care](https://docs.intomind.com/safety.md): Safety information for the IntoMind One: it is not a medical device, who should not use it, wearing it safely, the battery, cleaning, storage, and your recordings.
+- [Glossary](https://docs.intomind.com/glossary.md): The terms used in the IntoMind One documentation, from ADC and channel to embedding, head, token and window.
+
+## Protocol contract
+
+- [IntoMind BLE Protocol v1.4](https://docs.intomind.com/protocol.md): Version 1.4 of the IntoMind Bluetooth protocol: USB power, the heads' encoder ids, and embedding notifications that fit every link.
+
+## Optional
+
+- [IntoMind BLE Protocol v1.3](https://docs.intomind.com/protocol-1-3.md): Version 1.3 of the IntoMind Bluetooth protocol: model cadence, the synthetic signal, weights updates, and the device's name.
+- [IntoMind BLE Protocol v1.2](https://docs.intomind.com/protocol-1-2.md): Version 1.2 of the IntoMind Bluetooth protocol: the status light, the converter's registers, and embeddings.
+- [IntoMind BLE Protocol v1.1](https://docs.intomind.com/protocol-1-1.md): Version 1.1 of the IntoMind Bluetooth protocol, the whole contract as it stood then: services, packets, commands, updates, heads, and processing on the device.
+- [IntoMind BLE Protocol v1.0](https://docs.intomind.com/protocol-1-0.md): Version 1.0 of the IntoMind Bluetooth protocol, the first frozen contract.

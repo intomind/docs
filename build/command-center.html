@@ -1,78 +1,49 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Command Center | docs.intomind.com</title>
-<style>
-:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
-        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
-          --rule: #2d3138; --link: #8fb4f0; }
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
-header { border-bottom: 1px solid var(--rule); }
-nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
-nav .tm { font-size: 0.55em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.05em; }
-nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
-nav a:hover, nav a.here { color: var(--ink); }
-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
-p, li { max-width: 40rem; }
-a { color: var(--link); }
-code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-            font-size: 0.86em; }
-code { background: color-mix(in srgb, var(--rule) 45%, transparent);
-       padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
-      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
-pre code { background: none; padding: 0; }
-table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
-th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
-         border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; }
-blockquote { margin: 1.25rem 0; padding-left: 1rem;
-             border-left: 3px solid var(--rule); color: var(--quiet); }
-footer { border-top: 1px solid var(--rule); color: var(--quiet);
-         font-size: 0.85rem; }
-footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
-.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
-</style>
-<header><nav><a class="mark" href="https://intomind.com">IntoMind<sup class="tm">&trade;</sup></a><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="here">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
-<main><h1>Command Center</h1>
-<p>The program that runs the device. A local server and a page in your own browser. Nothing is sent anywhere.</p>
-<pre><code>git clone https://github.com/intomind/commandcenter
+<title>Command Center | IntoMind documentation</title>
+<meta name="description" content="The Command Center app for the IntoMind One: install and run it, connect, watch the signal, record, export, use the model, and set up the device, in your own browser.">
+<link rel="canonical" href="https://docs.intomind.com/command-center.html">
+<link rel="alternate" type="text/markdown" href="/command-center.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="Command Center">
+<meta property="og:description" content="The Command Center app for the IntoMind One: install and run it, connect, watch the signal, record, export, use the model, and set up the device, in your own browser.">
+<meta property="og:url" content="https://docs.intomind.com/command-center.html">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Command Center", "description": "The Command Center app for the IntoMind One: install and run it, connect, watch the signal, record, export, use the model, and set up the device, in your own browser.", "url": "https://docs.intomind.com/command-center.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "Command Center", "item": "https://docs.intomind.com/command-center.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html" aria-current="page">Command Center</a></li><li><a href="/python.html">Python</a></li><li><a href="/rust.html">Rust</a></li><li><a href="/javascript.html">JavaScript</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>Command Center</h1><p class="lead">The Command Center is the app for using an IntoMind One from your computer. It runs a small server on your computer and shows its page in your browser, where you connect to the device, watch the signal, record, and export.</p><pre data-lang="Terminal"><code class="language-sh">git clone https://github.com/intomind/commandcenter
 cd commandcenter
-pip install &#x27;intomind[analysis]&#x27; aiohttp
-python3 hub.py</code></pre>
-<p>Then open <code>http://localhost:8080</code>.</p>
-<p>The page serves whether or not a device is connected, so you can go back through recordings with no hardware present.</p>
-<h2>What it does</h2>
-<ul><li>Connects to a device and shows what it is: its firmware, its channels, its rates, and what it says it can do.</li><li>Shows the live signal, and contact quality when lead-off detection is on.</li><li>Runs the cued protocols the instrument library provides, and records them with everything about how they were produced.</li><li>Reads recordings back, runs the analyses on them, and exports them.</li><li>Where a device carries a model, selects a head and shows what it predicts, and collects the model&#x27;s embeddings from the live stream into a file for training heads or generating signal.</li><li>Sets the device&#x27;s light: silent, reserved, or verbose, and makes it identify itself with a blink.</li><li>Names the device: your name and an adjective, shown composed as you type and counted against the 29 bytes a scan list can show.</li><li>Sets how often the model describes a window, and shows how long one pass takes on the device.</li><li>Says above the trace whenever the signal is not your electrodes: the converter&#x27;s test signal, shorted inputs, or the device&#x27;s synthetic signal.</li><li>Lists the devices it hears and connects only the one you pick. Nothing connects by itself.</li><li>Says when another program on this computer is also listening to the device. Each packet then arrives twice, and the copy is dropped.</li><li>In Intermediate, reads the converter&#x27;s registers in words, for debugging.</li></ul>
-<h2>It only listens to your own machine</h2>
-<p>The server refuses any request whose Host header is not localhost, and any request or websocket whose Origin is a page somewhere else. That is not paranoia: a page on the internet can otherwise reach a server running on your machine, and read what it says, including over a websocket, which ordinary cross origin rules do not cover.</p>
-<h2>Exports</h2>
-<p>Six formats, and the Command Center calls the instrument library&#x27;s exporter rather than writing its own, so a file exported here is the same file exported from a script.</p>
-<table><thead><tr><th>Format</th><th>What it is for</th></tr></thead><tbody>
-<tr><td>npz</td><td>numpy, lossless</td></tr>
-<tr><td>BDF</td><td>twenty four bit biosignal format, lossless for this device</td></tr>
-<tr><td>EDF</td><td>the older sixteen bit format, widely read, and lossy. It says so, with the error measured</td></tr>
-<tr><td>csv and tsv</td><td>text, for anything that reads a table</td></tr>
-<tr><td>MATLAB v7.3</td><td>for MATLAB</td></tr>
-</tbody></table>
-<p>Whether a format was lossless for a given recording is measured rather than claimed: the exporter reads what it wrote and compares.</p>
-<h2>Recordings</h2>
-<p>They go to <code>~/.local/share/intomind/captures</code>, or wherever <code>$INTOMIND_CAPTURES</code> points.</p>
-<p>Each one is its samples, its events, and a manifest that says how it was produced: the device, its firmware, its configuration, whether the signal was measured or generated, where the gaps were, how the clocks were fitted, and what software recorded it. Checksums are written last, so a run that dies half way leaves something that is visibly incomplete rather than something that looks finished and is short.</p>
-<h2>License</h2>
-<p>Free software under the GNU Affero General Public License, version 3. If you run a modified copy as a service for other people, they can ask you for your changes. A commercial license is available at contact@intomind.com.</p></main>
+pip install 'intomind[analysis]' aiohttp
+python3 hub.py</code></pre><p>Then open http://localhost:8080. It needs Python 3.11 or newer. The page also works with no device connected, so you can review recordings anywhere. On Linux, <code>./install-launcher.sh</code> adds it to your applications.</p><h2 id="what-it-does">What it does</h2><ul><li>Lists the devices it hears and connects only the one you pick. It shows the device's firmware, channels and protocol version.</li><li>Shows the live signal, and which electrodes are in contact when lead-off detection is on.</li><li>Records, with markers or with cued protocols such as eyes open and closed, blinks, jaw clenches and eye movements.</li><li>Reads recordings back, runs analyses on them, and exports them.</li><li>Selects a head on the device and shows its predictions, sets how often the model runs, and saves the model's embeddings to a file for training heads.</li><li>Sets the status light and the device's name, and makes the device identify itself.</li><li>Says above the trace whenever the signal does not come from the electrodes, and when another program on the computer is also listening to the device.</li></ul><p>The page has three levels. Basic shows every setting and lets you change a few everyday ones. Intermediate also lets you change the device's settings and its processing chain, and shows the ADC's registers. Advanced also lets you change the signal source and the analysis settings.</p><h2 id="recordings">Recordings</h2><p>Recordings are saved in the <code>captures</code> folder inside the Command Center's folder, and exports in <code>exports</code>. A recording holds its samples, its events, and a record of how it was made: the device and its firmware, its settings, the processing chain, whether the signal was measured or generated, and where any gaps are. Checksums are written last, so a recording that stopped partway is never mistaken for a complete one.</p><h2 id="exports">Exports</h2><div class="table"><table><thead><tr><th scope="col">Format</th><th scope="col"></th></tr></thead><tbody><tr><td>BDF</td><td>24-bit biosignal format, every value kept</td></tr><tr><td>EDF</td><td>the older 16-bit format, rounded to 16 bits</td></tr><tr><td>npz</td><td>NumPy arrays</td></tr><tr><td>CSV and TSV</td><td>text tables</td></tr><tr><td>MATLAB</td><td>version 7.3 files, every value kept</td></tr></tbody></table></div><p>Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is not exported. The Command Center uses the Python API's exporters, so a file exported here matches one exported from a script.</p><h2 id="it-answers-only-your-computer">It answers only your computer</h2><p>The server listens only on your own computer, and it refuses requests from web pages on other sites, so a page you visit cannot reach it. The page loads nothing from the internet.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.</p>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#what-it-does">What it does</a></li><li class="l2"><a href="#recordings">Recordings</a></li><li class="l2"><a href="#exports">Exports</a></li><li class="l2"><a href="#it-answers-only-your-computer">It answers only your computer</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
+</div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-is not a medical device.</div></footer>
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+
+</body>
 </html>

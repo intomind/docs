@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 254" class="diagram">
+  <defs>
+    <linearGradient id="sp-brand" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#ee2b7b"/><stop offset="0.38" stop-color="#f7931a"/>
+      <stop offset="0.68" stop-color="#4caf50"/><stop offset="1" stop-color="#2f80ed"/>
+    </linearGradient>
+    <marker id="sp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="d-arrow"/>
+    </marker>
+  </defs>
+  <rect x="10" y="22" width="740" height="4" rx="2" fill="url(#sp-brand)"/>
+  <g class="d-box">
+    <rect x="10" y="40" width="132" height="96" rx="12"/>
+    <rect x="162" y="40" width="132" height="96" rx="12"/>
+    <rect x="314" y="40" width="132" height="96" rx="12"/>
+    <rect x="466" y="40" width="132" height="96" rx="12"/>
+    <rect x="618" y="40" width="132" height="96" rx="12"/>
+    <rect x="466" y="166" width="132" height="80" rx="12"/>
+    <rect x="162" y="166" width="132" height="80" rx="12"/>
+  </g>
+  <g class="d-dot">
+    <circle cx="30" cy="60" r="5" fill="#ee2b7b"/>
+    <circle cx="182" cy="60" r="5" fill="#f7931a"/>
+    <circle cx="334" cy="60" r="5" fill="#f7931a"/>
+    <circle cx="486" cy="60" r="5" fill="#4caf50"/>
+    <circle cx="638" cy="60" r="5" fill="#2f80ed"/>
+    <circle cx="486" cy="186" r="5" fill="#4caf50"/>
+    <circle cx="182" cy="186" r="5" fill="#6d4de0"/>
+  </g>
+  <g class="d-title">
+    <text x="42" y="65">Electrodes</text>
+    <text x="194" y="65">ADC</text>
+    <text x="346" y="65">Device clock</text>
+    <text x="498" y="65">Processing</text>
+    <text x="650" y="65">Bluetooth</text>
+    <text x="498" y="191">Encoder</text>
+    <text x="194" y="191">Generator</text>
+  </g>
+  <g class="d-text">
+    <text x="24" y="92">4 channels and</text><text x="24" y="110">a shared reference</text>
+    <text x="176" y="92">24 bits, 250, 500</text><text x="176" y="110">or 1000 per second</text>
+    <text x="328" y="92">every sample</text><text x="328" y="110">stamped with the</text><text x="328" y="128">device's time</text>
+    <text x="480" y="92">high-pass, mains</text><text x="480" y="110">notches, low-pass,</text><text x="480" y="128">by default</text>
+    <text x="632" y="92">encrypted, to</text><text x="632" y="110">your computer</text>
+    <text x="480" y="216">76 numbers for</text><text x="480" y="234">each 4 seconds</text>
+    <text x="176" y="216">a synthetic signal,</text><text x="176" y="234">in place of the ADC</text>
+  </g>
+  <g class="d-line" marker-end="url(#sp-arrow)">
+    <line x1="142" y1="88" x2="160" y2="88"/>
+    <line x1="294" y1="88" x2="312" y2="88"/>
+    <line x1="446" y1="88" x2="464" y2="88"/>
+    <line x1="598" y1="88" x2="616" y2="88"/>
+    <line x1="532" y1="136" x2="532" y2="164"/>
+    <path d="M598,206 L684,206 L684,138" fill="none"/>
+    <path d="M294,206 L380,206 L380,138" fill="none" stroke-dasharray="5 4"/>
+  </g>
+</svg>

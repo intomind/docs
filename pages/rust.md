@@ -1,124 +1,150 @@
+---
+title: Rust
+description: The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, and the timebase.
+---
+
 # Rust
 
-```
+The `intomind` crate is a client for the IntoMind One that does no input or output of its own. You give it the bytes your Bluetooth stack received, and it returns events and the bytes to send. It works with any Bluetooth library and any async runtime, or none.
+
+```sh
 cargo add intomind
 ```
 
-The client does no input and no output. It is handed bytes that arrived
-and it hands back bytes to send, which means it works over whatever
-Bluetooth stack you already have, on whatever runtime you already use, and
-it can be tested without either.
+| Crate | |
+|---|---|
+| `intomind` | the client, with the timebase and head uploads |
+| `intomind-protocol` | the protocol's messages as code. `no_std`, with no dependencies |
+| `intomind-pipeline` | the device's processing chain, so a chain can be checked before it is sent |
+| `intomind-model` | the encoder's arithmetic, as the device does it. `no_std`. Enable it with `--features model` |
+| `intomind-capture` | a recording format of flat files and a manifest |
+
+## Connect and stream
+
+Your Bluetooth library reads Device Info once, writes the commands the session builds, and passes every notification to the session.
 
 ```rust
-use intomind::{protocol::uuid_fill, Event, Session};
+use intomind::protocol::uuid_fill;
+use intomind::{Event, Session};
 
-let mut session = Session::new();
-session.on_device_info(&read(uuid_fill::DEVICE_INFO)?)?;
+fn stream(stack: &mut impl Stack) -> Result<(), Box<dyn std::error::Error>> {
+    let mut session = Session::new();
+    session.on_device_info(&stack.read(uuid_fill::DEVICE_INFO)?)?;
+    let info = *session.info()?;
 
-let command = session.start_stream();
-write(command.characteristic, &command.bytes, command.with_response)?;
+    let start = session.start_stream();
+    stack.write(start.characteristic, &start.bytes, start.with_response)?;
 
-for event in session.on_notification(uuid_fill::EEG_DATA, &notification) {
-    match event {
-        Event::Samples(batch) => {
-            let info = *session.info()?;
-            for row in 0..batch.rows() {
-                let uv = batch.microvolts(row, 0, &info);
+    while let Some((characteristic, bytes)) = stack.next_notification() {
+        for event in session.on_notification(characteristic, &bytes) {
+            match event {
+                Event::Samples(batch) => {
+                    for row in 0..batch.rows() {
+                        let uv = batch.microvolts(row, 0, &info); // channel 1, in microvolts
+                        println!("{} {uv:.2}", batch.index + row as u32);
+                    }
+                }
+                // None when the device restarted its count.
+                Event::Gap(gap) => println!("gap {:?}", gap.samples_lost),
+                Event::Duplicate { .. } => {} // another program is listening: dropped
+                _ => {}
             }
         }
-        Event::Gap(gap) => {
-            // Written down, never smoothed over. `samples_lost` is None
-            // for a re-base, whose extent is not a number.
-        }
-        Event::Duplicate { .. } => {
-            // A packet that arrived twice, dropped: another program on
-            // this computer is listening to the device.
-        }
-        _ => {}
     }
+    Ok(())
+}
+
+/// What your Bluetooth library provides.
+trait Stack {
+    fn read(&mut self, fill: u16) -> Result<Vec<u8>, Box<dyn std::error::Error>>;
+    fn write(&mut self, fill: u16, bytes: &[u8], with_response: bool) -> Result<(), Box<dyn std::error::Error>>;
+    fn next_notification(&mut self) -> Option<(u16, Vec<u8>)>;
 }
 ```
 
-## The crates
+`intomind::protocol::uuid128(fill)` gives each characteristic's full UUID.
 
-| | |
-|---|---|
-| `intomind` | a device as a state machine, over any transport |
-| `intomind-protocol` | the wire, and nothing else. `no_std`, no dependencies |
-| `intomind-capture` | what a recording is on disk |
-| `intomind-model` | the encoder, `no_std`, allocating nothing |
+## Commands
 
-`intomind-protocol` and `intomind-model` are the crates the device
-firmware itself builds. The wire and the arithmetic are the same by
-construction rather than by agreement.
-
-## Capabilities
+Every command is checked against what the device reported, and one the device cannot carry out returns an error rather than bytes.
 
 ```rust
+use intomind::protocol::control::{indicator, mode};
 use intomind::protocol::device_info::capability;
 
-if session.can(capability::MODEL) { /* ... */ }
-session.set_leadoff(true)?;   // refused unless the device claims it
+if session.can(capability::LEADOFF) {
+    let command = session.set_leadoff(true)?;
+}
+let verbose = session.set_indicator(indicator::VERBOSE)?;          // silent, reserved, verbose
+let identify = session.identify(5)?;                               // the status light winks for five seconds
+let name = session.set_name("Ada", "Blue", "IntoMind One")?;       // refused unless it fits 29 bytes
+let synthetic = session.set_mode(mode::SYNTHETIC)?;                // the generated signal
 ```
 
 ## Processing on the device
 
-A device that claims the processing chain preprocesses its own signal, and
-the chain in force is readable at any time. A chain is checked here, with
-the device's own rules from `intomind-pipeline`, before anything is sent.
-
 ```rust
 use intomind::protocol::pipeline::{kind, Chain, Stage};
+use intomind::{Command, Error, Session};
 
-let mut chain = Chain::NATURAL;
-chain.push(Stage::one(kind::HIGH_PASS, 5))?;       // 0.5 Hz, in tenths
-chain.push(Stage::two(kind::NOTCH, 580, 620))?;    // 58 to 62 Hz
-chain.push(Stage::one(kind::LOW_PASS, 0))?;        // automatic corner
-let command = session.set_pipeline(&chain, 500)?;  // refused with its reason if it cannot run at 500
-let read = session.pipeline()?;                    // the answer decodes with pipeline::PipelineState
+fn my_chain(session: &Session) -> Result<Command, Error> {
+    let mut chain = Chain::NATURAL;                    // no stages
+    chain.push(Stage::one(kind::HIGH_PASS, 5))?;       // 0.5 Hz, in tenths of a hertz
+    chain.push(Stage::two(kind::NOTCH, 580, 620))?;    // 58 to 62 Hz
+    chain.push(Stage::one(kind::LOW_PASS, 0))?;        // the automatic corner
+    session.set_pipeline(&chain, 500)                  // refused, with the reason, if it cannot run at 500
+}
 ```
 
-## The light, the registers, and embeddings
+## Embeddings
 
 ```rust
 use intomind::embeddings::{Assembler, Form};
-use intomind::protocol::control::indicator;
 
-session.set_indicator(indicator::VERBOSE)?;             // silent, reserved, verbose
-session.identify(5)?;                                   // the light winks for five seconds
-let regs = session.converter_registers()?;              // answer decodes with control::ConverterRegisters
-let ask = session.set_embeddings(Some(Form::Both))?;    // the window embedding and the tokens
-let mut windows = Assembler::new(4, 20, Form::Both);    // channels, tokens per channel
-// for each Event::Embedding(e): if let Some(w) = windows.feed(e) { ... one whole window ... }
+let ask = session.set_embeddings(Some(Form::Window))?;
+let mut windows = Assembler::new(4, 20, Form::Window);  // channels, tokens per channel
+// for each Event::Embedding(part): if let Some(window) = windows.feed(part) { ... }
 ```
 
-`Assembler` returns a window when its last piece arrives: the embedding a
-head consumes, the tokens generation starts from, both quantized exactly
-as the device's heads receive them.
+## Run your own head
 
-## Its name, the model's cadence, and a synthetic signal
+A transfer tells you what to write, and you tell it what the device answered.
 
 ```rust
-use intomind::protocol::control::mode;
+use intomind::{Step, Transfer};
 
-let ask = session.set_name("Ada", "Blue", "IntoMind One")?;   // refused unless the whole fits 29 bytes
-let labels = intomind::display_names(&["Ada's IntoMind One", "Ada's IntoMind One"]);
-// ["Ada's IntoMind One", "Ada's IntoMind One 2"]: the number is the host's
-let every_minute = session.set_model_interval(60)?;         // 0 is every window it can
-let synthetic = session.set_mode(mode::SYNTHETIC)?;         // the device generates the signal
-// every Event::Samples(batch) it sends has batch.synthetic set
+let mut transfer = Transfer::head(&session, 2, &blob)?;   // slot 2: slot 1 holds the open sex head
+loop {
+    match transfer.step(&blob) {
+        Step::Send(command) => {
+            write(&command);
+            transfer.on_answer(&update_answer()?, &blob)?;
+        }
+        Step::Data { from, to, .. } => {
+            write_data(&blob[from..to]);
+            transfer.sent(to - from);
+        }
+        Step::Verified(_) => break,
+    }
+}
 ```
+
+Then select it with `session.select_head(2)` and turn predictions on with `session.set_predictions(true)`. Heads are trained in [Python](/python.html#the-model).
 
 ## The timebase
 
-Device time onto host time is a line through several exchanges, and the
-fit refuses what it cannot measure. One exchange fixes an offset and
-claims no rate. A skew beyond a thousand parts per million is not two
-crystals disagreeing, and a slope drawn through a stalled exchange is not
-a measurement, so both are dropped and the offset is kept.
+`Timebase` maps device time onto your computer's clock from time exchanges with the device. One exchange gives the offset between the clocks, and a rate needs at least three.
 
 ```rust
-let mut tb = Timebase::new(info.time_tick_hz);
-tb.observe(Exchange { before, after, device_ticks });
-tb.host_time(sample_device_time);
+use intomind::{Exchange, Timebase};
+
+let mut timebase = Timebase::new(info.time_tick_hz);
+timebase.observe(Exchange { before, after, device_ticks });
+let seconds = timebase.host_time(device_ticks);
 ```
+
+The crates are tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
+
+## License
+
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.

@@ -1,0 +1,323 @@
+/* docs.intomind.com. The brand is intomind.com's: its pink, gold, green and
+   blue, and Sen for headings. Text is set in Noto Sans. The layout is plain
+   and informational: large type, thin rules, small monospace labels. */
+
+@font-face {
+  font-family: "Sen";
+  src: url("/assets/fonts/Sen-variable.ttf") format("truetype");
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light dark;
+  --pink: #ee2b7b;
+  --gold: #f7931a;
+  --green: #4caf50;
+  --blue: #2f80ed;
+  --brand: linear-gradient(90deg, var(--pink), var(--gold) 38%, var(--green) 68%, var(--blue));
+  --paper: #f2f2ee;
+  --raised: #fafaf7;
+  --ink: #111111;
+  --soft: #66665f;
+  --rule: rgb(17 17 17 / 0.14);
+  --tint: #e7e7e1;
+  --link: #1f6fd6;
+  --code-bg: #222222;
+  --code-ink: #f2f2ee;
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --sans: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  --display: "Sen", var(--sans);
+  --side: 15.5rem;
+  --toc: 13rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #222222;
+    --raised: #2a2a2a;
+    --ink: #f2f2ee;
+    --soft: #a3a39b;
+    --rule: rgb(242 242 238 / 0.16);
+    --tint: #2e2e2c;
+    --link: #79aef5;
+    --code-bg: #161616;
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16.5px/1.7 var(--sans);
+  text-rendering: optimizeLegibility;
+}
+
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 1rem; top: 1rem; z-index: 20; background: var(--raised); padding: 0.5rem 1rem; }
+
+/* The bar along the top. */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 1rem;
+  height: 3.75rem; padding: 0 1.25rem;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.top::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--brand);
+}
+.mark {
+  font-family: var(--display); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.01em;
+  color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.mark sup { font-size: 0.5em; font-weight: 400; margin-left: 0.05em; }
+.docs {
+  font-family: var(--display); font-weight: 600; font-size: 1.2rem; text-decoration: none; white-space: nowrap;
+  margin-left: -0.45rem; padding-left: 0.6rem; border-left: 1px solid var(--rule); color: var(--soft);
+}
+.docs:hover { color: var(--ink); }
+.menu { display: none; }
+
+.search { position: relative; flex: 0 1 22rem; margin-left: 1.5rem; }
+.search input {
+  width: 100%; font: inherit; font-size: 0.95rem; color: var(--ink);
+  background: var(--tint); border: 1px solid transparent; border-radius: 0.6rem;
+  padding: 0.42rem 2.2rem 0.42rem 0.8rem;
+}
+.search input:focus { outline: none; border-color: var(--blue); background: var(--raised); }
+.search kbd {
+  position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%);
+  font: 0.75rem var(--mono); color: var(--soft); border: 1px solid var(--rule); border-radius: 0.3rem; padding: 0 0.35rem;
+}
+.search input:focus + kbd { display: none; }
+#results {
+  position: absolute; left: 0; right: 0; top: calc(100% + 0.4rem); margin: 0; padding: 0.35rem; list-style: none;
+  background: var(--raised); border: 1px solid var(--rule); border-radius: 0.7rem;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.14); max-height: 70vh; overflow-y: auto;
+}
+#results a { display: block; padding: 0.5rem 0.65rem; border-radius: 0.45rem; text-decoration: none; color: var(--ink); }
+#results a:hover, #results li[aria-selected="true"] a { background: var(--tint); }
+#results b { display: block; font-weight: 600; font-size: 0.93rem; }
+#results small { display: block; color: var(--soft); font-size: 0.82rem; line-height: 1.4; }
+#results mark { background: color-mix(in srgb, var(--gold) 30%, transparent); color: inherit; border-radius: 2px; }
+#results .none { padding: 0.6rem 0.7rem; color: var(--soft); font-size: 0.9rem; }
+
+/* The three columns: pages, the page, and its contents. */
+.frame {
+  display: grid; grid-template-columns: var(--side) minmax(0, 1fr) var(--toc);
+  max-width: 88rem; margin: 0 auto; gap: 0 2.5rem; padding: 0 1.25rem;
+}
+.sidebar {
+  position: sticky; top: 3.75rem; align-self: start; max-height: calc(100vh - 3.75rem); overflow-y: auto;
+  padding: 1.75rem 0 2rem; font-size: 0.94rem;
+}
+.sidebar > ul { margin-top: 0.2rem; }
+.sidebar .group > p, .sidebar summary {
+  margin: 0 0 0.3rem; font: 600 0.75rem/1.4 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft);
+}
+.sidebar summary { cursor: pointer; margin-bottom: 0.4rem; }
+.sidebar ul { list-style: none; margin: 0; padding: 0; }
+.sidebar a {
+  display: block; padding: 0.28rem 0.7rem; border-radius: 0.45rem; color: var(--ink); text-decoration: none;
+  border-left: 2px solid transparent;
+}
+.sidebar a:hover { background: var(--tint); }
+.sidebar a[aria-current="page"] {
+  background: var(--tint); font-weight: 600; border-left-color: var(--pink); border-radius: 0 0.45rem 0.45rem 0;
+}
+
+main { min-width: 0; padding: 2.25rem 0 5rem; }
+article { max-width: 47rem; }
+
+.toc {
+  position: sticky; top: 3.75rem; align-self: start; max-height: calc(100vh - 3.75rem); overflow-y: auto;
+  padding: 2.4rem 0 2rem; font-size: 0.86rem;
+}
+.toc p { margin: 0 0 0.6rem; font: 500 0.72rem/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); }
+.toc ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--rule); }
+.toc a { display: block; padding: 0.2rem 0 0.2rem 0.85rem; margin-left: -1px; color: var(--soft); text-decoration: none; border-left: 2px solid transparent; line-height: 1.45; }
+.toc .l3 a { padding-left: 1.6rem; font-size: 0.82rem; }
+.toc a:hover { color: var(--ink); }
+.toc a.here { color: var(--ink); border-left-color: var(--blue); }
+
+/* Text. */
+h1, h2, h3, h4 { font-family: var(--display); line-height: 1.22; letter-spacing: -0.005em; }
+h1 { font-size: clamp(2.4rem, 5vw, 3.3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; margin: 0.4rem 0 1.4rem; }
+h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; margin: 3.2rem 0 0.9rem; padding-top: 1.3rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.18rem; font-weight: 700; margin: 2.1rem 0 0.5rem; }
+h4 { font-size: 1rem; margin: 1.6rem 0 0.4rem; }
+p, li { max-width: 42rem; }
+.tm { font-size: 0.42em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.04em; }
+
+.lead { font-size: 1.2rem; line-height: 1.6; color: var(--soft); max-width: 40rem; }
+a { color: var(--link); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+strong { font-weight: 650; }
+ul, ol { padding-left: 1.35rem; }
+li { margin: 0.25rem 0; }
+li::marker { color: var(--soft); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+.source { font-size: 0.88rem; color: var(--soft); margin: 0 0 0.8rem; }
+
+code { font-family: var(--mono); font-size: 0.86em; background: var(--tint); padding: 0.12em 0.34em; border-radius: 0.3rem; }
+pre {
+  position: relative; margin: 1.25rem 0 1.5rem; padding: 1.05rem 1.15rem; overflow-x: auto;
+  background: var(--code-bg); color: var(--code-ink); border-radius: 0.75rem; font-size: 0.875rem; line-height: 1.6;
+  tab-size: 4;
+}
+pre[data-lang] { padding-top: 2.1rem; }
+pre[data-lang]::before {
+  content: attr(data-lang); position: absolute; left: 1.15rem; top: 0.6rem;
+  font: 600 0.68rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: #b9b1a5;
+}
+pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+pre .k { color: #ff6fa8; }
+pre .s { color: #8fd694; }
+pre .n { color: #ffb75e; }
+pre .f { color: #7fb3ff; }
+pre .t { color: #ffd479; }
+pre .c { color: #9b9387; font-style: italic; }
+.copy {
+  position: absolute; right: 0.55rem; top: 0.45rem; font: 600 0.72rem/1 var(--sans); color: #d9d2c7;
+  background: rgb(255 255 255 / 0.08); border: 1px solid rgb(255 255 255 / 0.14); border-radius: 0.4rem;
+  padding: 0.35rem 0.55rem; cursor: pointer; opacity: 0; transition: opacity 0.15s;
+}
+pre:hover .copy, .copy:focus { opacity: 1; }
+.copy.done { color: #8fd694; }
+
+/* The scroll box reaches a little past the text on each side, so a light's glow in the first
+   column is not cut off, and the rule stays on the table itself. */
+.table { overflow-x: auto; margin: 1.25rem -1rem 1.6rem; padding: 0 1rem; }
+.table table { border-top: 1px solid var(--ink); }
+table { border-collapse: collapse; width: 100%; font-size: 0.94rem; }
+th, td { text-align: left; vertical-align: top; padding: 0.62rem 1rem 0.62rem 0; border-bottom: 1px solid var(--rule); }
+tbody tr:last-child td { border-bottom: 0; }
+th { font: 500 0.72rem/1.5 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); }
+td code { white-space: nowrap; }
+
+.callout { margin: 1.4rem 0; padding: 0.85rem 1.05rem; border-radius: 0.7rem; border-left: 3px solid var(--blue);
+  background: color-mix(in srgb, var(--blue) 8%, var(--paper)); }
+.callout p { margin: 0; }
+.callout.important, .callout.warning { border-left-color: var(--pink); background: color-mix(in srgb, var(--pink) 7%, var(--paper)); }
+
+figure { margin: 1.75rem 0; }
+figure img, figure svg { max-width: 100%; height: auto; display: block; border-radius: 0.6rem; }
+figcaption { margin-top: 0.55rem; font-size: 0.88rem; color: var(--soft); }
+
+/* Cards that lead on from the start page. */
+.paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr)); gap: 0.9rem; margin: 1.5rem 0 2rem; padding: 0; list-style: none; }
+.paths li { max-width: none; margin: 0; }
+.paths a {
+  display: block; height: 100%; padding: 1rem 1.1rem 1.05rem; border: 1px solid var(--rule); border-radius: 0.85rem;
+  color: var(--ink); text-decoration: none; background: var(--raised); position: relative; overflow: hidden;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.paths a::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--brand); opacity: 0; transition: opacity 0.15s; }
+.paths a:hover { border-color: color-mix(in srgb, var(--blue) 45%, var(--rule)); transform: translateY(-1px); }
+.paths a:hover::before { opacity: 1; }
+.paths b { display: block; font-family: var(--display); font-size: 1.05rem; margin-bottom: 0.2rem; }
+.paths span { display: block; color: var(--soft); font-size: 0.9rem; line-height: 1.5; }
+
+/* Interactive parts. */
+.widget { margin: 1.5rem 0 2rem; border: 1px solid var(--rule); border-radius: 0.9rem; background: var(--raised); padding: 1.1rem 1.2rem; }
+.widget:empty { display: none; }
+.widget h4 { margin: 0 0 0.75rem; font-size: 0.95rem; }
+.widget label { display: block; font-size: 0.85rem; color: var(--soft); margin-bottom: 0.25rem; }
+.widget input[type="text"], .widget textarea, .widget select {
+  width: 100%; font: inherit; font-size: 0.95rem; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 0.5rem; padding: 0.45rem 0.65rem;
+}
+.widget textarea { font-family: var(--mono); font-size: 0.85rem; min-height: 5rem; }
+.widget input:focus, .widget textarea:focus, .widget select:focus { outline: none; border-color: var(--blue); }
+.widget button {
+  font: 600 0.9rem var(--sans); color: #fff; background: var(--blue); border: 0; border-radius: 0.55rem; padding: 0.5rem 0.95rem; cursor: pointer;
+}
+.widget button.quiet { color: var(--ink); background: var(--tint); }
+.widget button:disabled { opacity: 0.5; cursor: default; }
+.widget .row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: end; }
+.widget .row > * { flex: 1 1 10rem; }
+.widget .row > select { flex: 0 1 9rem; }
+.widget .out { font-family: var(--mono); font-size: 0.88rem; }
+.widget .bad { color: var(--pink); }
+.widget .good { color: var(--green); }
+.meter { height: 0.45rem; border-radius: 1rem; background: var(--tint); overflow: hidden; margin: 0.6rem 0 0.3rem; }
+.meter i { display: block; height: 100%; background: var(--blue); border-radius: 1rem; transition: width 0.15s; }
+.meter.over i { background: var(--pink); }
+
+.lights { display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: 0.7rem; }
+.light { display: flex; gap: 0.8rem; align-items: center; padding: 0.65rem 0.75rem; border-radius: 0.65rem; background: var(--tint); }
+.light .lamp { flex: none; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: #3a372f; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25); }
+/* The status light is a red LED. */
+.light .lamp.on { background: #ff8a14; box-shadow: 0 0 0.3rem 0.1rem rgb(255 150 40 / 0.9), 0 0 1.1rem 0.3rem rgb(255 140 30 / 0.5); }
+.light b { display: block; font-size: 0.88rem; line-height: 1.3; }
+.light small { display: block; color: var(--soft); font-size: 0.78rem; line-height: 1.35; }
+.light.hidden-here b, .light.hidden-here small { color: var(--soft); opacity: 0.7; }
+
+.scope { width: 100%; height: 15rem; display: block; background: var(--code-bg); border-radius: 0.6rem; }
+.status { font-size: 0.88rem; color: var(--soft); margin: 0.6rem 0 0; }
+dl.fields { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; margin: 0.8rem 0 0; font-size: 0.88rem; }
+dl.fields dt { color: var(--soft); }
+dl.fields dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+
+footer { border-top: 1px solid var(--rule); color: var(--soft); font-size: 0.85rem; }
+footer div { max-width: 88rem; margin: 0 auto; padding: 1.5rem 1.25rem 2.5rem; }
+footer a { color: inherit; }
+
+/* Narrower screens: the contents go first, then the pages fold away. */
+@media (max-width: 1180px) {
+  .frame { grid-template-columns: var(--side) minmax(0, 1fr); }
+  .toc { display: none; }
+}
+@media (max-width: 860px) {
+  .frame { grid-template-columns: minmax(0, 1fr); }
+  .menu {
+    display: inline-flex; align-items: center; gap: 0.45rem; font: 600 0.88rem var(--sans); color: var(--ink);
+    background: var(--tint); border: 0; border-radius: 0.5rem; padding: 0.4rem 0.7rem; cursor: pointer;
+  }
+  .menu span, .menu span::before, .menu span::after { display: block; width: 0.9rem; height: 2px; background: currentColor; position: relative; }
+  .menu span::before, .menu span::after { content: ""; position: absolute; }
+  .menu span::before { top: -5px; }
+  .menu span::after { top: 5px; }
+  .sidebar {
+    position: fixed; z-index: 9; top: 3.75rem; left: 0; bottom: 0; width: min(20rem, 85vw); max-height: none;
+    background: var(--paper); border-right: 1px solid var(--rule); padding: 1.25rem; transform: translateX(-105%);
+    transition: transform 0.2s;
+  }
+  .sidebar.open { transform: none; box-shadow: 0 0 40px rgb(0 0 0 / 0.2); }
+  .search { margin-left: 0; }
+  .search kbd, .docs { display: none; }
+  main { padding-top: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+@media print {
+  .top, .sidebar, .toc, .copy, footer { display: none; }
+  .frame { display: block; }
+  pre { white-space: pre-wrap; }
+}
+
+/* Drawings, set inside the page so they follow its type and its colors. */
+.diagram { width: 100%; height: auto; display: block; }
+.diagram .d-box rect { fill: var(--raised); stroke: var(--rule); stroke-width: 1.2; }
+.diagram .d-box rect.alt { fill: var(--tint); }
+.diagram .d-title text { font: 700 15px var(--display); fill: var(--ink); }
+.diagram .d-text text { font: 12.5px var(--sans); fill: var(--soft); }
+.diagram .d-small text { font: 11px var(--sans); fill: var(--soft); }
+.diagram .d-line line, .diagram .d-line path { stroke: var(--soft); stroke-width: 1.5; fill: none; }
+.diagram .d-arrow { fill: var(--soft); }
+.diagram .d-sep { stroke: var(--rule); stroke-width: 1.2; }
+
+/* A steady light in the text, where the power light is described. */
+.lit { white-space: nowrap; }
+.lamp-inline {
+  display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 50%; margin-right: 0.45rem; vertical-align: -0.05rem;
+  background: #ff8a14; box-shadow: 0 0 0.25rem 0.08rem rgb(255 150 40 / 0.85), 0 0 0.8rem 0.2rem rgb(255 140 30 / 0.45);
+}

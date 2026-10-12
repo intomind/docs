@@ -1,129 +1,122 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rust | docs.intomind.com</title>
-<style>
-:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
-        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
-          --rule: #2d3138; --link: #8fb4f0; }
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
-header { border-bottom: 1px solid var(--rule); }
-nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
-nav .tm { font-size: 0.55em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.05em; }
-nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
-nav a:hover, nav a.here { color: var(--ink); }
-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
-p, li { max-width: 40rem; }
-a { color: var(--link); }
-code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-            font-size: 0.86em; }
-code { background: color-mix(in srgb, var(--rule) 45%, transparent);
-       padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
-      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
-pre code { background: none; padding: 0; }
-table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
-th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
-         border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; }
-blockquote { margin: 1.25rem 0; padding-left: 1rem;
-             border-left: 3px solid var(--rule); color: var(--quiet); }
-footer { border-top: 1px solid var(--rule); color: var(--quiet);
-         font-size: 0.85rem; }
-footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
-.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
-</style>
-<header><nav><a class="mark" href="https://intomind.com">IntoMind<sup class="tm">&trade;</sup></a><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="here">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
-<main><h1>Rust</h1>
-<pre><code>cargo add intomind</code></pre>
-<p>The client does no input and no output. It is handed bytes that arrived and it hands back bytes to send, which means it works over whatever Bluetooth stack you already have, on whatever runtime you already use, and it can be tested without either.</p>
-<pre><code>use intomind::{protocol::uuid_fill, Event, Session};
+<title>Rust | IntoMind documentation</title>
+<meta name="description" content="The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, and the timebase.">
+<link rel="canonical" href="https://docs.intomind.com/rust.html">
+<link rel="alternate" type="text/markdown" href="/rust.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="Rust">
+<meta property="og:description" content="The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, and the timebase.">
+<meta property="og:url" content="https://docs.intomind.com/rust.html">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Rust", "description": "The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, and the timebase.", "url": "https://docs.intomind.com/rust.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "Rust", "item": "https://docs.intomind.com/rust.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html">Command Center</a></li><li><a href="/python.html">Python</a></li><li><a href="/rust.html" aria-current="page">Rust</a></li><li><a href="/javascript.html">JavaScript</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>Rust</h1><p class="lead">The <code>intomind</code> crate is a client for the IntoMind One that does no input or output of its own. You give it the bytes your Bluetooth stack received, and it returns events and the bytes to send. It works with any Bluetooth library and any async runtime, or none.</p><pre data-lang="Terminal"><code class="language-sh">cargo add intomind</code></pre><div class="table"><table><thead><tr><th scope="col">Crate</th><th scope="col"></th></tr></thead><tbody><tr><td><code>intomind</code></td><td>the client, with the timebase and head uploads</td></tr><tr><td><code>intomind-protocol</code></td><td>the protocol's messages as code. <code>no_std</code>, with no dependencies</td></tr><tr><td><code>intomind-pipeline</code></td><td>the device's processing chain, so a chain can be checked before it is sent</td></tr><tr><td><code>intomind-model</code></td><td>the encoder's arithmetic, as the device does it. <code>no_std</code>. Enable it with <code>--features model</code></td></tr><tr><td><code>intomind-capture</code></td><td>a recording format of flat files and a manifest</td></tr></tbody></table></div><h2 id="connect-and-stream">Connect and stream</h2><p>Your Bluetooth library reads Device Info once, writes the commands the session builds, and passes every notification to the session.</p><pre data-lang="Rust"><code class="language-rust"><span class="k">use</span> intomind::protocol::uuid_fill;
+<span class="k">use</span> intomind::{<span class="t">Event</span>, <span class="t">Session</span>};
 
-let mut session = Session::new();
-session.on_device_info(&amp;read(uuid_fill::DEVICE_INFO)?)?;
+<span class="k">fn</span> <span class="f">stream</span>(stack: &amp;<span class="k">mut</span> <span class="k">impl</span> <span class="t">Stack</span>) -&gt; <span class="t">Result</span>&lt;(), <span class="t">Box</span>&lt;<span class="k">dyn</span> std::error::<span class="t">Error</span>&gt;&gt; {
+    <span class="k">let</span> <span class="k">mut</span> session = <span class="t">Session</span>::<span class="f">new</span>();
+    session.<span class="f">on_device_info</span>(&amp;stack.<span class="f">read</span>(uuid_fill::DEVICE_INFO)?)?;
+    <span class="k">let</span> info = *session.<span class="f">info</span>()?;
 
-let command = session.start_stream();
-write(command.characteristic, &amp;command.bytes, command.with_response)?;
+    <span class="k">let</span> start = session.<span class="f">start_stream</span>();
+    stack.<span class="f">write</span>(start.characteristic, &amp;start.bytes, start.with_response)?;
 
-for event in session.on_notification(uuid_fill::EEG_DATA, &amp;notification) {
-    match event {
-        Event::Samples(batch) =&gt; {
-            let info = *session.info()?;
-            for row in 0..batch.rows() {
-                let uv = batch.microvolts(row, 0, &amp;info);
+    <span class="k">while</span> <span class="k">let</span> <span class="f">Some</span>((characteristic, bytes)) = stack.<span class="f">next_notification</span>() {
+        <span class="k">for</span> event <span class="k">in</span> session.<span class="f">on_notification</span>(characteristic, &amp;bytes) {
+            <span class="k">match</span> event {
+                <span class="t">Event</span>::<span class="f">Samples</span>(batch) =&gt; {
+                    <span class="k">for</span> row <span class="k">in</span> <span class="n">0</span>..batch.<span class="f">rows</span>() {
+                        <span class="k">let</span> uv = batch.<span class="f">microvolts</span>(row, <span class="n">0</span>, &amp;info); <span class="c">// channel 1, in microvolts</span>
+                        <span class="f">println!</span>(<span class="s">"{} {uv:.2}"</span>, batch.index + row <span class="k">as</span> u32);
+                    }
+                }
+                <span class="c">// None when the device restarted its count.</span>
+                <span class="t">Event</span>::<span class="f">Gap</span>(gap) =&gt; <span class="f">println!</span>(<span class="s">"gap {:?}"</span>, gap.samples_lost),
+                <span class="t">Event</span>::<span class="t">Duplicate</span> { .. } =&gt; {} <span class="c">// another program is listening: dropped</span>
+                _ =&gt; {}
             }
         }
-        Event::Gap(gap) =&gt; {
-            // Written down, never smoothed over. `samples_lost` is None
-            // for a re-base, whose extent is not a number.
-        }
-        Event::Duplicate { .. } =&gt; {
-            // A packet that arrived twice, dropped: another program on
-            // this computer is listening to the device.
-        }
-        _ =&gt; {}
     }
-}</code></pre>
-<h2>The crates</h2>
-<table><thead><tr><th></th><th></th></tr></thead><tbody>
-<tr><td><code>intomind</code></td><td>a device as a state machine, over any transport</td></tr>
-<tr><td><code>intomind-protocol</code></td><td>the wire, and nothing else. <code>no_std</code>, no dependencies</td></tr>
-<tr><td><code>intomind-capture</code></td><td>what a recording is on disk</td></tr>
-<tr><td><code>intomind-model</code></td><td>the encoder, <code>no_std</code>, allocating nothing</td></tr>
-</tbody></table>
-<p><code>intomind-protocol</code> and <code>intomind-model</code> are the crates the device firmware itself builds. The wire and the arithmetic are the same by construction rather than by agreement.</p>
-<h2>Capabilities</h2>
-<pre><code>use intomind::protocol::device_info::capability;
+    <span class="f">Ok</span>(())
+}
 
-if session.can(capability::MODEL) { /* ... */ }
-session.set_leadoff(true)?;   // refused unless the device claims it</code></pre>
-<h2>Processing on the device</h2>
-<p>A device that claims the processing chain preprocesses its own signal, and the chain in force is readable at any time. A chain is checked here, with the device&#x27;s own rules from <code>intomind-pipeline</code>, before anything is sent.</p>
-<pre><code>use intomind::protocol::pipeline::{kind, Chain, Stage};
+<span class="c">/// What your Bluetooth library provides.</span>
+<span class="k">trait</span> <span class="t">Stack</span> {
+    <span class="k">fn</span> <span class="f">read</span>(&amp;<span class="k">mut</span> <span class="k">self</span>, fill: u16) -&gt; <span class="t">Result</span>&lt;<span class="t">Vec</span>&lt;u8&gt;, <span class="t">Box</span>&lt;<span class="k">dyn</span> std::error::<span class="t">Error</span>&gt;&gt;;
+    <span class="k">fn</span> <span class="f">write</span>(&amp;<span class="k">mut</span> <span class="k">self</span>, fill: u16, bytes: &amp;[u8], with_response: bool) -&gt; <span class="t">Result</span>&lt;(), <span class="t">Box</span>&lt;<span class="k">dyn</span> std::error::<span class="t">Error</span>&gt;&gt;;
+    <span class="k">fn</span> <span class="f">next_notification</span>(&amp;<span class="k">mut</span> <span class="k">self</span>) -&gt; <span class="t">Option</span>&lt;(u16, <span class="t">Vec</span>&lt;u8&gt;)&gt;;
+}</code></pre><p><code>intomind::protocol::uuid128(fill)</code> gives each characteristic's full UUID.</p><h2 id="commands">Commands</h2><p>Every command is checked against what the device reported, and one the device cannot carry out returns an error rather than bytes.</p><pre data-lang="Rust"><code class="language-rust"><span class="k">use</span> intomind::protocol::control::{indicator, mode};
+<span class="k">use</span> intomind::protocol::device_info::capability;
 
-let mut chain = Chain::NATURAL;
-chain.push(Stage::one(kind::HIGH_PASS, 5))?;       // 0.5 Hz, in tenths
-chain.push(Stage::two(kind::NOTCH, 580, 620))?;    // 58 to 62 Hz
-chain.push(Stage::one(kind::LOW_PASS, 0))?;        // automatic corner
-let command = session.set_pipeline(&amp;chain, 500)?;  // refused with its reason if it cannot run at 500
-let read = session.pipeline()?;                    // the answer decodes with pipeline::PipelineState</code></pre>
-<h2>The light, the registers, and embeddings</h2>
-<pre><code>use intomind::embeddings::{Assembler, Form};
-use intomind::protocol::control::indicator;
+<span class="k">if</span> session.<span class="f">can</span>(capability::LEADOFF) {
+    <span class="k">let</span> command = session.<span class="f">set_leadoff</span>(<span class="k">true</span>)?;
+}
+<span class="k">let</span> verbose = session.<span class="f">set_indicator</span>(indicator::VERBOSE)?;          <span class="c">// silent, reserved, verbose</span>
+<span class="k">let</span> identify = session.<span class="f">identify</span>(<span class="n">5</span>)?;                               <span class="c">// the status light winks for five seconds</span>
+<span class="k">let</span> name = session.<span class="f">set_name</span>(<span class="s">"Ada"</span>, <span class="s">"Blue"</span>, <span class="s">"IntoMind One"</span>)?;       <span class="c">// refused unless it fits 29 bytes</span>
+<span class="k">let</span> synthetic = session.<span class="f">set_mode</span>(mode::SYNTHETIC)?;                <span class="c">// the generated signal</span></code></pre><h2 id="processing-on-the-device">Processing on the device</h2><pre data-lang="Rust"><code class="language-rust"><span class="k">use</span> intomind::protocol::pipeline::{kind, <span class="t">Chain</span>, <span class="t">Stage</span>};
+<span class="k">use</span> intomind::{<span class="t">Command</span>, <span class="t">Error</span>, <span class="t">Session</span>};
 
-session.set_indicator(indicator::VERBOSE)?;             // silent, reserved, verbose
-session.identify(5)?;                                   // the light winks for five seconds
-let regs = session.converter_registers()?;              // answer decodes with control::ConverterRegisters
-let ask = session.set_embeddings(Some(Form::Both))?;    // the window embedding and the tokens
-let mut windows = Assembler::new(4, 20, Form::Both);    // channels, tokens per channel
-// for each Event::Embedding(e): if let Some(w) = windows.feed(e) { ... one whole window ... }</code></pre>
-<p><code>Assembler</code> returns a window when its last piece arrives: the embedding a head consumes, the tokens generation starts from, both quantized exactly as the device&#x27;s heads receive them.</p>
-<h2>Its name, the model&#x27;s cadence, and a synthetic signal</h2>
-<pre><code>use intomind::protocol::control::mode;
+<span class="k">fn</span> <span class="f">my_chain</span>(session: &amp;<span class="t">Session</span>) -&gt; <span class="t">Result</span>&lt;<span class="t">Command</span>, <span class="t">Error</span>&gt; {
+    <span class="k">let</span> <span class="k">mut</span> chain = <span class="t">Chain</span>::NATURAL;                    <span class="c">// no stages</span>
+    chain.<span class="f">push</span>(<span class="t">Stage</span>::<span class="f">one</span>(kind::HIGH_PASS, <span class="n">5</span>))?;       <span class="c">// 0.5 Hz, in tenths of a hertz</span>
+    chain.<span class="f">push</span>(<span class="t">Stage</span>::<span class="f">two</span>(kind::NOTCH, <span class="n">580</span>, <span class="n">620</span>))?;    <span class="c">// 58 to 62 Hz</span>
+    chain.<span class="f">push</span>(<span class="t">Stage</span>::<span class="f">one</span>(kind::LOW_PASS, <span class="n">0</span>))?;        <span class="c">// the automatic corner</span>
+    session.<span class="f">set_pipeline</span>(&amp;chain, <span class="n">500</span>)                  <span class="c">// refused, with the reason, if it cannot run at 500</span>
+}</code></pre><h2 id="embeddings">Embeddings</h2><pre data-lang="Rust"><code class="language-rust"><span class="k">use</span> intomind::embeddings::{<span class="t">Assembler</span>, <span class="t">Form</span>};
 
-let ask = session.set_name(&quot;Ada&quot;, &quot;Blue&quot;, &quot;IntoMind One&quot;)?;   // refused unless the whole fits 29 bytes
-let labels = intomind::display_names(&amp;[&quot;Ada&#x27;s IntoMind One&quot;, &quot;Ada&#x27;s IntoMind One&quot;]);
-// [&quot;Ada&#x27;s IntoMind One&quot;, &quot;Ada&#x27;s IntoMind One 2&quot;]: the number is the host&#x27;s
-let every_minute = session.set_model_interval(60)?;         // 0 is every window it can
-let synthetic = session.set_mode(mode::SYNTHETIC)?;         // the device generates the signal
-// every Event::Samples(batch) it sends has batch.synthetic set</code></pre>
-<h2>The timebase</h2>
-<p>Device time onto host time is a line through several exchanges, and the fit refuses what it cannot measure. One exchange fixes an offset and claims no rate. A skew beyond a thousand parts per million is not two crystals disagreeing, and a slope drawn through a stalled exchange is not a measurement, so both are dropped and the offset is kept.</p>
-<pre><code>let mut tb = Timebase::new(info.time_tick_hz);
-tb.observe(Exchange { before, after, device_ticks });
-tb.host_time(sample_device_time);</code></pre></main>
+<span class="k">let</span> ask = session.<span class="f">set_embeddings</span>(<span class="f">Some</span>(<span class="t">Form</span>::<span class="t">Window</span>))?;
+<span class="k">let</span> <span class="k">mut</span> windows = <span class="t">Assembler</span>::<span class="f">new</span>(<span class="n">4</span>, <span class="n">20</span>, <span class="t">Form</span>::<span class="t">Window</span>);  <span class="c">// channels, tokens per channel</span>
+<span class="c">// for each Event::Embedding(part): if let Some(window) = windows.feed(part) { ... }</span></code></pre><h2 id="run-your-own-head">Run your own head</h2><p>A transfer tells you what to write, and you tell it what the device answered.</p><pre data-lang="Rust"><code class="language-rust"><span class="k">use</span> intomind::{<span class="t">Step</span>, <span class="t">Transfer</span>};
+
+<span class="k">let</span> <span class="k">mut</span> transfer = <span class="t">Transfer</span>::<span class="f">head</span>(&amp;session, <span class="n">2</span>, &amp;blob)?;   <span class="c">// slot 2: slot 1 holds the open sex head</span>
+<span class="k">loop</span> {
+    <span class="k">match</span> transfer.<span class="f">step</span>(&amp;blob) {
+        <span class="t">Step</span>::<span class="f">Send</span>(command) =&gt; {
+            <span class="f">write</span>(&amp;command);
+            transfer.<span class="f">on_answer</span>(&amp;<span class="f">update_answer</span>()?, &amp;blob)?;
+        }
+        <span class="t">Step</span>::<span class="t">Data</span> { from, to, .. } =&gt; {
+            <span class="f">write_data</span>(&amp;blob[from..to]);
+            transfer.<span class="f">sent</span>(to - from);
+        }
+        <span class="t">Step</span>::<span class="f">Verified</span>(_) =&gt; <span class="k">break</span>,
+    }
+}</code></pre><p>Then select it with <code>session.select_head(2)</code> and turn predictions on with <code>session.set_predictions(true)</code>. Heads are trained in <a href="/python.html#the-model">Python</a>.</p><h2 id="the-timebase">The timebase</h2><p><code>Timebase</code> maps device time onto your computer's clock from time exchanges with the device. One exchange gives the offset between the clocks, and a rate needs at least three.</p><pre data-lang="Rust"><code class="language-rust"><span class="k">use</span> intomind::{<span class="t">Exchange</span>, <span class="t">Timebase</span>};
+
+<span class="k">let</span> <span class="k">mut</span> timebase = <span class="t">Timebase</span>::<span class="f">new</span>(info.time_tick_hz);
+timebase.<span class="f">observe</span>(<span class="t">Exchange</span> { before, after, device_ticks });
+<span class="k">let</span> seconds = timebase.<span class="f">host_time</span>(device_ticks);</code></pre><p>The crates are tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.</p>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#connect-and-stream">Connect and stream</a></li><li class="l2"><a href="#commands">Commands</a></li><li class="l2"><a href="#processing-on-the-device">Processing on the device</a></li><li class="l2"><a href="#embeddings">Embeddings</a></li><li class="l2"><a href="#run-your-own-head">Run your own head</a></li><li class="l2"><a href="#the-timebase">The timebase</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
+</div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-is not a medical device.</div></footer>
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+
+</body>
 </html>

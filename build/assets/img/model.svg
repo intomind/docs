@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" class="diagram">
+  <defs>
+    <marker id="md-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="d-arrow"/>
+    </marker>
+  </defs>
+  <g class="d-small"><text x="10" y="20">ON THE DEVICE</text><text x="10" y="196">ON YOUR COMPUTER</text></g>
+  <g class="d-box">
+    <rect x="10" y="32" width="132" height="110" rx="12"/>
+    <rect x="162" y="32" width="132" height="110" rx="12"/>
+    <rect x="314" y="32" width="132" height="110" rx="12"/>
+    <rect x="466" y="32" width="132" height="110" rx="12"/>
+    <rect x="618" y="32" width="132" height="110" rx="12"/>
+    <rect x="314" y="208" width="172" height="84" rx="12" class="alt"/>
+    <rect x="506" y="208" width="144" height="84" rx="12" class="alt"/>
+  </g>
+  <g>
+    <circle cx="30" cy="52" r="5" fill="#ee2b7b"/>
+    <circle cx="182" cy="52" r="5" fill="#f7931a"/>
+    <circle cx="334" cy="52" r="5" fill="#f7931a"/>
+    <circle cx="486" cy="52" r="5" fill="#4caf50"/>
+    <circle cx="638" cy="52" r="5" fill="#2f80ed"/>
+    <circle cx="334" cy="228" r="5" fill="#4caf50"/>
+    <circle cx="526" cy="228" r="5" fill="#2f80ed"/>
+  </g>
+  <g class="d-title">
+    <text x="42" y="57">Window</text>
+    <text x="194" y="57">Encoder</text>
+    <text x="346" y="57">Tokens</text>
+    <text x="498" y="57">Embedding</text>
+    <text x="650" y="57">Head</text>
+    <text x="346" y="233">Reconstruction</text>
+    <text x="538" y="233">Signal</text>
+  </g>
+  <g class="d-text">
+    <text x="24" y="84">4 seconds of</text><text x="24" y="102">4 channels, at</text><text x="24" y="120">500 per second</text>
+    <text x="176" y="84">a small neural</text><text x="176" y="102">network, whose</text><text x="176" y="120">weights stay here</text>
+    <text x="328" y="84">80 vectors, one</text><text x="328" y="102">per channel per</text><text x="328" y="120">fifth of a second</text>
+    <text x="480" y="84">76 numbers, the</text><text x="480" y="102">mean of the</text><text x="480" y="120">tokens</text>
+    <text x="632" y="84">your weights,</text><text x="632" y="102">up to 32</text><text x="632" y="120">outputs</text>
+    <text x="328" y="260">the open head:</text><text x="328" y="278">token to signal</text>
+    <text x="520" y="260">what the model</text><text x="520" y="278">kept of the window</text>
+  </g>
+  <g class="d-line" marker-end="url(#md-arrow)">
+    <line x1="142" y1="87" x2="160" y2="87"/>
+    <line x1="294" y1="87" x2="312" y2="87"/>
+    <line x1="446" y1="87" x2="464" y2="87"/>
+    <line x1="598" y1="87" x2="616" y2="87"/>
+    <line x1="380" y1="142" x2="380" y2="206"/>
+    <line x1="486" y1="250" x2="504" y2="250"/>
+  </g>
+  <line x1="10" y1="178" x2="750" y2="178" stroke-dasharray="4 5" class="d-sep"/>
+</svg>

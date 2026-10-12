@@ -1,70 +1,46 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Safety and care | docs.intomind.com</title>
-<style>
-:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
-        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
-          --rule: #2d3138; --link: #8fb4f0; }
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
-header { border-bottom: 1px solid var(--rule); }
-nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
-nav .tm { font-size: 0.55em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.05em; }
-nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
-nav a:hover, nav a.here { color: var(--ink); }
-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
-p, li { max-width: 40rem; }
-a { color: var(--link); }
-code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-            font-size: 0.86em; }
-code { background: color-mix(in srgb, var(--rule) 45%, transparent);
-       padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
-      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
-pre code { background: none; padding: 0; }
-table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
-th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
-         border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; }
-blockquote { margin: 1.25rem 0; padding-left: 1rem;
-             border-left: 3px solid var(--rule); color: var(--quiet); }
-footer { border-top: 1px solid var(--rule); color: var(--quiet);
-         font-size: 0.85rem; }
-footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
-.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
-</style>
-<header><nav><a class="mark" href="https://intomind.com">IntoMind<sup class="tm">&trade;</sup></a><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="here">Safety and care</a></nav></header>
-<main><h1>Safety and care</h1>
-<h2>This is not a medical device</h2>
-<p>It is not intended to diagnose, treat, cure, or prevent any disease or condition. It is a research and development instrument. Nothing it records or reports is a clinical measurement, and nothing on this site is medical advice.</p>
-<h2>Who should not use it</h2>
-<ul><li>Anyone with an implanted electrical device, including a pacemaker, a neurostimulator, or a cochlear implant, without asking the doctor who manages it first.</li><li>Anyone with broken or irritated skin where the electrodes would sit.</li><li>Children, unsupervised.</li></ul>
-<h2>While you are wearing it</h2>
-<p>The device is powered by a small battery and the electrodes are passive: they listen. Lead-off detection, which you turn on deliberately, passes a current far below anything you can feel.</p>
-<p>Take it off if the skin under an electrode becomes sore or red. Some people react to prolonged pressure rather than to the metal.</p>
-<p>Do not use it while driving, operating machinery, or doing anything where a distraction matters.</p>
-<h2>The battery</h2>
-<p>It is a lithium polymer cell. Treat it the way you would treat the one in a phone.</p>
-<ul><li>Charge it from an ordinary USB source.</li><li>Do not charge it unattended on a soft surface.</li><li>Do not puncture, crush, or take the device apart.</li><li>If the device becomes hot, swells, or smells, stop using it, put it somewhere with nothing flammable nearby, and do not charge it again.</li><li>Do not put it in household waste. Take it to a battery recycling point.</li></ul>
-<h2>Cleaning</h2>
-<p>Make sure the device is completely powered off and the charging cable and battery are unplugged.</p>
-<p>A damp cloth on the electrodes, then let them dry. No solvents, no alcohol, no abrasives: the electrodes are gold plated and the plating is what keeps them quiet.</p>
-<p>Do not submerge the device and do not run it under a tap. It is not sealed.</p>
-<h2>Your recordings</h2>
-<p>Everything the device records goes to your computer and stays there. No account is needed, nothing is uploaded, and the software works with no network at all.</p>
-<p>A recording of your brain is about as personal as data gets. If you share one, share it deliberately.</p></main>
+<title>Safety and care | IntoMind documentation</title>
+<meta name="description" content="Safety information for the IntoMind One: it is not a medical device, who should not use it, wearing it safely, the battery, cleaning, storage, and your recordings.">
+<link rel="canonical" href="https://docs.intomind.com/safety.html">
+<link rel="alternate" type="text/markdown" href="/safety.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="Safety and care">
+<meta property="og:description" content="Safety information for the IntoMind One: it is not a medical device, who should not use it, wearing it safely, the battery, cleaning, storage, and your recordings.">
+<meta property="og:url" content="https://docs.intomind.com/safety.html">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Safety and care", "description": "Safety information for the IntoMind One: it is not a medical device, who should not use it, wearing it safely, the battery, cleaning, storage, and your recordings.", "url": "https://docs.intomind.com/safety.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "Safety and care", "item": "https://docs.intomind.com/safety.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html">Command Center</a></li><li><a href="/python.html">Python</a></li><li><a href="/rust.html">Rust</a></li><li><a href="/javascript.html">JavaScript</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html" aria-current="page">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>Safety and care</h1><h2 id="not-a-medical-device">Not a medical device</h2><p>The IntoMind One is not intended to diagnose, treat, cure, or prevent any disease or condition. It is a research and development instrument. Nothing it records or reports is a clinical measurement, and nothing on this site is medical advice. You use it at your own risk.</p><h2 id="who-should-not-use-it">Who should not use it</h2><ul><li>Infants, young children, and anyone with a weak or sensitive scalp.</li><li>Anyone with an implanted electrical device, such as a pacemaker, a neurostimulator, or a cochlear implant, without first asking the doctor who manages it.</li><li>Anyone with broken or irritated skin where the electrodes would rest.</li></ul><h2 id="while-you-wear-it">While you wear it</h2><p>The device is designed to be safe against a single electrical fault on battery power only. To ensure safety, never wear it or touch its electrodes while USB is plugged in.</p><p>Do not use it in wet or damp conditions, or while driving, operating machinery, or doing anything else where a distraction could cause harm.</p><p>The electrodes only measure, except when you turn on lead-off detection, which passes a very small current through them. Take the device off if the skin under an electrode becomes sore or red.</p><h2 id="the-battery">The battery</h2><p>The device has a lithium polymer battery. Treat it as you would the battery in a phone.</p><ul><li>Charge it from an ordinary USB charger or computer.</li><li>Do not charge it unattended on a soft surface.</li><li>Do not puncture or crush the device.</li><li>If the device becomes hot, swells, or smells, stop using it, move it away from anything that can burn, and do not charge it again.</li><li>Do not put it in household waste. Take it to a battery recycling point.</li></ul><h2 id="cleaning">Cleaning</h2><p>With the power off, charger disconnected, and ideally the battery disconnected as well, wipe the electrodes with a damp cloth and let them dry. Do not use solvents, alcohol or abrasives on them.</p><p>Do not submerge the device or hold it under running water. It is not sealed.</p><h2 id="storage">Storage</h2><p>Store the device dry and charged. The battery drains slowly even while the device is off, and a lithium battery left empty for a long time may not recover.</p><h2 id="your-recordings">Your recordings</h2><p>Recordings are written to your own computer. The Command Center and the Python API send nothing over the internet and need no account. A recording of brain activity is personal data, so share one only on purpose.</p>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#not-a-medical-device">Not a medical device</a></li><li class="l2"><a href="#who-should-not-use-it">Who should not use it</a></li><li class="l2"><a href="#while-you-wear-it">While you wear it</a></li><li class="l2"><a href="#the-battery">The battery</a></li><li class="l2"><a href="#cleaning">Cleaning</a></li><li class="l2"><a href="#storage">Storage</a></li><li class="l2"><a href="#your-recordings">Your recordings</a></li></ul></aside>
+</div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-is not a medical device.</div></footer>
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+
+</body>
 </html>

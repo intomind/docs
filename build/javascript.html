@@ -1,101 +1,84 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JavaScript | docs.intomind.com</title>
-<style>
-:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
-        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
-          --rule: #2d3138; --link: #8fb4f0; }
+<title>JavaScript | IntoMind documentation</title>
+<meta name="description" content="The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.">
+<link rel="canonical" href="https://docs.intomind.com/javascript.html">
+<link rel="alternate" type="text/markdown" href="/javascript.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="JavaScript">
+<meta property="og:description" content="The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.">
+<meta property="og:url" content="https://docs.intomind.com/javascript.html">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "JavaScript", "description": "The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.", "url": "https://docs.intomind.com/javascript.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "JavaScript", "item": "https://docs.intomind.com/javascript.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html">Command Center</a></li><li><a href="/python.html">Python</a></li><li><a href="/rust.html">Rust</a></li><li><a href="/javascript.html" aria-current="page">JavaScript</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>JavaScript</h1><p class="lead">The <code>@intomind/sdk</code> package connects a web page to an IntoMind One over Web Bluetooth, with nothing for the user to install. It is written in TypeScript and also decodes the protocol in Node.</p><pre data-lang="Terminal"><code class="language-sh">npm install @intomind/sdk</code></pre><h2 id="try-it">Try it</h2><p>With an IntoMind One switched on and unplugged, and a browser that has <a href="#browsers">Web Bluetooth</a>, you can connect to it from this page. Nothing is recorded, and nothing leaves your browser.</p><div class="widget" data-widget="live-demo"></div><h2 id="connect-and-stream">Connect and stream</h2><pre data-lang="TypeScript"><code class="language-ts"><span class="k">import</span> { requestAndConnect } <span class="k">from</span> <span class="s">"@intomind/sdk"</span>;
+
+document.<span class="f">querySelector</span>(<span class="s">"#connect"</span>)?.<span class="f">addEventListener</span>(<span class="s">"click"</span>, <span class="k">async</span> () =&gt; {
+  <span class="k">const</span> link = <span class="k">await</span> <span class="f">requestAndConnect</span>();              <span class="c">// the browser lists the devices nearby</span>
+
+  link.<span class="f">on</span>((event) =&gt; {
+    <span class="k">if</span> (event.type === <span class="s">"samples"</span>) {
+      <span class="k">const</span> batch = event.batch;
+      <span class="k">for</span> (<span class="k">let</span> row = <span class="n">0</span>; row &lt; batch.rows; row++) {
+        <span class="k">const</span> uv = batch.<span class="f">microvolts</span>(row, <span class="n">0</span>, link.info);  <span class="c">// channel 1, in microvolts</span>
+      }
+    } <span class="k">else</span> <span class="k">if</span> (event.type === <span class="s">"gap"</span>) {
+      console.<span class="f">log</span>(<span class="s">"lost"</span>, event.gap.samplesLost);        <span class="c">// null when the device restarted its count</span>
+    }
+  });
+
+  <span class="k">const</span> answer = <span class="k">await</span> link.<span class="f">request</span>(link.session.<span class="f">startStream</span>());
+  <span class="k">if</span> (!answer.ok) console.<span class="f">log</span>(<span class="s">"refused:"</span>, answer.statusName);
+});</code></pre><p><code>requestAndConnect</code> must run from a click, on a page served over HTTPS or from <code>localhost</code>. The first connection pairs the device. <code>link.info</code> is what the device reported when it connected, and scaling a sample to microvolts needs it. Each batch carries the index and device time of its first sample, and a gap is announced before the batch that follows it.</p><h2 id="events">Events</h2><div class="table"><table><thead><tr><th scope="col">Event</th><th scope="col">Carries</th></tr></thead><tbody><tr><td><code>samples</code></td><td>samples, with <code>microvolts(row, channel, info)</code>, the first sample's index and device time, and whether the device generated them</td></tr><tr><td><code>gap</code></td><td>how many samples were lost, or <code>null</code> when the device restarted its count</td></tr><tr><td><code>status</code></td><td>battery, charger, whether USB is plugged in, and whether the device is streaming</td></tr><tr><td><code>answer</code></td><td>the device's answer to a command</td></tr><tr><td><code>prediction</code></td><td>a head's outputs for one window</td></tr><tr><td><code>duplicate</code></td><td>a packet that arrived twice and was dropped, because another program is listening to the device</td></tr></tbody></table></div><h2 id="commands">Commands</h2><p><code>link.request</code> sends a command and waits for the device's answer. A command for something the device does not report is refused before it is sent.</p><pre data-lang="TypeScript"><code class="language-ts"><span class="k">import</span> { protocol as P } <span class="k">from</span> <span class="s">"@intomind/sdk"</span>;
+
+<span class="k">const</span> s = link.session;
+<span class="k">await</span> link.<span class="f">request</span>(s.<span class="f">setRate</span>(<span class="n">250</span>));                     <span class="c">// refused while streaming</span>
+<span class="k">await</span> link.<span class="f">request</span>(s.<span class="f">setIndicator</span>(<span class="s">"verbose"</span>));          <span class="c">// "silent", "reserved" or "verbose"</span>
+<span class="k">await</span> link.<span class="f">request</span>(s.<span class="f">identify</span>(<span class="n">5</span>));                      <span class="c">// the status light winks for five seconds</span>
+<span class="k">await</span> link.<span class="f">request</span>(s.<span class="f">setName</span>(<span class="s">"Ada"</span>, <span class="s">"Blue"</span>));           <span class="c">// "Ada's Blue IntoMind One"</span>
+<span class="k">await</span> link.<span class="f">request</span>(s.<span class="f">setPipeline</span>([P.<span class="f">highpass</span>(<span class="n">0.5</span>), ...P.<span class="f">mainsBands</span>(<span class="n">60</span>, <span class="n">500</span>), P.<span class="f">lowpass</span>()], <span class="n">500</span>));
+<span class="k">await</span> link.<span class="f">request</span>(s.<span class="f">setMode</span>(<span class="s">"synthetic"</span>));             <span class="c">// the generated signal, at 500 per second</span></code></pre><p>A stream started while USB is plugged in answers status 7: the device does not stream from its electrodes on USB power.</p><h2 id="run-your-own-head">Run your own head</h2><p>Train a head in <a href="/python.html#the-model">Python</a>, then upload it from a page.</p><pre data-lang="TypeScript"><code class="language-ts"><span class="k">import</span> { <span class="t">Transfer</span> } <span class="k">from</span> <span class="s">"@intomind/sdk"</span>;
+
+<span class="k">const</span> transfer = <span class="t">Transfer</span>.<span class="f">head</span>(link.session, <span class="n">2</span>, blob);   <span class="c">// slot 2: slot 1 holds the open sex head</span>
+<span class="k">await</span> link.<span class="f">transfer</span>(transfer, blob, ({ taken, total }) =&gt; console.<span class="f">log</span>(<span class="s">`${taken} of ${total}`</span>));
+<span class="k">await</span> link.<span class="f">request</span>(link.session.<span class="f">selectHead</span>(<span class="n">2</span>));
+<span class="k">await</span> link.<span class="f">request</span>(link.session.<span class="f">setPredictions</span>(<span class="k">true</span>));</code></pre><h2 id="browsers">Browsers</h2><p>Web Bluetooth is in Chrome on Windows, macOS, ChromeOS and Android, and in Edge and Opera on Windows and macOS. On Linux, Chrome needs <code>chrome://flags/#enable-web-bluetooth</code> turned on. Safari and Firefox do not have it, and neither does any browser on an iPhone or iPad.</p><h2 id="node">Node</h2><p>Node has no Web Bluetooth, but everything except the connection works there. Pass the session the bytes your Bluetooth library receives, and write the bytes it returns.</p><pre data-lang="TypeScript"><code class="language-ts"><span class="k">import</span> { <span class="t">Session</span>, FILL } <span class="k">from</span> <span class="s">"@intomind/sdk"</span>;
+
+<span class="k">const</span> session = <span class="k">new</span> <span class="f">Session</span>();
+session.<span class="f">onDeviceInfo</span>(deviceInfoBytes);                  <span class="c">// read from the Device Info characteristic</span>
+<span class="k">for</span> (<span class="k">const</span> event <span class="k">of</span> session.<span class="f">onNotification</span>(FILL.EEG_DATA, notificationBytes)) {
+  <span class="c">// the same events as in a browser</span>
 }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
-header { border-bottom: 1px solid var(--rule); }
-nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
-nav .tm { font-size: 0.55em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.05em; }
-nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
-nav a:hover, nav a.here { color: var(--ink); }
-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
-p, li { max-width: 40rem; }
-a { color: var(--link); }
-code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-            font-size: 0.86em; }
-code { background: color-mix(in srgb, var(--rule) 45%, transparent);
-       padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
-      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
-pre code { background: none; padding: 0; }
-table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
-th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
-         border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; }
-blockquote { margin: 1.25rem 0; padding-left: 1rem;
-             border-left: 3px solid var(--rule); color: var(--quiet); }
-footer { border-top: 1px solid var(--rule); color: var(--quiet);
-         font-size: 0.85rem; }
-footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
-.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
-</style>
-<header><nav><a class="mark" href="https://intomind.com">IntoMind<sup class="tm">&trade;</sup></a><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="here">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
-<main><h1>JavaScript</h1>
-<pre><code>npm install @intomind/sdk</code></pre>
-<p>The same protocol, in TypeScript, for browsers and Node. In a browser it uses Web Bluetooth, so a page can talk to a device with nothing installed.</p>
-<pre><code>import { requestAndConnect } from &quot;@intomind/sdk&quot;;
-
-// The browser asks the user to pick a device. It must start from a click.
-const link = await requestAndConnect();
-
-link.on((event) =&gt; {
-  if (event.type === &quot;samples&quot;) {
-    const uv = event.batch.microvolts(0, 0, link.info);
-  }
-  if (event.type === &quot;gap&quot;) {
-    // written down, never smoothed over
-  }
-});
-
-await link.send(link.session.startStream());</code></pre>
-<p>A device that claims the processing chain preprocesses its own signal, and the chain is checked here with the device&#x27;s own rules before it is sent:</p>
-<pre><code>import { protocol as P } from &quot;intomind&quot;;
-
-await link.send(link.session.setPipeline([P.highpass(0.5), ...P.mainsBands(60, 500), P.lowpass()], 500));
-const state = P.decodePipelineState((await link.request(link.session.pipeline())).payload);</code></pre>
-<p><code>link.info</code> is what the device said it is, read before anything was asked of it. Scaling a count needs it, because the reference voltage and the converter width are the device&#x27;s to state and not this library&#x27;s to assume.</p>
-<p>Pass <code>onEvent</code> to <code>requestAndConnect</code> instead if you need the events that arrive while the link is still being set up. That callback cannot refer to the link, because the link does not exist yet.</p>
-<h2>The same rules as everywhere else</h2>
-<ul><li>What a device can do is the bits it reports, not a version number.</li><li>A gap is announced before the samples that follow it, so anything writing samples down writes the break down first and can never splice.</li><li>A loss carries an exact count. A break carries none, because zero missing samples is a different statement from an unknown extent.</li><li>A packet that arrives twice is dropped and counted, and a <code>duplicate</code> event says so. It means another program on the same computer is listening to the device.</li><li>Nothing assumes a channel count, a converter width, or a reference voltage. They come from the device.</li></ul>
-<h2>Held to the same vectors</h2>
-<p>The package is tested against <code>contract/conformance.json</code>, which the device firmware emits from the codec it runs: 66 messages to decode and 56 to refuse. So is the Rust crate, and so is the Python library. An implementation that drifts fails a test rather than a session.</p>
-<p>One warning if you read that file yourself. It writes every 64-bit field as a decimal string, because a device time runs past what a JSON number holds exactly. Parse it with <code>BigInt</code>, not <code>Number</code>.</p>
-<h2>The light, the registers, and embeddings</h2>
-<pre><code>session.setIndicator(&quot;verbose&quot;);           // silent, reserved, verbose
-session.identify(5);                       // the light winks for five seconds
-session.converterRegisters();              // answer decodes with decodeConverterRegisters, describeAds1299Registers
-session.setEmbeddings(&quot;both&quot;);             // the window embedding and the tokens
-const windows = new EmbeddingAssembler(4, 20, &quot;both&quot;);   // channels, tokens per channel
-// for each event of type &quot;embedding&quot;: const w = windows.feed(event.embedding); if (w) { ... one whole window ... }</code></pre>
-<h2>Its name, the model&#x27;s cadence, and a synthetic signal</h2>
-<pre><code>P.composeName(&quot;Ada&quot;, &quot;Blue&quot;);              // &quot;Ada&#x27;s Blue IntoMind One&quot;
-P.nameFits(&quot;Beatrice&quot;, &quot;Purple&quot;);          // false: 30 bytes, over the 29 a scan list shows
-session.setName(&quot;Ada&quot;, &quot;Blue&quot;);            // refused before sending if it would not fit
-session.getName();                         // answer decodes with decodeNameParts
-P.displayNames([&quot;Ada&#x27;s IntoMind One&quot;, &quot;Ada&#x27;s IntoMind One&quot;]);   // the second becomes &quot;Ada&#x27;s IntoMind One 2&quot;
-session.setModelInterval(60);              // one window a minute; 0 is every window it can
-session.modelInterval();                   // answer decodes with decodeModelInterval
-session.setMode(&quot;synthetic&quot;);              // the device generates the signal, at 500 per second
-// every batch it sends says so: event.batch.synthetic</code></pre>
-<p>The number <code>displayNames</code> adds to a shared name is the host&#x27;s. The device never holds it.</p>
-<h2>Web Bluetooth</h2>
-<p>Works in Chrome and Edge on desktop and Android. Safari and Firefox do not implement Web Bluetooth. The page must be served over HTTPS, or from localhost, and the connection has to start from something the user clicked.</p></main>
+<span class="k">const</span> command = session.<span class="f">startStream</span>();                  <span class="c">// write command.bytes to its characteristic</span></code></pre><p>The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.</p>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#try-it">Try it</a></li><li class="l2"><a href="#connect-and-stream">Connect and stream</a></li><li class="l2"><a href="#events">Events</a></li><li class="l2"><a href="#commands">Commands</a></li><li class="l2"><a href="#run-your-own-head">Run your own head</a></li><li class="l2"><a href="#browsers">Browsers</a></li><li class="l2"><a href="#node">Node</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
+</div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-is not a medical device.</div></footer>
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+<script type="module" src="/assets/widgets/live.js"></script>
+</body>
 </html>

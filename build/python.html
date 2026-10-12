@@ -1,161 +1,109 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Python | docs.intomind.com</title>
-<style>
-:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
-        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
-          --rule: #2d3138; --link: #8fb4f0; }
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
-header { border-bottom: 1px solid var(--rule); }
-nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
-nav .tm { font-size: 0.55em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.05em; }
-nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
-nav a:hover, nav a.here { color: var(--ink); }
-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
-p, li { max-width: 40rem; }
-a { color: var(--link); }
-code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-            font-size: 0.86em; }
-code { background: color-mix(in srgb, var(--rule) 45%, transparent);
-       padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
-      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
-pre code { background: none; padding: 0; }
-table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
-th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
-         border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; }
-blockquote { margin: 1.25rem 0; padding-left: 1rem;
-             border-left: 3px solid var(--rule); color: var(--quiet); }
-footer { border-top: 1px solid var(--rule); color: var(--quiet);
-         font-size: 0.85rem; }
-footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
-.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
-</style>
-<header><nav><a class="mark" href="https://intomind.com">IntoMind<sup class="tm">&trade;</sup></a><a href="index.html" class="">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="here">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
-<main><h1>Python</h1>
-<pre><code>pip install intomind</code></pre>
-<p>The instrument library: the link to a device, the protocol, the recording, its provenance, the exports, and the analyses that read it back.</p>
-<pre><code>from intomind.client import display_names, scan
-from intomind.session import Session
+<title>Python | IntoMind documentation</title>
+<meta name="description" content="The intomind Python API for the IntoMind One: install, connect, stream, set up the device, collect embeddings and run heads, read recordings, export, and analyze.">
+<link rel="canonical" href="https://docs.intomind.com/python.html">
+<link rel="alternate" type="text/markdown" href="/python.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="Python">
+<meta property="og:description" content="The intomind Python API for the IntoMind One: install, connect, stream, set up the device, collect embeddings and run heads, read recordings, export, and analyze.">
+<meta property="og:url" content="https://docs.intomind.com/python.html">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Python", "description": "The intomind Python API for the IntoMind One: install, connect, stream, set up the device, collect embeddings and run heads, read recordings, export, and analyze.", "url": "https://docs.intomind.com/python.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "Python", "item": "https://docs.intomind.com/python.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html">Command Center</a></li><li><a href="/python.html" aria-current="page">Python</a></li><li><a href="/rust.html">Rust</a></li><li><a href="/javascript.html">JavaScript</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>Python</h1><p class="lead">The <code>intomind</code> package is the Python API for the IntoMind One. It connects to the device, streams its signal, and reads, exports and analyzes recordings. The <a href="/command-center.html">Command Center</a> is built on it.</p><pre data-lang="Terminal"><code class="language-sh">pip install 'intomind[analysis]'</code></pre><p>It needs Python 3.11 or newer. The <code>analysis</code> extra installs SciPy, which reading recordings, exporting and the analyses need. For MATLAB export, install <code>'intomind[analysis,mat]'</code>.</p><pre data-lang="Python"><code class="language-python"><span class="k">import</span> asyncio
 
-found = await scan()                   # every device that answered, as heard
-labels = display_names(found)          # each one&#x27;s name, numbered when two share one
-chosen = next(d for d in found if labels[d.address] == &quot;Ada&#x27;s IntoMind One&quot;)
-s = Session()
-await s.connect(chosen)                # only the one picked
-device = s.devices[0]
+<span class="k">from</span> intomind.client <span class="k">import</span> display_names, scan
+<span class="k">from</span> intomind.session <span class="k">import</span> <span class="t">Session</span>
 
-device.on_sample = lambda dev, sample: print(sample.uv)
-await device.start()</code></pre>
-<p>Nothing connects that was not chosen. With two devices in a room, the first to answer a scan is not necessarily the one you meant.</p>
-<p>The first connection pairs the device with the computer, and the pairing is kept, so later connections do not pair again. On Linux the library answers the pairing itself, so no settings window is needed and a headless machine works. Pairing from the system&#x27;s Bluetooth settings first works too: the library finds the device paired and asks nothing, and it finds a device the computer is already connected to, which does not advertise and no scan alone could see. The library is never the system&#x27;s default pairing agent, so the rest of your Bluetooth behaves as before. If a connection fails with a message that the link could not be secured, the remedy is in the message.</p>
-<h2>The device answers for itself</h2>
-<p>Nothing in the library holds a table of hardware. What a device can do is what the device reports.</p>
-<pre><code>device.info.channels          # what it said
-device.info.adc_bits          # what it said
-device.info.rates             # what it said
-device.can(&quot;model&quot;)           # a capability bit, not a version number
-device.profile()              # the controls to offer, composed from the above</code></pre>
-<p>Asking a device for something it does not claim is refused before anything reaches the wire, with a message that says which capability is missing.</p>
-<h2>Processing on the device</h2>
-<p>A device that claims the processing chain preprocesses its own signal. Filters come first: a high-pass, a low-pass, and any number of notch bands, on from the first use with the device&#x27;s own default. When a chain is in force only its output streams, and the chain is readable at any time, so a recording says exactly what produced its samples. There is no raw-or-filtered flag anywhere, because a flag says nothing about what a signal is.</p>
-<pre><code>from intomind import protocol
 
-device.pipeline()                       # the chain in force, and whose it is
-device.set_pipeline([protocol.highpass(0.5),
-                     *protocol.mains_bands(50, 500),  # the bands 500/s can carry
-                     protocol.lowpass()])   # automatic corner for the rate
-device.restore_pipeline_default()
-device.clear_pipeline()                 # the natural signal
-device.pipeline_at_start                # what the last stream was made by
-protocol.describe_chain(device.pipeline().stages, 500)</code></pre>
-<p>The rules a chain must meet are the device&#x27;s, restated in the library, so a chain that cannot run at the device&#x27;s rate is refused in words before anything is sent. The device refuses a change while streaming: stop, set, start. The model follows the stream unless you point it elsewhere with <code>device.set_prediction_input</code>, at the natural signal or at a chain of its own, without touching the stream.</p>
-<h2>The light, and the converter&#x27;s registers</h2>
-<p>A device that claims the status light lets you choose how much it says. Silent shows nothing. Reserved, the default, shows low battery and a failed start-up check. Verbose adds waiting, connected, streaming, and update in progress. The device keeps the setting across power cycles, and it can blink on request so you know which device you are talking to.</p>
-<pre><code>await device.indicator()                 # &quot;reserved&quot;
-await device.set_indicator(&quot;verbose&quot;)
-await device.identify(5)                 # the light winks for five seconds</code></pre>
-<p>A device that claims register reading lets you see how its analog converter is set, raw and in words, for debugging. Read only, and only while not streaming.</p>
-<pre><code>regs = await device.converter_registers()
-regs.describe()      # data rate, gain and input per channel, bias, lead-off ...</code></pre>
-<h2>Its name</h2>
-<p>A device that claims a name keeps two parts you set, a name and an adjective, and advertises them composed with the product&#x27;s name. The whole is at most 29 bytes, which is what a scan list shows, so it is never cut short.</p>
-<pre><code>from intomind import protocol
+<span class="k">async</span> <span class="k">def</span> <span class="f">main</span>():
+    found = <span class="k">await</span> <span class="f">scan</span>()                       <span class="c"># every device that answered</span>
+    names = <span class="f">display_names</span>(found)               <span class="c"># address to name, numbered when two share one</span>
+    device = <span class="f">next</span>(d <span class="k">for</span> d <span class="k">in</span> found <span class="k">if</span> names[d.address] == <span class="s">"Ada's IntoMind One"</span>)
 
-await device.get_name()                     # (&quot;Ada&quot;, &quot;Blue&quot;)
-await device.set_name(&quot;Ada&quot;, &quot;Blue&quot;)        # refused in words if it would not fit
-protocol.compose_name(&quot;Ada&quot;, &quot;Blue&quot;)        # &quot;Ada&#x27;s Blue IntoMind One&quot;
-protocol.name_fits(&quot;Beatrice&quot;, &quot;Purple&quot;)    # False: 30 bytes</code></pre>
-<p>Two devices in one list may share a name. <code>display_names</code> numbers the later ones, and the number is your computer&#x27;s, never the device&#x27;s.</p>
-<pre><code>from intomind.client import display_names, scan
+    session = <span class="f">Session</span>()
+    <span class="k">await</span> session.<span class="f">connect</span>(device)              <span class="c"># only the device you picked</span>
+    device = session.devices[<span class="n">0</span>]
 
-labels = display_names(await scan())        # address to label, &quot;Ada&#x27;s IntoMind One 2&quot; for a twin</code></pre>
-<h2>A synthetic signal</h2>
-<p>A device that claims it can stream a signal it generates itself, in place of its electrodes, at 500 samples per second. Every sample says it was generated, and so does a recording made from it. The device runs one model at a time, so turn predictions and embeddings off first. While it generates, it refuses both.</p>
-<pre><code>await device.set_mode(&quot;synthetic&quot;)          # the converter off, the generator on
-device.on_sample = lambda dev, s: s.synthetic   # True for every generated sample
-await device.start()
-await device.stop()
-await device.set_mode(&quot;normal&quot;)             # back to the electrodes</code></pre>
-<p>What it is for and how close it comes to real EEG are on <a href="device.html">the device page</a>.</p>
-<h2>Embeddings and generation</h2>
-<p>A device that claims embeddings sends its encoder&#x27;s output for each window while it streams, on request: the window embedding a head consumes, the tokens that generation starts from, or both. No head needs to be selected.</p>
-<pre><code>await device.start()
-windows = await device.collect_embeddings(100, form=&quot;window&quot;)   # about seven minutes
-one = (await device.collect_embeddings(1, form=&quot;tokens&quot;))[0]
-device.on_embedding = lambda dev, w: print(w.index, len(w.embedding or []))
-await device.set_embeddings(&quot;both&quot;)      # or &quot;off&quot;</code></pre>
-<p>Each whole window carries the sample index and device time of its first sample, the encoder that produced it, and what it was taken from. What you do with them is in <a href="model.html">the model and heads</a>: train a head, or turn tokens back into signal with the open reconstruction head, which ships with the library as <code>Reconstructor.shipped()</code>.</p>
-<p>How often the model describes a window is yours to set: every window it can, which is the default, or one every so many seconds.</p>
-<pre><code>interval = await device.model_interval()    # the interval in force, and the device&#x27;s minimum
-await device.set_model_interval(60)         # one window a minute; 0 is every window it can</code></pre>
-<h2>Gaps are never papered over</h2>
-<p>Every sample carries the device&#x27;s own index and the device time of its own conversion. When something is missed, the recording says so.</p>
-<pre><code>capture = analysis.load(&quot;my-recording&quot;)
-capture.repairs               # anything load had to correct, in words
-capture.gap_before            # one flag per sample
-capture.meta[&quot;synthetic&quot;]     # true when the device generated the signal</code></pre>
-<p>A forward step in the index is a loss with an exact count. A step that is not forward is a break whose extent is not a number, and the library says unknown rather than returning a count that would be a fiction.</p>
-<p>A packet that arrives twice is dropped and counted, never recorded twice. It happens when another program on the same computer listens to the device, because the system sends each notification once per listener.</p>
-<pre><code>device.duplicates           # packets that arrived twice and were dropped
-device.another_listener     # another program is listening right now</code></pre>
-<h2>Recording</h2>
-<pre><code>from intomind import provenance
-provenance.use_captures_dir(&quot;~/study/captures&quot;)
-provenance.use_site({&quot;mains_hz&quot;: 50,
-                     &quot;electrode_montage&quot;: &quot;four over the forehead&quot;})</code></pre>
-<p>Anything you do not declare is recorded as unknown. Nothing is guessed.</p>
-<h2>Exports</h2>
-<pre><code>from intomind import export
+    device.on_sample = <span class="k">lambda</span> dev, sample: <span class="f">print</span>(sample.index, sample.uv)
+    <span class="k">await</span> device.<span class="f">start</span>()
+    <span class="k">await</span> asyncio.<span class="f">sleep</span>(<span class="n">5</span>)
+    <span class="k">await</span> device.<span class="f">stop</span>()
+    <span class="k">await</span> session.<span class="f">close</span>()
 
-export.FORMATS                # the six
-export.export(&quot;my-recording&quot;, &quot;bdf&quot;)</code></pre>
-<p>Every exporter refuses a recording that does not verify against its own checksums.</p>
-<h2>Analyses</h2>
-<pre><code>from intomind import analysis
 
-analysis.summary(&quot;my-recording&quot;)
-analysis.psd_curve(&quot;my-recording&quot;)
-analysis.berger(&quot;my-recording&quot;)     # eyes closed against eyes open</code></pre>
-<p>The analyses need scipy, which is an optional extra: <code>pip install &#x27;intomind[analysis]&#x27;</code>.</p>
-<h2>The model</h2>
-<p>See <a href="model.html">the model and heads</a>.</p>
-<h2>Hardware this library was not written for</h2>
-<p>An adapter claims a device and hangs its own methods off <code>device.extra</code>. The library never calls into one, so a device with no adapter behaves exactly as documented. See <code>adapters.py</code>.</p></main>
+asyncio.<span class="f">run</span>(<span class="f">main</span>())</code></pre><p>Each sample carries the device's index (<code>sample.index</code>), the device time at which it was converted (<code>sample.device_time</code>), that time on your computer's clock (<code>sample.host_time</code>), and one value per channel in microvolts (<code>sample.uv</code>).</p><p>The first connection pairs the device with your computer, and later connections reuse the pairing. On Linux the library answers the pairing request itself, so no settings window is needed and a computer without a screen works. If a connection fails because the link could not be secured, the error says what to do.</p><h2 id="what-the-device-reports">What the device reports</h2><p>The library holds no table of hardware. What a device can do is what it reports, and a request for anything else is refused before it is sent, with an error that names the missing capability.</p><pre data-lang="Python"><code class="language-python">device.info.channels          <span class="c"># 4</span>
+device.info.adc_bits          <span class="c"># 24</span>
+device.info.rates             <span class="c"># the sample rates it offers</span>
+device.<span class="f">can</span>(<span class="s">"model"</span>)           <span class="c"># True when it reports that capability</span></code></pre><h2 id="processing-on-the-device">Processing on the device</h2><p>The device filters its signal through a chain you can read and change, and only the chain's output streams. The device refuses changes while it streams: stop, set, and start again.</p><pre data-lang="Python"><code class="language-python"><span class="k">from</span> intomind <span class="k">import</span> protocol
+
+state = <span class="k">await</span> device.<span class="f">pipeline</span>()                        <span class="c"># the chain in force</span>
+<span class="k">await</span> device.<span class="f">set_pipeline</span>([protocol.<span class="f">highpass</span>(<span class="n">0.5</span>),
+                           *protocol.<span class="f">mains_bands</span>(<span class="n">60</span>, <span class="n">500</span>),  <span class="c"># 60 Hz and the harmonics 500 per second can carry</span>
+                           protocol.<span class="f">lowpass</span>()])        <span class="c"># the automatic corner</span>
+<span class="k">await</span> device.<span class="f">restore_pipeline_default</span>()
+<span class="k">await</span> device.<span class="f">clear_pipeline</span>()                          <span class="c"># no processing</span></code></pre><p>A chain that cannot run at the device's rate is refused, with the reason, before anything is sent.</p><h2 id="the-light-the-name-and-the-registers">The light, the name, and the registers</h2><pre data-lang="Python"><code class="language-python"><span class="k">await</span> device.<span class="f">set_indicator</span>(<span class="s">"verbose"</span>)       <span class="c"># "silent", "reserved" or "verbose"</span>
+<span class="k">await</span> device.<span class="f">identify</span>(<span class="n">5</span>)                    <span class="c"># the status light winks for five seconds</span>
+
+<span class="k">await</span> device.<span class="f">set_name</span>(<span class="s">"Ada"</span>, <span class="s">"Blue"</span>)        <span class="c"># refused if the whole name would not fit</span>
+protocol.<span class="f">compose_name</span>(<span class="s">"Ada"</span>, <span class="s">"Blue"</span>)        <span class="c"># "Ada's Blue IntoMind One"</span>
+
+regs = <span class="k">await</span> device.<span class="f">converter_registers</span>()   <span class="c"># the ADC's registers, while not streaming</span>
+regs.<span class="f">describe</span>()                             <span class="c"># its settings, in words</span></code></pre><h2 id="the-synthetic-signal">The synthetic signal</h2><pre data-lang="Python"><code class="language-python"><span class="k">await</span> device.<span class="f">set_mode</span>(<span class="s">"synthetic"</span>)          <span class="c"># the generator, at 500 samples per second</span>
+<span class="k">await</span> device.<span class="f">set_mode</span>(<span class="s">"normal"</span>)             <span class="c"># back to the electrodes</span></code></pre><p>Turn embeddings and predictions off first, because the device runs one neural network at a time. Every generated sample has <code>sample.synthetic</code> set. See <a href="/device.html#the-synthetic-signal">the device</a> for what the signal is.</p><h2 id="the-model">The model</h2><p>This example collects four minutes of embeddings with eyes open and four with eyes closed, trains a head that tells them apart, and runs it on the device.</p><pre data-lang="Python"><code class="language-python"><span class="k">from</span> intomind.model <span class="k">import</span> train_head
+
+<span class="k">await</span> device.<span class="f">start</span>()
+opened = <span class="k">await</span> device.<span class="f">collect_embeddings</span>(<span class="n">60</span>, form=<span class="s">"window"</span>)    <span class="c"># 60 windows, 4 minutes, eyes open</span>
+closed = <span class="k">await</span> device.<span class="f">collect_embeddings</span>(<span class="n">60</span>, form=<span class="s">"window"</span>)    <span class="c"># eyes closed</span>
+
+head = <span class="f">train_head</span>([w.embedding <span class="k">for</span> w <span class="k">in</span> opened + closed],
+                  [<span class="n">0</span>] * <span class="f">len</span>(opened) + [<span class="n">1</span>] * <span class="f">len</span>(closed),
+                  name=<span class="s">"eyes closed"</span>, encoder_id=opened[<span class="n">0</span>].encoder_id)
+
+<span class="k">await</span> device.<span class="f">upload_head</span>(head, slot=<span class="n">2</span>, select=<span class="k">True</span>)
+device.on_prediction = <span class="k">lambda</span> dev, p: <span class="f">print</span>(p.outputs)
+<span class="k">await</span> device.<span class="f">set_predictions</span>(<span class="k">True</span>)</code></pre><p><a href="/model.html">The model and heads</a> explains embeddings, heads, and how often the model runs.</p><h2 id="gaps-and-repeated-packets">Gaps and repeated packets</h2><pre data-lang="Python"><code class="language-python"><span class="k">from</span> intomind <span class="k">import</span> analysis
+
+capture = analysis.<span class="f">load</span>(<span class="s">"my-recording"</span>)    <span class="c"># checks the checksums first</span>
+capture.gap_before                         <span class="c"># one flag per sample: True where samples were lost before it</span>
+capture.meta[<span class="s">"synthetic"</span>]                  <span class="c"># True when the device generated the signal</span></code></pre><p>The device numbers every sample, so a loss has an exact count. When the device restarts its count, the library reports a break of unknown length, never a count.</p><p>When another program on the same computer listens to the device, every packet arrives twice. The library drops the copies and counts them in <code>device.duplicates</code>.</p><h2 id="where-recordings-go">Where recordings go</h2><pre data-lang="Python"><code class="language-python"><span class="k">from</span> intomind <span class="k">import</span> provenance
+
+provenance.<span class="f">use_captures_dir</span>(<span class="s">"~/study/captures"</span>)
+provenance.<span class="f">use_site</span>({<span class="s">"mains_hz"</span>: <span class="n">60</span>, <span class="s">"electrode_montage"</span>: <span class="s">"four over the forehead"</span>})</code></pre><p>Recordings go to <code>~/.local/share/intomind/captures</code> unless <code>INTOMIND_CAPTURES</code> or <code>use_captures_dir</code> names another folder. <code>use_site</code> records facts about where you record. Anything you do not declare is recorded as unknown.</p><h2 id="exports">Exports</h2><pre data-lang="Python"><code class="language-python"><span class="k">from</span> intomind <span class="k">import</span> export
+
+export.<span class="f">export</span>(<span class="s">"my-recording"</span>, <span class="s">"bdf"</span>)       <span class="c"># also "edf", "npz", "csv", "tsv" and "mat"</span></code></pre><p>Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is refused.</p><h2 id="analyses">Analyses</h2><pre data-lang="Python"><code class="language-python">analysis.<span class="f">summary</span>(<span class="s">"my-recording"</span>)           <span class="c"># offset, noise, band power, spectral slope</span>
+analysis.<span class="f">psd_curve</span>(<span class="s">"my-recording"</span>)         <span class="c"># the power spectrum of every channel</span>
+analysis.<span class="f">berger</span>(<span class="s">"my-recording"</span>)            <span class="c"># alpha with eyes closed against eyes open</span></code></pre><h2 id="other-hardware">Other hardware</h2><p>An adapter, in a package of its own, adds methods under <code>device.extra</code> for the devices it claims. A device without one behaves as documented here. See <code>adapters.py</code> in the <a href="https://github.com/intomind/api" rel="noopener">repository</a>.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.</p>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#what-the-device-reports">What the device reports</a></li><li class="l2"><a href="#processing-on-the-device">Processing on the device</a></li><li class="l2"><a href="#the-light-the-name-and-the-registers">The light, the name, and the registers</a></li><li class="l2"><a href="#the-synthetic-signal">The synthetic signal</a></li><li class="l2"><a href="#the-model">The model</a></li><li class="l2"><a href="#gaps-and-repeated-packets">Gaps and repeated packets</a></li><li class="l2"><a href="#where-recordings-go">Where recordings go</a></li><li class="l2"><a href="#exports">Exports</a></li><li class="l2"><a href="#analyses">Analyses</a></li><li class="l2"><a href="#other-hardware">Other hardware</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
+</div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-is not a medical device.</div></footer>
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+
+</body>
 </html>

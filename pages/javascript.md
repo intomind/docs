@@ -1,105 +1,111 @@
+---
+title: JavaScript
+description: The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.
+---
+
 # JavaScript
 
-```
+The `@intomind/sdk` package connects a web page to an IntoMind One over Web Bluetooth, with nothing for the user to install. It is written in TypeScript and also decodes the protocol in Node.
+
+```sh
 npm install @intomind/sdk
 ```
 
-The same protocol, in TypeScript, for browsers and Node. In a browser it
-uses Web Bluetooth, so a page can talk to a device with nothing installed.
+## Try it
 
-```javascript
+With an IntoMind One switched on and unplugged, and a browser that has [Web Bluetooth](#browsers), you can connect to it from this page. Nothing is recorded, and nothing leaves your browser.
+
+{{live-demo}}
+
+## Connect and stream
+
+```ts
 import { requestAndConnect } from "@intomind/sdk";
 
-// The browser asks the user to pick a device. It must start from a click.
-const link = await requestAndConnect();
+document.querySelector("#connect")?.addEventListener("click", async () => {
+  const link = await requestAndConnect();              // the browser lists the devices nearby
 
-link.on((event) => {
-  if (event.type === "samples") {
-    const uv = event.batch.microvolts(0, 0, link.info);
-  }
-  if (event.type === "gap") {
-    // written down, never smoothed over
-  }
+  link.on((event) => {
+    if (event.type === "samples") {
+      const batch = event.batch;
+      for (let row = 0; row < batch.rows; row++) {
+        const uv = batch.microvolts(row, 0, link.info);  // channel 1, in microvolts
+      }
+    } else if (event.type === "gap") {
+      console.log("lost", event.gap.samplesLost);        // null when the device restarted its count
+    }
+  });
+
+  const answer = await link.request(link.session.startStream());
+  if (!answer.ok) console.log("refused:", answer.statusName);
 });
-
-await link.send(link.session.startStream());
 ```
 
-A device that claims the processing chain preprocesses its own signal,
-and the chain is checked here with the device's own rules before it is
-sent:
+`requestAndConnect` must run from a click, on a page served over HTTPS or from `localhost`. The first connection pairs the device. `link.info` is what the device reported when it connected, and scaling a sample to microvolts needs it. Each batch carries the index and device time of its first sample, and a gap is announced before the batch that follows it.
+
+## Events
+
+| Event | Carries |
+|---|---|
+| `samples` | samples, with `microvolts(row, channel, info)`, the first sample's index and device time, and whether the device generated them |
+| `gap` | how many samples were lost, or `null` when the device restarted its count |
+| `status` | battery, charger, whether USB is plugged in, and whether the device is streaming |
+| `answer` | the device's answer to a command |
+| `prediction` | a head's outputs for one window |
+| `duplicate` | a packet that arrived twice and was dropped, because another program is listening to the device |
+
+## Commands
+
+`link.request` sends a command and waits for the device's answer. A command for something the device does not report is refused before it is sent.
 
 ```ts
-import { protocol as P } from "intomind";
+import { protocol as P } from "@intomind/sdk";
 
-await link.send(link.session.setPipeline([P.highpass(0.5), ...P.mainsBands(60, 500), P.lowpass()], 500));
-const state = P.decodePipelineState((await link.request(link.session.pipeline())).payload);
+const s = link.session;
+await link.request(s.setRate(250));                     // refused while streaming
+await link.request(s.setIndicator("verbose"));          // "silent", "reserved" or "verbose"
+await link.request(s.identify(5));                      // the status light winks for five seconds
+await link.request(s.setName("Ada", "Blue"));           // "Ada's Blue IntoMind One"
+await link.request(s.setPipeline([P.highpass(0.5), ...P.mainsBands(60, 500), P.lowpass()], 500));
+await link.request(s.setMode("synthetic"));             // the generated signal, at 500 per second
 ```
 
-`link.info` is what the device said it is, read before anything was asked
-of it. Scaling a count needs it, because the reference voltage and the
-converter width are the device's to state and not this library's to
-assume.
+A stream started while USB is plugged in answers status 7: the device does not stream from its electrodes on USB power.
 
-Pass `onEvent` to `requestAndConnect` instead if you need the events that
-arrive while the link is still being set up. That callback cannot refer to
-the link, because the link does not exist yet.
+## Run your own head
 
-## The same rules as everywhere else
-
-- What a device can do is the bits it reports, not a version number.
-- A gap is announced before the samples that follow it, so anything
-  writing samples down writes the break down first and can never splice.
-- A loss carries an exact count. A break carries none, because zero
-  missing samples is a different statement from an unknown extent.
-- A packet that arrives twice is dropped and counted, and a `duplicate`
-  event says so. It means another program on the same computer is
-  listening to the device.
-- Nothing assumes a channel count, a converter width, or a reference
-  voltage. They come from the device.
-
-## Held to the same vectors
-
-The package is tested against `contract/conformance.json`, which the
-device firmware emits from the codec it runs: 66 messages to decode and 56
-to refuse. So is the Rust crate, and so is the Python library. An
-implementation that drifts fails a test rather than a session.
-
-One warning if you read that file yourself. It writes every 64-bit field
-as a decimal string, because a device time runs past what a JSON number
-holds exactly. Parse it with `BigInt`, not `Number`.
-
-## The light, the registers, and embeddings
+Train a head in [Python](/python.html#the-model), then upload it from a page.
 
 ```ts
-session.setIndicator("verbose");           // silent, reserved, verbose
-session.identify(5);                       // the light winks for five seconds
-session.converterRegisters();              // answer decodes with decodeConverterRegisters, describeAds1299Registers
-session.setEmbeddings("both");             // the window embedding and the tokens
-const windows = new EmbeddingAssembler(4, 20, "both");   // channels, tokens per channel
-// for each event of type "embedding": const w = windows.feed(event.embedding); if (w) { ... one whole window ... }
+import { Transfer } from "@intomind/sdk";
+
+const transfer = Transfer.head(link.session, 2, blob);   // slot 2: slot 1 holds the open sex head
+await link.transfer(transfer, blob, ({ taken, total }) => console.log(`${taken} of ${total}`));
+await link.request(link.session.selectHead(2));
+await link.request(link.session.setPredictions(true));
 ```
 
-## Its name, the model's cadence, and a synthetic signal
+## Browsers
+
+Web Bluetooth is in Chrome on Windows, macOS, ChromeOS and Android, and in Edge and Opera on Windows and macOS. On Linux, Chrome needs `chrome://flags/#enable-web-bluetooth` turned on. Safari and Firefox do not have it, and neither does any browser on an iPhone or iPad.
+
+## Node
+
+Node has no Web Bluetooth, but everything except the connection works there. Pass the session the bytes your Bluetooth library receives, and write the bytes it returns.
 
 ```ts
-P.composeName("Ada", "Blue");              // "Ada's Blue IntoMind One"
-P.nameFits("Beatrice", "Purple");          // false: 30 bytes, over the 29 a scan list shows
-session.setName("Ada", "Blue");            // refused before sending if it would not fit
-session.getName();                         // answer decodes with decodeNameParts
-P.displayNames(["Ada's IntoMind One", "Ada's IntoMind One"]);   // the second becomes "Ada's IntoMind One 2"
-session.setModelInterval(60);              // one window a minute; 0 is every window it can
-session.modelInterval();                   // answer decodes with decodeModelInterval
-session.setMode("synthetic");              // the device generates the signal, at 500 per second
-// every batch it sends says so: event.batch.synthetic
+import { Session, FILL } from "@intomind/sdk";
+
+const session = new Session();
+session.onDeviceInfo(deviceInfoBytes);                  // read from the Device Info characteristic
+for (const event of session.onNotification(FILL.EEG_DATA, notificationBytes)) {
+  // the same events as in a browser
+}
+const command = session.startStream();                  // write command.bytes to its characteristic
 ```
 
-The number `displayNames` adds to a shared name is the host's. The device
-never holds it.
+The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
 
-## Web Bluetooth
+## License
 
-Works in Chrome and Edge on desktop and Android. Safari and Firefox do
-not implement Web Bluetooth. The page must be served over HTTPS, or from
-localhost, and the connection has to start from something the user
-clicked.
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.

@@ -8,11 +8,18 @@ it is checked here and the exit code says whether the site is sound.
 The worst rot is an example that no longer works. Every name a Python
 example shows is resolved against the installed library, so a rename
 breaks this check rather than someone's first hour with the thing. The
-JavaScript examples are compiled in the SDK repository, where the types
-are; this checks that the two say the same thing.
+JavaScript and Rust examples are not compiled here.
+
+The site also loads nothing from anywhere else, and carries a copy of the
+published JavaScript SDK for its interactive parts. Both are checked: a
+page that fetched a font from a third party would tell that party who read
+it, and a copy of the SDK that drifted from the published one would show
+readers something the package does not do.
 """
 from __future__ import annotations
 
+import hashlib
+import html
 import os
 import pathlib
 import re
@@ -21,6 +28,19 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 BUILD = HERE / "build"
+
+#: The published @intomind/sdk 1.4.0, file by file, as npm serves it
+#: (tarball sha1 84c3b2a8b6cc4a21746f92dfe351355d4a70f3d6).
+VENDORED = HERE / "assets" / "vendor" / "intomind-sdk-1.4.0"
+VENDORED_SHA256 = {
+    "digest.js": "8e357d10ea895040331d94e4327a611d58ac3fde22c3b2fee2f74a9fdb38bf47",
+    "index.js": "621bbb9b390e76015bd1d1ff8e0096bec101e46099b523a1b3b9b9700a6dd1bb",
+    "protocol.js": "d1e895c13730a625002461eef30c81546fa4976d59ca0d766e9d878ca2d51983",
+    "session.js": "e2f2016a23a602f6eeaa393313d68d899004bd817e56d1614641d244c9062235",
+    "timebase.js": "308d5b6af89e23b59c94a367300f041cf4e98bbe80ac82fad7eab804802da478",
+    "transfer.js": "052c394fc0e0a81d3851cac4febb0daa63432c029e47c2fe32da5deb4588485d",
+    "web-bluetooth.js": "143f3110067344b07086e5e6bbf8c580ac7086f5eef6f5911176ae593db21a2d",
+}
 
 
 def main() -> int:
@@ -33,12 +53,16 @@ def main() -> int:
     if not pages:
         problems.append("nothing was built")
 
+    ids = {f.name: set(re.findall(r' id="([^"]+)"', f.read_text())) for f in pages}
+    sitemap = (BUILD / "sitemap.xml").read_text() if (BUILD / "sitemap.xml").exists() else ""
+    llms = (BUILD / "llms.txt").read_text() if (BUILD / "llms.txt").exists() else ""
     for f in pages:
         text = f.read_text()
-        body = text.split("<main>")[1].split("</main>")[0] if "<main>" in text else ""
+        m = re.search(r"<main[^>]*>(.*)</main>", text, re.S)
+        body = m.group(1) if m else ""
         # Code blocks are not prose and are not Markdown. A backtick or a
         # pair of asterisks inside one is the code saying what it says.
-        prose = re.sub(r"<pre>.*?</pre>", "", body, flags=re.S)
+        prose = re.sub(r"<pre[^>]*>.*?</pre>", "", body, flags=re.S)
         for pattern, why in [
             (r"^\s*#{1,4} ", "a heading that was not rendered"),
             (r"\|\s*---", "a table rule that was not rendered"),
@@ -49,15 +73,58 @@ def main() -> int:
         ]:
             if re.search(pattern, prose, re.M):
                 problems.append(f"{f.name}: {why}")
-        for href in re.findall(r'href="([^":#]+\.html)"', text):
+        for href, anchor in re.findall(r'href="/?([^":#]+\.html)(?:#([^"]+))?"', text):
             if not (BUILD / href).exists():
                 problems.append(f"{f.name}: links to {href}, which is not there")
+            elif anchor and anchor not in ids.get(href, set()):
+                problems.append(f"{f.name}: links to {href}#{anchor}, which has no such section")
+        for anchor in re.findall(r'href="#([^"]+)"', text):
+            if anchor not in ids[f.name] and anchor != "content":
+                problems.append(f"{f.name}: links to #{anchor}, which this page does not have")
         if "<title>" not in text:
             problems.append(f"{f.name}: no title")
+        if not re.search(r'<meta name="description" content="[^"]{40,}">', text):
+            problems.append(f"{f.name}: no description for search engines")
         if "\u2014" in text:
             problems.append(f"{f.name}: an em dash, which the public pages do not use")
+        # The pages we write keep to the house style. The contract's own
+        # documents are assembled as written and keep theirs.
+        if '<p class="source">' not in text:
+            words = html.unescape(re.sub(r"<[^>]+>", " ", re.sub(r"<(code|pre)[^>]*>.*?</\1>", "", prose, flags=re.S)))
+            if ";" in words:
+                problems.append(f"{f.name}: a semicolon in the text, which the public pages do not use")
+            # A product manual, not development notes: no qualifiers about
+            # where a number was measured, and rates are per second.
+            for pattern, why in ((r"pre-production|prototype|\bunit one\b|\bbench\b|\bour test", "development notes"),
+                                 (r"\b(?:\d+|samples) a second\b", "a rate written as 'a second' rather than 'per second'")):
+                if m := re.search(pattern, words, re.I):
+                    problems.append(f"{f.name}: '{m.group(0)}', {why}")
+        if 'class="anchor"' in text:
+            problems.append(f"{f.name}: a link mark on a heading")
+        # Nothing loads from another site: no script, style, font or image.
+        for tag in re.findall(r"<(?:script|img|link|source|iframe|video|audio)\b[^>]*>", text):
+            if 'rel="canonical"' in tag or 'rel="alternate"' in tag:
+                continue
+            if m := re.search(r'(?:src|href)="((?:https?:)?//[^"]+)"', tag):
+                problems.append(f"{f.name}: loads {m.group(1)} from another site")
+        if f.name != "404.html":
+            url = "https://docs.intomind.com/" + ("" if f.name == "index.html" else f.name)
+            if f"<loc>{url}</loc>" not in sitemap:
+                problems.append(f"{f.name}: missing from the sitemap")
+            if not (BUILD / (f.stem + ".md")).exists():
+                problems.append(f"{f.name}: has no Markdown twin")
+            if not f.name.startswith("protocol-1-") or f.name == "protocol-1-4.html":
+                if f"/{f.stem}.md)" not in llms and f.name != "index.html" or (f.name == "index.html" and "/index.md)" not in llms):
+                    problems.append(f"{f.name}: missing from llms.txt")
 
     problems += names_that_do_not_exist()
+    problems += vendored_copy_drifted()
+    for asset in sorted((BUILD / "assets").rglob("*")):
+        if asset.suffix not in (".css", ".js") or "vendor" in asset.parts:
+            continue
+        for m in re.finditer(r"url\(\s*['\"]?(?:https?:)?//|(?:fetch|import)\s*\(?\s*['\"](?:https?:)?//|from\s+['\"](?:https?:)?//",
+                             asset.read_text()):
+            problems.append(f"{asset.relative_to(BUILD)}: loads from another site: {m.group(0)}")
 
     problems += names_that_must_not_appear(pages)
     problems += gate_blind_spots()
@@ -148,6 +215,19 @@ def names_that_must_not_appear(pages) -> list[str]:
         patterns = private if name == "check.py" else PUBLIC + private
         for hit in _hits(text, patterns):
             problems.append(f"{name}: {hit}")
+    return problems
+
+
+def vendored_copy_drifted() -> list[str]:
+    """The site's copy of the SDK, byte for byte the published one."""
+    problems = []
+    found = {p.name for p in VENDORED.glob("*.js")}
+    if found != set(VENDORED_SHA256):
+        problems.append(f"the vendored SDK holds {sorted(found)}, not {sorted(VENDORED_SHA256)}")
+    for name, want in VENDORED_SHA256.items():
+        path = VENDORED / name
+        if path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() != want:
+            problems.append(f"the vendored SDK's {name} is not the published file")
     return problems
 
 

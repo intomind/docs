@@ -1,87 +1,53 @@
+---
+title: Command Center
+description: The Command Center app for the IntoMind One: install and run it, connect, watch the signal, record, export, use the model, and set up the device, in your own browser.
+---
+
 # Command Center
 
-The program that runs the device. A local server and a page in your own
-browser. Nothing is sent anywhere.
+The Command Center is the app for using an IntoMind One from your computer. It runs a small server on your computer and shows its page in your browser, where you connect to the device, watch the signal, record, and export.
 
-```
+```sh
 git clone https://github.com/intomind/commandcenter
 cd commandcenter
 pip install 'intomind[analysis]' aiohttp
 python3 hub.py
 ```
 
-Then open `http://localhost:8080`.
-
-The page serves whether or not a device is connected, so you can go back
-through recordings with no hardware present.
+Then open http://localhost:8080. It needs Python 3.11 or newer. The page also works with no device connected, so you can review recordings anywhere. On Linux, `./install-launcher.sh` adds it to your applications.
 
 ## What it does
 
-- Connects to a device and shows what it is: its firmware, its channels,
-  its rates, and what it says it can do.
-- Shows the live signal, and contact quality when lead-off detection is on.
-- Runs the cued protocols the instrument library provides, and records
-  them with everything about how they were produced.
-- Reads recordings back, runs the analyses on them, and exports them.
-- Where a device carries a model, selects a head and shows what it
-  predicts, and collects the model's embeddings from the live stream into
-  a file for training heads or generating signal.
-- Sets the device's light: silent, reserved, or verbose, and makes it
-  identify itself with a blink.
-- Names the device: your name and an adjective, shown composed as you type
-  and counted against the 29 bytes a scan list can show.
-- Sets how often the model describes a window, and shows how long one
-  pass takes on the device.
-- Says above the trace whenever the signal is not your electrodes: the
-  converter's test signal, shorted inputs, or the device's synthetic
-  signal.
-- Lists the devices it hears and connects only the one you pick. Nothing
-  connects by itself.
-- Says when another program on this computer is also listening to the
-  device. Each packet then arrives twice, and the copy is dropped.
-- In Intermediate, reads the converter's registers in words, for debugging.
+- Lists the devices it hears and connects only the one you pick. It shows the device's firmware, channels and protocol version.
+- Shows the live signal, and which electrodes are in contact when lead-off detection is on.
+- Records, with markers or with cued protocols such as eyes open and closed, blinks, jaw clenches and eye movements.
+- Reads recordings back, runs analyses on them, and exports them.
+- Selects a head on the device and shows its predictions, sets how often the model runs, and saves the model's embeddings to a file for training heads.
+- Sets the status light and the device's name, and makes the device identify itself.
+- Says above the trace whenever the signal does not come from the electrodes, and when another program on the computer is also listening to the device.
 
-## It only listens to your own machine
-
-The server refuses any request whose Host header is not localhost, and any
-request or websocket whose Origin is a page somewhere else. That is not
-paranoia: a page on the internet can otherwise reach a server running on
-your machine, and read what it says, including over a websocket, which
-ordinary cross origin rules do not cover.
-
-## Exports
-
-Six formats, and the Command Center calls the instrument library's
-exporter rather than writing its own, so a file exported here is the same
-file exported from a script.
-
-| Format | What it is for |
-|---|---|
-| npz | numpy, lossless |
-| BDF | twenty four bit biosignal format, lossless for this device |
-| EDF | the older sixteen bit format, widely read, and lossy. It says so, with the error measured |
-| csv and tsv | text, for anything that reads a table |
-| MATLAB v7.3 | for MATLAB |
-
-Whether a format was lossless for a given recording is measured rather
-than claimed: the exporter reads what it wrote and compares.
+The page has three levels. Basic shows every setting and lets you change a few everyday ones. Intermediate also lets you change the device's settings and its processing chain, and shows the ADC's registers. Advanced also lets you change the signal source and the analysis settings.
 
 ## Recordings
 
-They go to `~/.local/share/intomind/captures`, or wherever
-`$INTOMIND_CAPTURES` points.
+Recordings are saved in the `captures` folder inside the Command Center's folder, and exports in `exports`. A recording holds its samples, its events, and a record of how it was made: the device and its firmware, its settings, the processing chain, whether the signal was measured or generated, and where any gaps are. Checksums are written last, so a recording that stopped partway is never mistaken for a complete one.
 
-Each one is its samples, its events, and a manifest that says how it was
-produced: the device, its firmware, its configuration, whether the signal
-was measured or generated, where the gaps were, how the clocks were
-fitted, and what software recorded it.
-Checksums are written last, so a run that dies half way leaves something
-that is visibly incomplete rather than something that looks finished and
-is short.
+## Exports
+
+| Format | |
+|---|---|
+| BDF | 24-bit biosignal format, every value kept |
+| EDF | the older 16-bit format, rounded to 16 bits |
+| npz | NumPy arrays |
+| CSV and TSV | text tables |
+| MATLAB | version 7.3 files, every value kept |
+
+Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is not exported. The Command Center uses the Python API's exporters, so a file exported here matches one exported from a script.
+
+## It answers only your computer
+
+The server listens only on your own computer, and it refuses requests from web pages on other sites, so a page you visit cannot reach it. The page loads nothing from the internet.
 
 ## License
 
-Free software under the GNU Affero General Public License, version 3. If
-you run a modified copy as a service for other people, they can ask you
-for your changes. A commercial license is available at
-contact@intomind.com.
+Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.

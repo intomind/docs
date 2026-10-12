@@ -1,77 +1,103 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IntoMind One | docs.intomind.com</title>
-<style>
-:root { color-scheme: light dark; --ink: #16181d; --paper: #fbfbf9;
-        --quiet: #5c6068; --rule: #dcdcd6; --link: #1a4fa0; }
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e6e6e1; --paper: #16181d; --quiet: #9aa0a8;
-          --rule: #2d3138; --link: #8fb4f0; }
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--paper); color: var(--ink);
-       font: 16px/1.65 "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif; }
-header { border-bottom: 1px solid var(--rule); }
-nav { max-width: 62rem; margin: 0 auto; padding: 1rem 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0 1.25rem; align-items: baseline; }
-nav .mark { font-weight: 600; letter-spacing: 0.02em; margin-right: 0.5rem; color: var(--ink); text-decoration: none; }
-nav .tm { font-size: 0.55em; font-weight: 400; vertical-align: super; line-height: 0; margin-left: 0.05em; }
-nav a { color: var(--quiet); text-decoration: none; font-size: 0.92rem; }
-nav a:hover, nav a.here { color: var(--ink); }
-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.4rem; margin: 2.5rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
-p, li { max-width: 40rem; }
-a { color: var(--link); }
-code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-            font-size: 0.86em; }
-code { background: color-mix(in srgb, var(--rule) 45%, transparent);
-       padding: 0.1em 0.3em; border-radius: 3px; }
-pre { background: color-mix(in srgb, var(--rule) 35%, transparent);
-      padding: 1rem 1.15rem; border-radius: 6px; overflow-x: auto; }
-pre code { background: none; padding: 0; }
-table { border-collapse: collapse; margin: 1.25rem 0; width: 100%; }
-th, td { text-align: left; padding: 0.45rem 0.8rem 0.45rem 0;
-         border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; }
-blockquote { margin: 1.25rem 0; padding-left: 1rem;
-             border-left: 3px solid var(--rule); color: var(--quiet); }
-footer { border-top: 1px solid var(--rule); color: var(--quiet);
-         font-size: 0.85rem; }
-footer div { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
-.source { color: var(--quiet); font-size: 0.85rem; font-style: italic; }
-</style>
-<header><nav><a class="mark" href="https://intomind.com">IntoMind<sup class="tm">&trade;</sup></a><a href="index.html" class="here">Start</a><a href="device.html" class="">The device</a><a href="command-center.html" class="">Command Center</a><a href="python.html" class="">Python</a><a href="rust.html" class="">Rust</a><a href="javascript.html" class="">JavaScript</a><a href="model.html" class="">The model and heads</a><a href="protocol.html" class="">The protocol</a><a href="safety.html" class="">Safety and care</a></nav></header>
-<main><h1>IntoMind One</h1>
-<p>A four channel wearable EEG device that streams your brain&#x27;s own electrical activity to a computer you own, over Bluetooth, and software you can read.</p>
-<p>Everything on this site is about two things: the device, and the code that talks to it. The code is free software. The recordings are yours and they stay on your machine.</p>
-<h2>Start here</h2>
-<table><thead><tr><th></th><th></th></tr></thead><tbody>
-<tr><td><a href="device.html">The device</a></td><td>what is in the box, how to wear it, what the light means</td></tr>
-<tr><td><a href="command-center.html">Command Center</a></td><td>the program that runs it, with nothing to set up</td></tr>
-<tr><td><a href="python.html">Python</a></td><td>the instrument library, for scripting and analysis</td></tr>
-<tr><td><a href="rust.html">Rust</a> and <a href="javascript.html">JavaScript</a></td><td>the SDK, for building something of your own</td></tr>
-<tr><td><a href="model.html">The model and heads</a></td><td>the encoder on the device, and teaching it what you care about</td></tr>
-<tr><td><a href="protocol.html">The protocol</a></td><td>the wire, in full, for anyone writing their own client</td></tr>
-<tr><td><a href="safety.html">Safety and care</a></td><td>what this is not, and how to look after it</td></tr>
-</tbody></table>
-<h2>What it actually does</h2>
-<p>Four electrodes sit against your scalp. The device amplifies what they pick up, converts it twenty four bits deep, timestamps every sample against its own clock in hardware, and streams it. It filters only through a chain you can read and change, a high-pass, a low-pass and mains notches by default, and the stream always says which chain produced it. It does not smooth, and it does not fill in anything it missed. If a sample is lost, the recording says so, where, and how many.</p>
-<p>That last part is the whole design. A recording you cannot trust is worse than no recording, because you will draw a conclusion from it.</p>
-<h2>What you need</h2>
-<p>A computer with Bluetooth Low Energy. The Command Center runs on it and serves a page to your own browser. Nothing is sent anywhere, no account is required, and it works with no network at all.</p>
-<h2>The software is free software</h2>
-<p>The instrument library, the SDK, the Command Center and the open heads are under the GNU Affero General Public License, version 3. Read them, change them, build on them, ship what you make. A commercial license is available if you want to build something closed: write to contact@intomind.com.</p>
-<table><thead><tr><th></th><th></th></tr></thead><tbody>
-<tr><td><a href="https://github.com/intomind/api">github.com/intomind/api</a></td><td>the instrument library, <code>pip install intomind</code></td></tr>
-<tr><td><a href="https://github.com/intomind/sdk">github.com/intomind/sdk</a></td><td>the SDK, <code>cargo add intomind</code> and <code>npm install @intomind/sdk</code></td></tr>
-<tr><td><a href="https://github.com/intomind/commandcenter">github.com/intomind/commandcenter</a></td><td>the Command Center</td></tr>
-<tr><td><a href="https://github.com/intomind/eeg-foundation-model-heads">github.com/intomind/eeg-foundation-model-heads</a></td><td>open heads for the encoder on the device</td></tr>
-</tbody></table></main>
+<title>IntoMind One documentation</title>
+<meta name="description" content="Documentation for IntoMind One, a four-channel wearable EEG device, and for its open software: the Command Center, the Python API, and the SDK for Rust and JavaScript.">
+<link rel="canonical" href="https://docs.intomind.com/">
+<link rel="alternate" type="text/markdown" href="/index.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="IntoMind One">
+<meta property="og:description" content="Documentation for IntoMind One, a four-channel wearable EEG device, and for its open software: the Command Center, the Python API, and the SDK for Rust and JavaScript.">
+<meta property="og:url" content="https://docs.intomind.com/">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "IntoMind documentation", "url": "https://docs.intomind.com/", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "inLanguage": "en-US"}, {"@type": "TechArticle", "headline": "IntoMind One", "description": "Documentation for IntoMind One, a four-channel wearable EEG device, and for its open software: the Command Center, the Python API, and the SDK for Rust and JavaScript.", "url": "https://docs.intomind.com/", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html" aria-current="page">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html">Command Center</a></li><li><a href="/python.html">Python</a></li><li><a href="/rust.html">Rust</a></li><li><a href="/javascript.html">JavaScript</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>IntoMind<sup class="tm">™</sup> One</h1><p class="lead">IntoMind One is a research grade EEG device that you wear. It streams four channels of your brain's electrical activity to your computer over Bluetooth, and the software that records, analyzes and builds on it is open.</p><h2 id="start-here">Start here</h2><div class="table"><table><tbody><tr><td><a href="/device.html">The device</a></td><td>what is in the box, charging, wearing it, the lights, and connecting</td></tr><tr><td><a href="/command-center.html">Command Center</a></td><td>the app for seeing the signal, recording, and exporting</td></tr><tr><td><a href="/python.html">Python</a></td><td>the API, for scripts, recordings and analysis</td></tr><tr><td><a href="/rust.html">Rust</a> and <a href="/javascript.html">JavaScript</a></td><td>the SDK, for building your own applications</td></tr><tr><td><a href="/model.html">The model and heads</a></td><td>the neural network on the device, and training your own heads</td></tr><tr><td><a href="/protocol.html">The protocol</a></td><td>the Bluetooth contract, for writing your own client</td></tr><tr><td><a href="/safety.html">Safety and care</a></td><td>warnings, the battery, and cleaning</td></tr><tr><td><a href="/glossary.html">Glossary</a></td><td>the terms used on this site</td></tr></tbody></table></div><h2 id="how-it-works">How it works</h2><figure><svg role="img" aria-label="The signal from the scalp to your computer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 254" class="diagram">
+  <defs>
+    <linearGradient id="sp-brand" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#ee2b7b"/><stop offset="0.38" stop-color="#f7931a"/>
+      <stop offset="0.68" stop-color="#4caf50"/><stop offset="1" stop-color="#2f80ed"/>
+    </linearGradient>
+    <marker id="sp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="d-arrow"/>
+    </marker>
+  </defs>
+  <rect x="10" y="22" width="740" height="4" rx="2" fill="url(#sp-brand)"/>
+  <g class="d-box">
+    <rect x="10" y="40" width="132" height="96" rx="12"/>
+    <rect x="162" y="40" width="132" height="96" rx="12"/>
+    <rect x="314" y="40" width="132" height="96" rx="12"/>
+    <rect x="466" y="40" width="132" height="96" rx="12"/>
+    <rect x="618" y="40" width="132" height="96" rx="12"/>
+    <rect x="466" y="166" width="132" height="80" rx="12"/>
+    <rect x="162" y="166" width="132" height="80" rx="12"/>
+  </g>
+  <g class="d-dot">
+    <circle cx="30" cy="60" r="5" fill="#ee2b7b"/>
+    <circle cx="182" cy="60" r="5" fill="#f7931a"/>
+    <circle cx="334" cy="60" r="5" fill="#f7931a"/>
+    <circle cx="486" cy="60" r="5" fill="#4caf50"/>
+    <circle cx="638" cy="60" r="5" fill="#2f80ed"/>
+    <circle cx="486" cy="186" r="5" fill="#4caf50"/>
+    <circle cx="182" cy="186" r="5" fill="#6d4de0"/>
+  </g>
+  <g class="d-title">
+    <text x="42" y="65">Electrodes</text>
+    <text x="194" y="65">ADC</text>
+    <text x="346" y="65">Device clock</text>
+    <text x="498" y="65">Processing</text>
+    <text x="650" y="65">Bluetooth</text>
+    <text x="498" y="191">Encoder</text>
+    <text x="194" y="191">Generator</text>
+  </g>
+  <g class="d-text">
+    <text x="24" y="92">4 channels and</text><text x="24" y="110">a shared reference</text>
+    <text x="176" y="92">24 bits, 250, 500</text><text x="176" y="110">or 1000 per second</text>
+    <text x="328" y="92">every sample</text><text x="328" y="110">stamped with the</text><text x="328" y="128">device's time</text>
+    <text x="480" y="92">high-pass, mains</text><text x="480" y="110">notches, low-pass,</text><text x="480" y="128">by default</text>
+    <text x="632" y="92">encrypted, to</text><text x="632" y="110">your computer</text>
+    <text x="480" y="216">76 numbers for</text><text x="480" y="234">each 4 seconds</text>
+    <text x="176" y="216">a synthetic signal,</text><text x="176" y="234">in place of the ADC</text>
+  </g>
+  <g class="d-line" marker-end="url(#sp-arrow)">
+    <line x1="142" y1="88" x2="160" y2="88"/>
+    <line x1="294" y1="88" x2="312" y2="88"/>
+    <line x1="446" y1="88" x2="464" y2="88"/>
+    <line x1="598" y1="88" x2="616" y2="88"/>
+    <line x1="532" y1="136" x2="532" y2="164"/>
+    <path d="M598,206 L684,206 L684,138" fill="none"/>
+    <path d="M294,206 L380,206 L380,138" fill="none" stroke-dasharray="5 4"/>
+  </g>
+</svg>
+<figcaption>The signal from the scalp to your computer</figcaption></figure><p>Four electrodes and a reference rest on the scalp. The ADC converts what they pick up into 24-bit samples, at 250, 500 or 1000 samples per second, and the device stamps each sample with its own clock. The device filters the signal through a processing chain you can read and change, and every stream states the chain that produced it. If a sample is lost on the way, the stream says where and how many. Nothing is filled in.</p><p>The device also runs a neural network that describes every 4 seconds of signal with 76 numbers. You can train heads on those numbers and run them on the device. In place of the electrodes, a generator on the device can stream a synthetic signal, marked as generated wherever it goes.</p><h2 id="what-you-need">What you need</h2><p>A computer with Bluetooth Low Energy. The Command Center runs on it and shows its page in your browser. Once installed, it needs no account and no internet connection.</p><h2 id="open-source">Open source</h2><p>The Command Center, the API, the SDK and the open heads are free software under the <a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="noopener">GNU Affero General Public License, version 3</a>. For a commercial license, write to contact@intomind.com.</p><div class="table"><table><tbody><tr><td><a href="https://github.com/intomind/commandcenter" rel="noopener">github.com/intomind/commandcenter</a></td><td>the Command Center</td></tr><tr><td><a href="https://github.com/intomind/api" rel="noopener">github.com/intomind/api</a></td><td>the Python API, <code>pip install 'intomind[analysis]'</code></td></tr><tr><td><a href="https://github.com/intomind/sdk" rel="noopener">github.com/intomind/sdk</a></td><td>the SDK, <code>cargo add intomind</code> and <code>npm install @intomind/sdk</code></td></tr><tr><td><a href="https://github.com/intomind/eeg-foundation-model-heads" rel="noopener">github.com/intomind/eeg-foundation-model-heads</a></td><td>the open heads for the model on the device</td></tr></tbody></table></div>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#start-here">Start here</a></li><li class="l2"><a href="#how-it-works">How it works</a></li><li class="l2"><a href="#what-you-need">What you need</a></li><li class="l2"><a href="#open-source">Open source</a></li></ul></aside>
+</div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
-<a href="https://github.com/intomind">github.com/intomind</a>. IntoMind One
-is not a medical device.</div></footer>
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+
+</body>
 </html>
