@@ -77,6 +77,7 @@ NAV = [
     ("python.html", "Python"),
     ("rust.html", "Rust"),
     ("javascript.html", "JavaScript"),
+    ("micropython.html", "MicroPython"),
     ("model.html", "The model and heads"),
     ("protocol.html", "The protocol"),
     ("safety.html", "Safety and care"),
@@ -106,7 +107,7 @@ KEYWORDS = {
 for alias in ("js", "ts", "typescript"):
     KEYWORDS[alias] = KEYWORDS["javascript"]
 
-LANGUAGE_LABELS = {"python": "Python", "rust": "Rust", "javascript": "JavaScript", "js": "JavaScript",
+LANGUAGE_LABELS = {"python": "Python", "micropython": "MicroPython", "rust": "Rust", "javascript": "JavaScript", "js": "JavaScript",
                    "ts": "TypeScript", "typescript": "TypeScript", "sh": "Terminal", "shell": "Terminal",
                    "bash": "Terminal", "json": "JSON", "html": "HTML", "toml": "TOML"}
 
@@ -151,6 +152,8 @@ def highlight(code: str, lang: str) -> str:
     it: comments, strings, numbers, keywords, types, and called names.
     Nothing cleverer, because a highlighter that guesses wrong misleads."""
     lang = lang.lower()
+    if lang == "micropython":
+        lang = "python"  # the same language, to a highlighter
     if lang in ("sh", "shell", "bash", "console"):
         return re.sub(r"^(\s*)(#.*)$", r'\1<span class="c">\2</span>', html.escape(code, quote=False), flags=re.M)
     if lang not in KEYWORDS:

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MicroPython | IntoMind documentation</title>
+<meta name="description" content="MicroPython for the Raspberry Pi Pico 2 W with the intomind library for the IntoMind One: install it on the board, connect and pair, stream, read what the device reports, and run heads on the device.">
+<link rel="canonical" href="https://docs.intomind.com/micropython.html">
+<link rel="alternate" type="text/markdown" href="/micropython.md">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="IntoMind documentation">
+<meta property="og:title" content="MicroPython">
+<meta property="og:description" content="MicroPython for the Raspberry Pi Pico 2 W with the intomind library for the IntoMind One: install it on the board, connect and pair, stream, read what the device reports, and run heads on the device.">
+<meta property="og:url" content="https://docs.intomind.com/micropython.html">
+<meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f2f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "MicroPython", "description": "MicroPython for the Raspberry Pi Pico 2 W with the intomind library for the IntoMind One: install it on the board, connect and pair, stream, read what the device reports, and run heads on the device.", "url": "https://docs.intomind.com/micropython.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "MicroPython", "item": "https://docs.intomind.com/micropython.html"}]}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<header class="top">
+<button class="menu" type="button" aria-controls="sidebar" aria-expanded="false"><span></span>Pages</button>
+<a class="mark" href="https://intomind.com">IntoMind<sup>&trade;</sup></a><a class="docs" href="/">Docs</a>
+<div class="search" role="search"><input type="search" id="q" placeholder="Search" aria-label="Search the documentation" autocomplete="off" spellcheck="false"><kbd>/</kbd><ol id="results" hidden></ol></div>
+</header>
+<div class="frame">
+<nav class="sidebar" id="sidebar" aria-label="Pages"><ul><li><a href="/index.html">Start</a></li><li><a href="/device.html">The device</a></li><li><a href="/command-center.html">Command Center</a></li><li><a href="/python.html">Python</a></li><li><a href="/rust.html">Rust</a></li><li><a href="/javascript.html">JavaScript</a></li><li><a href="/micropython.html" aria-current="page">MicroPython</a></li><li><a href="/model.html">The model and heads</a></li><li><a href="/protocol.html">The protocol</a></li><li><a href="/safety.html">Safety and care</a></li><li><a href="/glossary.html">Glossary</a></li></ul></nav>
+<main id="content">
+<article>
+<h1>MicroPython</h1><p class="lead">MicroPython for the Raspberry Pi Pico 2 W, with the <code>intomind</code> library built in, lets a program on the board connect to an IntoMind One with no computer in the room. It is MicroPython 1.29.0 as released for the Pico 2 W with pairing added, because the IntoMind One accepts commands and sends data only over a paired, encrypted link, and MicroPython as released cannot pair on the Pico 2 W. Everything else MicroPython does on the board, Wi-Fi included, works as usual.</p><h2 id="install">Install</h2><ol><li>Download <code>intomind-micropython-pico-2-w.uf2</code> from the <code>firmware</code> folder of <a href="https://github.com/intomind/micropython" rel="noopener">github.com/intomind/micropython</a>.</li><li>Hold the BOOTSEL button while you plug the board into your computer, then let go. Drag the file onto the drive that appears.</li><li>The board restarts into MicroPython, and its banner reads <code>v1.29.0-intomind</code>. In Thonny, choose MicroPython (Raspberry Pi Pico) at the bottom right, and the prompt is the board's.</li></ol><p>A program saved on the board as <code>main.py</code> runs whenever the board has power.</p><h2 id="connect-and-stream">Connect and stream</h2><pre data-lang="MicroPython"><code class="language-micropython"><span class="k">import</span> asyncio
+<span class="k">import</span> intomind
+
+
+<span class="k">def</span> <span class="f">on_packet</span>(device, packet):
+    scale = device.info.<span class="f">microvolts_per_count</span>(packet.gain)
+    channel_1 = [counts[<span class="n">0</span>] * scale <span class="k">for</span> counts <span class="k">in</span> packet.counts]   <span class="c"># one count per channel in each row</span>
+    <span class="f">print</span>(packet.index, channel_1)               <span class="c"># the first sample's index, and channel 1 in microvolts</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="f">main</span>():
+    device = <span class="k">await</span> intomind.<span class="f">connect</span>()            <span class="c"># the first IntoMind One heard</span>
+    <span class="f">print</span>(<span class="s">"Connected to"</span>, device.name)
+    device.on_packet = on_packet                 <span class="c"># before start()</span>
+    <span class="k">await</span> device.<span class="f">start</span>()
+    <span class="k">await</span> asyncio.<span class="f">sleep</span>(<span class="n">5</span>)
+    <span class="k">await</span> device.<span class="f">stop</span>()
+    <span class="k">await</span> device.<span class="f">disconnect</span>()
+
+
+asyncio.<span class="f">run</span>(<span class="f">main</span>())</code></pre><p><code>intomind.connect("Ada's")</code> connects to the first device whose name starts with <code>Ada's</code>, and <code>intomind.scan()</code> lists every device heard, the strongest first. The first connection pairs the board with the device, and later connections reuse the pairing, which the board keeps in <code>ble_secrets.json</code>. If a connection fails because the device no longer has the pairing, the error says to call <code>intomind.forget_pairings()</code>, and the next connection pairs again.</p><p>Each packet carries the index of its first sample. The next packet's index is this one's plus <code>packet.n_samples</code>, so a larger jump means samples were lost on the way. A stream started while the IntoMind One is plugged in is refused: <code>start()</code> raises <code>intomind.Refused</code> with status 7, because the device does not stream from its electrodes on USB power.</p><h2 id="what-the-device-reports">What the device reports</h2><p>The library holds no table of hardware. What a device can do is what it reports, and the methods for the battery, the model and heads raise <code>OSError</code> when it does not report that capability.</p><pre data-lang="MicroPython"><code class="language-micropython">device.info.channels                     <span class="c"># 4</span>
+device.info.rates                        <span class="c"># the sample rates it offers</span>
+device.<span class="f">can</span>(<span class="s">"heads"</span>)                      <span class="c"># True when it reports that capability</span>
+status = <span class="k">await</span> device.<span class="f">read_status</span>()      <span class="c"># streaming, battery, charger, USB, and contact</span>
+battery = <span class="k">await</span> device.<span class="f">battery</span>()         <span class="c"># millivolts, percent, and the charger</span></code></pre><h2 id="run-a-head">Run a head</h2><p>The IntoMind One runs heads on its own chip, and the board reads what they say. Train one in <a href="/python.html#the-model">Python</a>, or upload one from <a href="/javascript.html#run-your-own-head">JavaScript</a>.</p><pre data-lang="MicroPython"><code class="language-micropython">active, heads = <span class="k">await</span> device.<span class="f">heads</span>()
+<span class="k">for</span> head <span class="k">in</span> heads:
+    <span class="f">print</span>(head.slot, head.name, head.state)      <span class="c"># "valid" when it can run</span>
+
+
+<span class="k">def</span> <span class="f">on_prediction</span>(device, p):
+    <span class="k">if</span> <span class="k">not</span> (p.gap_in_window <span class="k">or</span> p.leadoff_in_window):    <span class="c"># skip a window with a gap or an electrode off</span>
+        <span class="f">print</span>(p.head_slot, p.outputs)
+
+
+device.on_prediction = on_prediction
+<span class="k">await</span> device.<span class="f">select_head</span>(<span class="n">2</span>)                      <span class="c"># slot 2: slot 1 holds the open sex head</span>
+<span class="k">await</span> device.<span class="f">start</span>()
+<span class="k">await</span> device.<span class="f">set_predictions</span>(<span class="k">True</span>)</code></pre><p>A program can then drive the board's pins from <code>p.outputs</code>, as a signal any circuit, robot or project of your own can act on.</p><h2 id="requests">Requests</h2><p><code>device.command(name, arg)</code> sends any request in <a href="/protocol.html">the protocol</a> by name and returns what the answer carries. A refusal raises <code>intomind.Refused</code>, with the status number in <code>status</code> and its name in <code>status_name</code>.</p><pre data-lang="MicroPython"><code class="language-micropython"><span class="k">await</span> device.<span class="f">command</span>(<span class="s">"identify"</span>, <span class="n">5</span>)              <span class="c"># the status light winks for five seconds</span>
+<span class="k">await</span> device.<span class="f">command</span>(<span class="s">"set_indicator"</span>, <span class="n">2</span>)         <span class="c"># verbose</span></code></pre><p><code>intomind.protocol</code> is the protocol on its own, in plain Python, for reading what an answer carries, such as <code>intomind.protocol.decode_battery(payload)</code>.</p><p>The library's tests read every message the way the published <code>@intomind/sdk</code> reads it.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3, with a permission to combine it with MicroPython and the libraries the firmware carries. For a commercial license, write to contact@intomind.com.</p>
+</article>
+</main>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#install">Install</a></li><li class="l2"><a href="#connect-and-stream">Connect and stream</a></li><li class="l2"><a href="#what-the-device-reports">What the device reports</a></li><li class="l2"><a href="#run-a-head">Run a head</a></li><li class="l2"><a href="#requests">Requests</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
+</div>
+<footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
+<a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>
+<script src="/assets/site.js" defer></script>
+
+</body>
+</html>

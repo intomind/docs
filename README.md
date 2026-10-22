@@ -43,9 +43,12 @@ anchor, that every page has a description and is in the sitemap and
 `llms.txt`, that no page loads anything from another site, and that the
 copy of the SDK is still the published one.
 
-The JavaScript and Rust examples are not compiled here. They were compiled
-against the published 1.4.0 packages when they were written, and need
-compiling again when either package changes.
+The JavaScript, Rust and MicroPython examples are not compiled here. The
+JavaScript and Rust ones were compiled against the published 1.4.0
+packages when they were written. The MicroPython ones were compiled with
+MicroPython's own compiler and run with the `intomind` library for
+MicroPython against simulated devices. Each needs checking again when its
+package changes.
 
 ## How the site is published
 
