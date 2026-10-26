@@ -150,6 +150,8 @@ export.export("my-recording", "bdf")       # also "edf", "npz", "csv", "tsv" and
 
 Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is refused.
 
+In BDF and EDF, every sample stays at the time it was recorded. Where samples were lost, the file holds the lowest value it can store for each of them, under a `BAD_ACQ_SKIP` annotation that MNE reads as its own, so MNE leaves the hole out of filtering and returns it as NaN when asked. These formats store whole numbers, so NaN cannot be written, and zero would stretch every signal's range and make every recorded sample in an EDF file less precise. `export.export` reports how many samples it filled in `samples_filled`.
+
 ## Analyses
 
 ```python

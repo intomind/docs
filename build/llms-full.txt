@@ -233,6 +233,8 @@ Recordings are saved in the `captures` folder inside the Command Center's folder
 
 Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is not exported. The Command Center uses the Python API's exporters, so a file exported here matches one exported from a script.
 
+In BDF and EDF every sample stays at the time it was recorded. Where samples were lost, the file fills the hole with the lowest value it can store and labels it `BAD_ACQ_SKIP`, which MNE reads as a gap, and the page says how many samples it filled. Zero is not used, because it would make every recorded sample in an EDF file less precise.
+
 ## It answers only your computer
 
 The server listens only on your own computer, and it refuses requests from web pages on other sites, so a page you visit cannot reach it. The page loads nothing from the internet.
@@ -389,6 +391,8 @@ export.export("my-recording", "bdf")       # also "edf", "npz", "csv", "tsv" and
 ```
 
 Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is refused.
+
+In BDF and EDF, every sample stays at the time it was recorded. Where samples were lost, the file holds the lowest value it can store for each of them, under a `BAD_ACQ_SKIP` annotation that MNE reads as its own, so MNE leaves the hole out of filtering and returns it as NaN when asked. These formats store whole numbers, so NaN cannot be written, and zero would stretch every signal's range and make every recorded sample in an EDF file less precise. `export.export` reports how many samples it filled in `samples_filled`.
 
 ## Analyses
 
