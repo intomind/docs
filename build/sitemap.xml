@@ -2,8 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://docs.intomind.com/</loc><lastmod>2026-10-22</lastmod></url>
   <url><loc>https://docs.intomind.com/device.html</loc><lastmod>2026-10-12</lastmod></url>
-  <url><loc>https://docs.intomind.com/command-center.html</loc><lastmod>2026-10-12</lastmod></url>
-  <url><loc>https://docs.intomind.com/python.html</loc><lastmod>2026-10-12</lastmod></url>
+  <url><loc>https://docs.intomind.com/command-center.html</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://docs.intomind.com/python.html</loc><lastmod>2026-10-26</lastmod></url>
   <url><loc>https://docs.intomind.com/rust.html</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://docs.intomind.com/javascript.html</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://docs.intomind.com/micropython.html</loc><lastmod>2026-10-22</lastmod></url>
