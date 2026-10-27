@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://docs.intomind.com/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://docs.intomind.com/</loc><lastmod>2026-10-29</lastmod></url>
   <url><loc>https://docs.intomind.com/device.html</loc><lastmod>2026-10-12</lastmod></url>
-  <url><loc>https://docs.intomind.com/command-center.html</loc><lastmod>2026-10-26</lastmod></url>
-  <url><loc>https://docs.intomind.com/python.html</loc><lastmod>2026-10-26</lastmod></url>
-  <url><loc>https://docs.intomind.com/files.html</loc></url>
+  <url><loc>https://docs.intomind.com/command-center.html</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://docs.intomind.com/python.html</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://docs.intomind.com/files.html</loc><lastmod>2026-10-29</lastmod></url>
   <url><loc>https://docs.intomind.com/rust.html</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://docs.intomind.com/javascript.html</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://docs.intomind.com/micropython.html</loc><lastmod>2026-10-22</lastmod></url>
   <url><loc>https://docs.intomind.com/model.html</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://docs.intomind.com/protocol.html</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://docs.intomind.com/safety.html</loc><lastmod>2026-10-12</lastmod></url>
-  <url><loc>https://docs.intomind.com/glossary.html</loc><lastmod>2026-10-12</lastmod></url>
+  <url><loc>https://docs.intomind.com/glossary.html</loc><lastmod>2026-10-29</lastmod></url>
   <url><loc>https://docs.intomind.com/protocol-1-0.html</loc><lastmod>2026-09-19</lastmod></url>
   <url><loc>https://docs.intomind.com/protocol-1-1.html</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://docs.intomind.com/protocol-1-2.html</loc><lastmod>2026-10-05</lastmod></url>

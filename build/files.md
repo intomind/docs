@@ -70,7 +70,14 @@ What these two exports report, beyond the six things every export reports:
 | `continuity` | `+C` for a continuous file |
 | `bits`, `quantum_uv`, `lsb_uv` | the sample width, the file's step in microvolts, and the recording's own step |
 
-The electrode-off flags recorded with each sample are kept in the npz and MATLAB exports.
+## Lead-off in files
+
+Lead-off detection reports which electrodes have come off, and it runs only when it is turned on. A lead-off reading of zero means every electrode was attached only while detection ran, so every file carries lead-off only where the recording says detection was running, and says so. On the IntoMind One each channel's bit is its positive electrode.
+
+- npz and mat carry the lead-off byte for every sample and, beside it, whether detection was running at that sample.
+- csv and tsv add a column per channel, `ch1_leadoff` and so on, with 1 where the electrode was off, 0 where it was attached, and empty where nothing was checking. The columns are present only when detection ran somewhere in the recording.
+- bdf and edf label each stretch an electrode was off `BAD_LEADOFF` followed by the channel's label, which MNE treats as bad, and label the part of a recording where detection was off `LEADOFF_NOT_CHECKED`, written only when it ran for the rest.
+- every export reports `contact`: `checked`, `partly checked`, `not checked`, or `not known` for a recording made before the flag was kept. bdf and edf also report `electrode_off_stretches`.
 
 ## Versions
 

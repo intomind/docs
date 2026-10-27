@@ -234,7 +234,9 @@ Recordings are saved in the `captures` folder inside the Command Center's folder
 
 Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is not exported. The Command Center uses the Python API's exporters, so a file exported here matches one exported from a script.
 
-In BDF and EDF every sample stays at the time it was recorded. Where samples were lost, the file fills the hole with a placeholder that repeats the last recorded value and labels it `BAD_ACQ_SKIP`, which MNE reads as a gap, and the page says how many samples it filled. A program that does not know the label shows a hole as a flat line. These files are made of whole blocks of about a second, and the last block is completed after the last sample the same way, so no recorded sample is left out, and the page says how many placeholders that took. The electrode-off flags recorded with each sample are kept in npz and MATLAB exports. What every file holds and promises is on [Recordings and files](https://docs.intomind.com/files.html).
+In BDF and EDF every sample stays at the time it was recorded. Where samples were lost, the file fills the hole with a placeholder that repeats the last recorded value and labels it `BAD_ACQ_SKIP`, which MNE reads as a gap, and the page says how many samples it filled. A program that does not know the label shows a hole as a flat line. These files are made of whole blocks of about a second, and the last block is completed after the last sample the same way, so no recorded sample is left out, and the page says how many placeholders that took. What every file holds and promises is on [Recordings and files](https://docs.intomind.com/files.html).
+
+Every format carries electrode contact where detection was on during the recording, and only there, because a reading of "attached" means nothing when nothing was checking. CSV and TSV add a column per channel: 1 where the electrode was off, 0 where it was attached, and empty where detection was off. BDF and EDF label each stretch an electrode was off `BAD_LEADOFF`, which MNE treats as bad. The page says whether contact was checked. A recording made before this was kept says it is not known.
 
 ## It answers only your computer
 
@@ -393,7 +395,9 @@ export.export("my-recording", "bdf")       # also "edf", "npz", "csv", "tsv" and
 
 Each export reports whether every value came out exactly as recorded, and if not, the largest error in microvolts. A recording whose checksums do not match is refused.
 
-In BDF and EDF, every sample stays at the time it was recorded. Where samples were lost, the file holds one placeholder for each of them, repeating the last recorded value, under a `BAD_ACQ_SKIP` annotation that MNE reads as its own, so MNE leaves the hole out of filtering and returns it as NaN when asked. A reader that does not know the label shows a hole as a flat line. The files are whole blocks of about a second, and the last block is completed after the last sample the same way, so no recorded sample is left out. `export.export` reports how many placeholders it wrote in `samples_filled` and `tail_filled`. The electrode-off flags recorded with each sample are kept in npz and MATLAB exports. What every file holds and promises is on [Recordings and files](https://docs.intomind.com/files.html).
+In BDF and EDF, every sample stays at the time it was recorded. Where samples were lost, the file holds one placeholder for each of them, repeating the last recorded value, under a `BAD_ACQ_SKIP` annotation that MNE reads as its own, so MNE leaves the hole out of filtering and returns it as NaN when asked. A reader that does not know the label shows a hole as a flat line. The files are whole blocks of about a second, and the last block is completed after the last sample the same way, so no recorded sample is left out. `export.export` reports how many placeholders it wrote in `samples_filled` and `tail_filled`. What every file holds and promises is on [Recordings and files](https://docs.intomind.com/files.html).
+
+Lead-off is in every format, and only where the recording says detection was running, because a lead-off status of zero is an attached electrode there and nothing at all anywhere else. CSV and TSV add a `chN_leadoff` column per channel: 1 where the electrode was off, 0 where it was attached, and empty where nothing was checking. BDF and EDF label each stretch an electrode was off `BAD_LEADOFF` and the channel, which MNE treats as bad. NPZ and MATLAB hold the flag itself as `leadoff_active`. Every export reports in `contact` whether contact was checked, and a recording made before the flag was kept reports "not known".
 
 ## Analyses
 
@@ -479,7 +483,14 @@ What these two exports report, beyond the six things every export reports:
 | `continuity` | `+C` for a continuous file |
 | `bits`, `quantum_uv`, `lsb_uv` | the sample width, the file's step in microvolts, and the recording's own step |
 
-The electrode-off flags recorded with each sample are kept in the npz and MATLAB exports.
+## Lead-off in files
+
+Lead-off detection reports which electrodes have come off, and it runs only when it is turned on. A lead-off reading of zero means every electrode was attached only while detection ran, so every file carries lead-off only where the recording says detection was running, and says so. On the IntoMind One each channel's bit is its positive electrode.
+
+- npz and mat carry the lead-off byte for every sample and, beside it, whether detection was running at that sample.
+- csv and tsv add a column per channel, `ch1_leadoff` and so on, with 1 where the electrode was off, 0 where it was attached, and empty where nothing was checking. The columns are present only when detection ran somewhere in the recording.
+- bdf and edf label each stretch an electrode was off `BAD_LEADOFF` followed by the channel's label, which MNE treats as bad, and label the part of a recording where detection was off `LEADOFF_NOT_CHECKED`, written only when it ran for the rest.
+- every export reports `contact`: `checked`, `partly checked`, `not checked`, or `not known` for a recording made before the flag was kept. bdf and edf also report `electrode_off_stretches`.
 
 ## Versions
 
