@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JavaScript | IntoMind documentation</title>
-<meta name="description" content="The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.">
+<meta name="description" content="The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, decode the protocol in Node, and read and export recordings.">
 <link rel="canonical" href="https://docs.intomind.com/javascript.html">
 <link rel="alternate" type="text/markdown" href="/javascript.md">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="IntoMind documentation">
 <meta property="og:title" content="JavaScript">
-<meta property="og:description" content="The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.">
+<meta property="og:description" content="The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, decode the protocol in Node, and read and export recordings.">
 <meta property="og:url" content="https://docs.intomind.com/javascript.html">
 <meta property="og:image" content="https://www.intomind.com/logo/1200x630.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -20,7 +20,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
 <link rel="preload" href="/assets/fonts/Sen-variable.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="/assets/site.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "JavaScript", "description": "The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.", "url": "https://docs.intomind.com/javascript.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "JavaScript", "item": "https://docs.intomind.com/javascript.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "JavaScript", "description": "The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, decode the protocol in Node, and read and export recordings.", "url": "https://docs.intomind.com/javascript.html", "inLanguage": "en-US", "publisher": {"@type": "Organization", "name": "IntoMind, Inc.", "url": "https://www.intomind.com", "logo": "https://www.intomind.com/logo/180.png"}, "about": {"@type": "Product", "name": "IntoMind One", "model": "IM-1", "brand": {"@type": "Brand", "name": "IntoMind"}}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "IntoMind documentation", "item": "https://docs.intomind.com/"}, {"@type": "ListItem", "position": 2, "name": "JavaScript", "item": "https://docs.intomind.com/javascript.html"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
@@ -71,10 +71,17 @@ session.<span class="f">onDeviceInfo</span>(deviceInfoBytes);                  <
 <span class="k">for</span> (<span class="k">const</span> event <span class="k">of</span> session.<span class="f">onNotification</span>(FILL.EEG_DATA, notificationBytes)) {
   <span class="c">// the same events as in a browser</span>
 }
-<span class="k">const</span> command = session.<span class="f">startStream</span>();                  <span class="c">// write command.bytes to its characteristic</span></code></pre><p>The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.</p>
+<span class="k">const</span> command = session.<span class="f">startStream</span>();                  <span class="c">// write command.bytes to its characteristic</span></code></pre><p>The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.</p><h2 id="recordings-and-exports">Recordings and exports</h2><p><code>@intomind/sdk/capture</code> reads the recordings the Command Center and the Python API make, and exports them in the same six formats, with the same rules and the same summary. A BDF, EDF, CSV or TSV file exported here is the same file, byte for byte, as one exported from Python, and an NPZ or MATLAB file holds the same arrays. It reads and writes bytes, so it runs in a browser, with the files from a file picker or a download.</p><pre data-lang="TypeScript"><code class="language-ts"><span class="k">import</span> { <span class="t">Collection</span>, exportRecording } <span class="k">from</span> <span class="s">"@intomind/sdk/capture"</span>;
+
+<span class="k">const</span> recordings = <span class="k">new</span> <span class="f">Collection</span>(files);                        <span class="c">// file name -&gt; bytes</span>
+<span class="k">const</span> bdf = <span class="f">exportRecording</span>(recordings, <span class="s">"my-recording"</span>, <span class="s">"bdf"</span>);  <span class="c">// also "edf", "npz", "csv", "tsv" and "mat"</span>
+<span class="c">// bdf.bytes is the file, and bdf.summary what the Python API reports for it</span></code></pre><p>In Node, <code>@intomind/sdk/capture/node</code> reads a folder and writes the export where the Python API would.</p><pre data-lang="TypeScript"><code class="language-ts"><span class="k">import</span> { defaultDir, exportToFile, openCollection } <span class="k">from</span> <span class="s">"@intomind/sdk/capture/node"</span>;
+
+<span class="k">const</span> summary = <span class="f">exportToFile</span>(<span class="f">defaultDir</span>(), <span class="s">"my-recording"</span>, <span class="s">"bdf"</span>);  <span class="c">// the folder the Python API uses</span>
+<span class="k">const</span> recording = <span class="f">openCollection</span>().<span class="f">load</span>(<span class="s">"my-recording"</span>);            <span class="c">// refused if its checksums do not match</span></code></pre><p>What every file holds and promises is on <a href="/files.html">Recordings and files</a>.</p><h2 id="license">License</h2><p>Free software under the GNU Affero General Public License, version 3. For a commercial license, write to contact@intomind.com.</p>
 </article>
 </main>
-<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#try-it">Try it</a></li><li class="l2"><a href="#connect-and-stream">Connect and stream</a></li><li class="l2"><a href="#events">Events</a></li><li class="l2"><a href="#commands">Commands</a></li><li class="l2"><a href="#run-your-own-head">Run your own head</a></li><li class="l2"><a href="#browsers">Browsers</a></li><li class="l2"><a href="#node">Node</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
+<aside class="toc" aria-label="On this page"><p>On this page</p><ul><li class="l2"><a href="#try-it">Try it</a></li><li class="l2"><a href="#connect-and-stream">Connect and stream</a></li><li class="l2"><a href="#events">Events</a></li><li class="l2"><a href="#commands">Commands</a></li><li class="l2"><a href="#run-your-own-head">Run your own head</a></li><li class="l2"><a href="#browsers">Browsers</a></li><li class="l2"><a href="#node">Node</a></li><li class="l2"><a href="#recordings-and-exports">Recordings and exports</a></li><li class="l2"><a href="#license">License</a></li></ul></aside>
 </div>
 <footer><div>IntoMind is a trademark of IntoMind, Inc. Source code is at
 <a href="https://github.com/intomind" rel="noopener">github.com/intomind</a>. IntoMind One is not a medical device.</div></footer>

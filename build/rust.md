@@ -1,6 +1,6 @@
 ---
 title: Rust
-description: The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, and the timebase.
+description: The intomind Rust crates for the IntoMind One: a client that works over any Bluetooth stack and runtime, with commands, processing, embeddings, head uploads, the timebase, and recordings.
 url: https://docs.intomind.com/rust.html
 ---
 
@@ -18,7 +18,7 @@ cargo add intomind
 | `intomind-protocol` | the protocol's messages as code. `no_std`, with no dependencies |
 | `intomind-pipeline` | the device's processing chain, so a chain can be checked before it is sent |
 | `intomind-model` | the encoder's arithmetic, as the device does it. `no_std`. Enable it with `--features model` |
-| `intomind-capture` | recordings: read as every IntoMind program writes them, and exported in six formats |
+| `intomind-capture` | recordings: recorded and read as every IntoMind program records and reads them, and exported in six formats |
 
 ## Connect and stream
 
@@ -147,6 +147,30 @@ let seconds = timebase.host_time(device_ticks);
 ```
 
 The crates are tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
+
+## Record
+
+The session records as the Python API records: the same four files, the same manifest, and the checksums written last, so a run that dies on the way is never taken for a whole recording. Its clock is the Python API's too. Give each time exchange both of your computer's clocks, read either side of it, and the session fits the device's time against the clock that never steps and holds the fit still while the device streams, so a recording's times never jump.
+
+```rust
+use intomind::capture::record::{Run, Setup};
+use intomind::capture::recording::Collection;
+use intomind::HostClocks;
+
+// Each time exchange: send session.time_sync() and wait for its answer.
+let before = HostClocks::now();
+session.on_time_sync_clocks(&answer, before, HostClocks::now())?;
+
+session.arm_recorder();             // then send reset_epoch() and start_stream()
+// Every notification goes to session.on_notification, as before.
+// Send stop_stream() at the end.
+let mut run = Run::default();
+run.extra.insert("experiment".into(), "my-experiment".into());
+let recordings = Collection::open(Collection::default_dir());
+let manifest = session.save_recording(&recordings, "my-recording", &Setup::default(), &run)?;
+```
+
+`Setup` declares what no code can discover: the adapter that carried the samples, facts about the hardware such as the mains frequency, and where the electrodes were put. What is not declared is written as unknown. A recording made here names the Rust crates as the software that made it, where one made by the Python API names Python. Everything else is the file the Python API writes from the same session.
 
 ## Recordings and exports
 

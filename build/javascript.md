@@ -1,6 +1,6 @@
 ---
 title: JavaScript
-description: The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, and decode the protocol in Node.
+description: The @intomind/sdk package for the IntoMind One: connect from a web page over Web Bluetooth, stream, send commands, run your own head, decode the protocol in Node, and read and export recordings.
 url: https://docs.intomind.com/javascript.html
 ---
 
@@ -106,6 +106,29 @@ const command = session.startStream();                  // write command.bytes t
 ```
 
 The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
+
+## Recordings and exports
+
+`@intomind/sdk/capture` reads the recordings the Command Center and the Python API make, and exports them in the same six formats, with the same rules and the same summary. A BDF, EDF, CSV or TSV file exported here is the same file, byte for byte, as one exported from Python, and an NPZ or MATLAB file holds the same arrays. It reads and writes bytes, so it runs in a browser, with the files from a file picker or a download.
+
+```ts
+import { Collection, exportRecording } from "@intomind/sdk/capture";
+
+const recordings = new Collection(files);                        // file name -> bytes
+const bdf = exportRecording(recordings, "my-recording", "bdf");  // also "edf", "npz", "csv", "tsv" and "mat"
+// bdf.bytes is the file, and bdf.summary what the Python API reports for it
+```
+
+In Node, `@intomind/sdk/capture/node` reads a folder and writes the export where the Python API would.
+
+```ts
+import { defaultDir, exportToFile, openCollection } from "@intomind/sdk/capture/node";
+
+const summary = exportToFile(defaultDir(), "my-recording", "bdf");  // the folder the Python API uses
+const recording = openCollection().load("my-recording");            // refused if its checksums do not match
+```
+
+What every file holds and promises is on [Recordings and files](https://docs.intomind.com/files.html).
 
 ## License
 

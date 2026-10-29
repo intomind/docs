@@ -6,7 +6,7 @@ url: https://docs.intomind.com/files.html
 
 # Recordings and files
 
-Every recording made with the Command Center or the Python API is kept the same way, and every export follows the same rules, whichever program asked for it. The Rust crates read the same recordings and write the same six files, byte for byte or array for array, as [Rust](https://docs.intomind.com/rust.html#recordings-and-exports) shows. This page is the contract: what a recording is, what each file holds, and what will not change.
+Every recording made with the Command Center, the Python API or the Rust crates is kept the same way, and every export follows the same rules, whichever program asked for it. The Rust crates and the JavaScript package read the same recordings and write the same six files, byte for byte or array for array, as [Rust](https://docs.intomind.com/rust.html#recordings-and-exports) and [JavaScript](https://docs.intomind.com/javascript.html#recordings-and-exports) show. This page is the contract: what a recording is, what each file holds, and what will not change.
 
 ## A recording
 
@@ -40,7 +40,7 @@ Six formats, one call. Every one refuses a recording whose checksums do not matc
 |---|---|
 | npz | Microvolts per channel as `ch1_uv` and so on, with each sample's index, device time, host time, lead-off byte and gap mark, and the manifest. Every value as recorded. |
 | csv and tsv | One header row, then one row per sample: `host_time_s`, `device_time`, and a microvolt column per channel. The rows are the samples, in order, and nothing is inserted where samples were lost. Both clocks are there so that a gap shows in the text. |
-| mat | MATLAB version 7.3, which needs `h5py`. The microvolts as `uv`, the manifest, and the per-sample arrays. Every value as recorded. |
+| mat | MATLAB version 7.3, which needs `h5py`. The microvolts as `uv`, the manifest as one line of text, and the per-sample arrays. Every value as recorded. |
 | bdf | BDF+, 24 bits per sample. At 24 bits the step is narrower than one converter count on any recording that does not span the whole converter, so the values are what was recorded and the error is measured, not assumed. |
 | edf | EDF+, 16 bits per sample, and therefore lossy by construction. `max_error_uv` says by how much. The step depends on the signal's own range in the file, not on its offset. |
 
