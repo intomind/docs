@@ -17,7 +17,7 @@ cargo add intomind
 | `intomind-protocol` | the protocol's messages as code. `no_std`, with no dependencies |
 | `intomind-pipeline` | the device's processing chain, so a chain can be checked before it is sent |
 | `intomind-model` | the encoder's arithmetic, as the device does it. `no_std`. Enable it with `--features model` |
-| `intomind-capture` | a recording format of flat files and a manifest |
+| `intomind-capture` | recordings: read as every IntoMind program writes them, and exported in six formats |
 
 ## Connect and stream
 
@@ -146,6 +146,23 @@ let seconds = timebase.host_time(device_ticks);
 ```
 
 The crates are tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
+
+## Recordings and exports
+
+`intomind::capture` reads the recordings the Command Center and the Python API make, and exports them in the same six formats, with the same rules and the same summary. A BDF, EDF, CSV or TSV file exported here is the same file, byte for byte, as one exported from Python, and an NPZ or MATLAB file holds the same arrays.
+
+```rust
+use intomind::capture::{export, recording::Collection};
+
+let recordings = Collection::open(Collection::default_dir());
+let summary = export::export(&recordings, "my-recording", "bdf", None)?;   // also "edf", "npz", "csv", "tsv" and "mat"
+println!("{} samples, largest error {} µV", summary["samples"], summary["max_error_uv"]);
+
+let recording = recordings.load("my-recording")?;                       // refused if its checksums do not match
+let ch1 = recording.uv(0)?;
+```
+
+`Collection::default_dir()` is the folder the Python API uses. An export with no path goes in `exports` beside it. What every file holds and promises is on [Recordings and files](/files.html).
 
 ## License
 
