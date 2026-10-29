@@ -15,6 +15,7 @@ IntoMind One is a research grade EEG device that you wear. It streams four chann
 | [The device](https://docs.intomind.com/device.html) | what is in the box, charging, wearing it, the lights, and connecting |
 | [Command Center](https://docs.intomind.com/command-center.html) | the app for seeing the signal, recording, and exporting |
 | [Python](https://docs.intomind.com/python.html) | the API, for scripts, recordings and analysis |
+| [Recordings and files](https://docs.intomind.com/files.html) | what a recording is, what each export holds, and the rule versions follow |
 | [Rust](https://docs.intomind.com/rust.html) and [JavaScript](https://docs.intomind.com/javascript.html) | the SDK, for building your own applications |
 | [MicroPython](https://docs.intomind.com/micropython.html) | MicroPython for the Raspberry Pi Pico 2 W, for programs that run on the board |
 | [The model and heads](https://docs.intomind.com/model.html) | the neural network on the device, and training your own heads |

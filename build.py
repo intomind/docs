@@ -75,6 +75,7 @@ NAV = [
     ("device.html", "The device"),
     ("command-center.html", "Command Center"),
     ("python.html", "Python"),
+    ("files.html", "Recordings and files"),
     ("rust.html", "Rust"),
     ("javascript.html", "JavaScript"),
     ("micropython.html", "MicroPython"),

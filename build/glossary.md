@@ -24,9 +24,11 @@ url: https://docs.intomind.com/glossary.html
 | Lead-off detection | A check that shows which electrodes touch the skin, by passing a very small current through them. |
 | Mains frequency | The frequency of household electricity, 50 or 60 Hz, which every EEG picks up. |
 | Pairing | The first connection between a computer and the device, which sets up the encryption for every later one. |
+| Placeholder | A value written in a BDF or EDF file where a sample was lost, repeating the last recorded value, under the label that marks the hole. |
 | Processing chain | The filters the device applies to its signal before streaming it. Every stream states its chain. |
 | Protocol | The contract for the Bluetooth messages between an IntoMind device and any software. |
 | Reconstruction head | The open head that turns tokens back into signal. |
+| Recording | The samples, the manifest, the markers and the checksums that one capture session wrote, kept together under one name. |
 | Reference | The electrode every channel is measured against. |
 | Sample | One measurement of every channel at one moment. |
 | Sample rate | How many samples the device takes per second: 250, 500 or 1000. |
