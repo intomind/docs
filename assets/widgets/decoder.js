@@ -1,5 +1,5 @@
 // An EEG Data notification, read by the published SDK's own decoder.
-import * as P from "/assets/vendor/intomind-sdk-1.4.0/protocol.js";
+import * as P from "/assets/vendor/intomind-sdk-1.4.1/protocol.js";
 
 // The IntoMind One's ADC reference and width, as its Device Info
 // reports them. A host reads both from the device, never from here.

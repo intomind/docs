@@ -1,7 +1,7 @@
 // An IntoMind One, live in this page over Web Bluetooth, through the
 // published JavaScript SDK. Nothing is recorded and nothing leaves the
 // browser: the samples are drawn and then dropped.
-import { requestAndConnect } from "/assets/vendor/intomind-sdk-1.4.0/index.js";
+import { requestAndConnect } from "/assets/vendor/intomind-sdk-1.4.1/index.js";
 
 const SECONDS = 5;
 const COLORS = ["#ee2b7b", "#f7931a", "#4caf50", "#2f80ed"];

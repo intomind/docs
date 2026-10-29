@@ -42,6 +42,8 @@ document.querySelector("#connect")?.addEventListener("click", async () => {
 
 `requestAndConnect` must run from a click, on a page served over HTTPS or from `localhost`. The first connection pairs the device. `link.info` is what the device reported when it connected, and scaling a sample to microvolts needs it. Each batch carries the index and device time of its first sample, and a gap is announced before the batch that follows it.
 
+Every batch says whether lead-off detection was running, in `batch.leadoffActive`, because a lead-off byte of zero is an attached electrode only when it was.
+
 ## Events
 
 | Event | Carries |

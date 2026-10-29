@@ -74,6 +74,8 @@
 <span class="k">if</span> session.<span class="f">can</span>(capability::LEADOFF) {
     <span class="k">let</span> command = session.<span class="f">set_leadoff</span>(<span class="k">true</span>)?;
 }
+<span class="c">// Every batch then says whether detection was running, in `batch.leadoff_active`:</span>
+<span class="c">// a lead-off byte of zero is an attached electrode only when it was.</span>
 <span class="k">let</span> verbose = session.<span class="f">set_indicator</span>(indicator::VERBOSE)?;          <span class="c">// silent, reserved, verbose</span>
 <span class="k">let</span> identify = session.<span class="f">identify</span>(<span class="n">5</span>)?;                               <span class="c">// the status light winks for five seconds</span>
 <span class="k">let</span> name = session.<span class="f">set_name</span>(<span class="s">"Ada"</span>, <span class="s">"Blue"</span>, <span class="s">"IntoMind One"</span>)?;       <span class="c">// refused unless it fits 29 bytes</span>

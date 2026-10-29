@@ -76,6 +76,8 @@ use intomind::protocol::device_info::capability;
 if session.can(capability::LEADOFF) {
     let command = session.set_leadoff(true)?;
 }
+// Every batch then says whether detection was running, in `batch.leadoff_active`:
+// a lead-off byte of zero is an attached electrode only when it was.
 let verbose = session.set_indicator(indicator::VERBOSE)?;          // silent, reserved, verbose
 let identify = session.identify(5)?;                               // the status light winks for five seconds
 let name = session.set_name("Ada", "Blue", "IntoMind One")?;       // refused unless it fits 29 bytes
