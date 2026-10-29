@@ -45,6 +45,8 @@ Six formats, one call. Every one refuses a recording whose checksums do not matc
 
 A recording the device generated is marked as generated wherever it goes: the columns are named `ch1_synthetic_uv`, the MATLAB matrix `synthetic_uv`, and the manifest says so.
 
+In a MATLAB file written by 1.4.1 or earlier, the manifest opens as a column of characters. `jsondecode(S.manifest_json(:)')` reads it from a file of any version.
+
 ## Time in BDF and EDF files
 
 In BDF and EDF, every sample is written at the time it was recorded, counted from the sample index the device gave it. This is what the files promise, and what changed in 1.4.1.
