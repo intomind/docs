@@ -794,6 +794,27 @@ const command = session.startStream();                  // write command.bytes t
 
 The package is tested against the protocol's conformance vectors, which the device's firmware generates from the code it runs.
 
+## Record
+
+The session records as the Python API records: the same four files, the same manifest, and the checksums written last, so a run that dies on the way is never taken for a whole recording. Its clock is the Python API's too. `link.timeSync()` reads both of your computer's clocks either side of each exchange, and the session fits the device's time against the clock that never steps and holds the fit still while the device streams, so a recording's times never jump.
+
+```ts
+for (let i = 0; i < 5; i++) await link.timeSync();   // a few exchanges before the stream
+
+link.session.armRecorder();
+await link.request(link.session.resetEpoch());
+await link.request(link.session.startStream());
+// the batches arrive as before
+await link.request(link.session.stopStream());
+
+const saved = link.session.saveRecording("my-recording", {}, { extra: { experiment: "my-experiment" } });
+// saved.files holds each file's name and bytes: the npz, the manifest and the checksums
+```
+
+The second argument declares what no code can discover: the adapter that carried the samples, facts about the hardware such as the mains frequency, and where the electrodes were put. What is not declared is written as unknown. A recording made here names the JavaScript package as the software that made it. Everything else is the file the Python API writes from the same session.
+
+In Node, give each time exchange both clocks yourself, read with `hostClocks()` from `@intomind/sdk/capture` either side of it, to `session.onTimeSyncClocks(answer, before, after)`. `writeRecording(defaultDir(), saved)` from `@intomind/sdk/capture/node` puts the files in the folder the Python API uses.
+
 ## Recordings and exports
 
 `@intomind/sdk/capture` reads the recordings the Command Center and the Python API make, and exports them in the same six formats, with the same rules and the same summary. A BDF, EDF, CSV or TSV file exported here is the same file, byte for byte, as one exported from Python, and an NPZ or MATLAB file holds the same arrays. It reads and writes bytes, so it runs in a browser, with the files from a file picker or a download.
