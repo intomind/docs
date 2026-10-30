@@ -661,7 +661,7 @@ session.arm_recorder();             // then send reset_epoch() and start_stream(
 // Every notification goes to session.on_notification, as before.
 // Send stop_stream() at the end.
 let mut run = Run::default();
-run.extra.insert("experiment".into(), "my-experiment".into());
+run.extra.set("experiment", "my-experiment".into());
 let recordings = Collection::open(Collection::default_dir());
 let manifest = session.save_recording(&recordings, "my-recording", &Setup::default(), &run)?;
 ```

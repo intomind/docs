@@ -23,9 +23,9 @@ Besides the pages, the build writes each page again as Markdown,
 `llms.txt` and `llms-full.txt` for AI assistants, a sitemap, and the index
 the search box reads. Everything the pages load is in `assets/`: the
 stylesheet, the Sen typeface with its license, and the scripts. The
-interactive parts use a copy of the published `@intomind/sdk` 1.4.0, kept
-byte for byte in `assets/vendor/`, so what they show is what the package
-does. Nothing is loaded from another site.
+interactive parts use a copy of the published `@intomind/sdk`, kept byte
+for byte in `assets/vendor/` in a folder named for its version, so what
+they show is what the package does. Nothing is loaded from another site.
 
 ```
 python3 check.py            # builds, then checks
@@ -44,10 +44,11 @@ anchor, that every page has a description and is in the sitemap and
 copy of the SDK is still the published one.
 
 The JavaScript, Rust and MicroPython examples are not compiled here. The
-JavaScript and Rust ones were compiled against the published 1.4.0
-packages when they were written. The MicroPython ones were compiled with
-MicroPython's own compiler and run with the `intomind` library for
-MicroPython against simulated devices. Each needs checking again when its
+JavaScript and Rust ones were compiled against the published packages
+when they were written, and are checked again when those change. The
+MicroPython ones were compiled with MicroPython's own compiler and run
+with the `intomind` library for MicroPython against simulated devices.
+Each needs checking again when its
 package changes.
 
 ## How the site is published

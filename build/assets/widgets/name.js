@@ -1,6 +1,6 @@
 // The device's name, composed as the device composes it and counted as the
 // device counts it, by the published SDK's own functions.
-import * as P from "/assets/vendor/intomind-sdk-1.4.2/protocol.js";
+import * as P from "/assets/vendor/intomind-sdk-1.4.3/protocol.js";
 
 const bytes = (s) => new TextEncoder().encode(s).length;
 
