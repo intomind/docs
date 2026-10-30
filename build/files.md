@@ -6,7 +6,7 @@ url: https://docs.intomind.com/files.html
 
 # Recordings and files
 
-Every recording made with the Command Center, the Python API or the Rust crates is kept the same way, and every export follows the same rules, whichever program asked for it. The Rust crates and the JavaScript package read the same recordings and write the same six files, byte for byte or array for array, as [Rust](https://docs.intomind.com/rust.html#recordings-and-exports) and [JavaScript](https://docs.intomind.com/javascript.html#recordings-and-exports) show. This page is the contract: what a recording is, what each file holds, and what will not change.
+Every recording made with the Command Center, the Python API, the Rust crates or the JavaScript package is kept the same way, and every export follows the same rules, whichever program asked for it. The Rust crates and the JavaScript package read the same recordings and write the same six files, byte for byte or array for array, as [Rust](https://docs.intomind.com/rust.html#recordings-and-exports) and [JavaScript](https://docs.intomind.com/javascript.html#recordings-and-exports) show. This page is the contract: what a recording is, what each file holds, and what will not change.
 
 ## A recording
 
